@@ -1,7 +1,8 @@
 # Laboratorio di Ricerca Operativa
 
-**Modelli continui di ottimizzazione per l'Ingegneria Gestionale** — dispensa,
-codice Python/Gurobi, dati, slide e casi di studio, tutto riproducibile.
+**Modelli continui di ottimizzazione per l'Ingegneria Gestionale** — la dispensa
+del corso in versione online, con codice Python/Gurobi, dati e casi di studio
+riproducibili.
 
 Ogni capitolo parte da un problema gestionale concreto — quanto produrre, dove
 localizzare un servizio, quale prezzo fissare, quanto rischio accettare — lo
@@ -133,9 +134,7 @@ cambiano del 5%?
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy
 python3 python/esegui_tutti.py        # rigenera dati, risultati e figure
-latexmk -pdf dispensa/main.tex        # compila la dispensa (~85 pagine)
 ```
 
 Nel [repository](https://github.com/fabiofurini/laboratorio-ricerca-operativa)
-trovi il sorgente LaTeX della dispensa, tutti gli **script Python** e i **dati**
-in CSV dei casi di studio.
+trovi tutti gli **script Python** e i **dati** in CSV dei casi di studio.

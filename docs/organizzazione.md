@@ -51,7 +51,6 @@
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy
 python3 python/esegui_tutti.py       # rigenera dati, risultati e figure
-latexmk -pdf dispensa/main.tex       # compila la dispensa
 ```
 
 Le slide del corso e le soluzioni degli esercizi vengono distribuite a lezione.
