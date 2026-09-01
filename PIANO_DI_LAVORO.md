@@ -92,85 +92,87 @@ Box didattici colorati usati ovunque (tcolorbox):
 - [x] Verifica pdflatex + tcolorbox/listings/booktabs
 
 ### FASE 1 — Infrastruttura
-- [ ] 1.0 `GUIDA_GUROBI.md`: guida autonoma e completa al solver — installazione e licenza;
+- [x] 1.0 `GUIDA_GUROBI.md`: guida autonoma e completa al solver — installazione e licenza;
       come si costruisce un modello (Model, addVars, addConstrs, setObjective, passo per passo
       su un esempio completo); come si fa girare (`optimize`, parametri, log spiegato riga per
       riga); come si recupera la soluzione (`Status`, `ObjVal`, `X`, `Pi`, `RC`, `Slack`,
       `SAObjLow/Up`, `SARHSLow/Up`); come si interpreta l'output (ottimo/inammissibile/illimitato,
       prezzi ombra, costi ridotti, range di validità); errori tipici e come diagnosticarli.
-- [ ] 1.1 Creare l'albero di cartelle `dispensa/`, `python/`, `dati/`
-- [ ] 1.2 `python/stile.py`: palette coerente con la dispensa, funzioni di salvataggio figure
-- [ ] 1.3 `dispensa/preambolo.tex`: pacchetti, definizione dei 6 box, stile codice Python
-- [ ] 1.4 `dispensa/main.tex`: frontespizio, indice, inclusione capitoli
+- [x] 1.1 Creare l'albero di cartelle `dispensa/`, `python/`, `dati/`
+- [x] 1.2 `python/stile.py`: palette coerente con la dispensa, funzioni di salvataggio figure
+- [x] 1.3 `dispensa/preambolo.tex`: pacchetti, definizione dei 6 box, stile codice Python
+- [x] 1.4 `dispensa/main.tex`: frontespizio, indice, inclusione capitoli
 
 ### FASE 2 — Script Python (un modello alla volta: dati → modello → soluzione → sensitività → figure)
 Ogni script: genera/salva i dati in `dati/*.csv`, costruisce il modello Gurobi (o scipy per gli
 NLP generali), risolve, stampa un report, esegue la sensitività e salva le figure in
 `dispensa/figure/` come PDF vettoriali.
 
-- [ ] 2.1 `lab04_produzione.py` — 3 prodotti × 6 mesi; LP costo minimo, duali della capacità,
+- [x] 2.1 `lab04_produzione.py` — 3 prodotti × 6 mesi; LP costo minimo, duali della capacità,
       variante QP con smoothing (γ), scenario di domanda ±10%, figura: piano di produzione + scorte.
-- [ ] 2.2 `lab05_supplychain.py` — rete 2 stabilimenti/2 hub/4 mercati; flusso a costo minimo,
+- [x] 2.2 `lab05_supplychain.py` — rete 2 stabilimenti/2 hub/4 mercati; flusso a costo minimo,
       congestione quadratica, prezzo CO₂ crescente; figure: rete e costi vs τ.
-- [ ] 2.3 `lab06_markowitz.py` — 8 titoli, 60 mesi di rendimenti simulati; minima varianza al
+- [x] 2.3 `lab06_markowitz.py` — 8 titoli, 60 mesi di rendimenti simulati; minima varianza al
       variare di r̄ → frontiera efficiente; composizione del portafoglio; effetto limiti u_i.
-- [ ] 2.4 `lab07_pricing.py` — domanda lineare (QP esatto con Gurobi), elasticità costante e
+- [x] 2.4 `lab07_pricing.py` — domanda lineare (QP esatto con Gurobi), elasticità costante e
       logistica (scipy); prezzo ottimo vs capacità K; valore marginale di un posto.
-- [ ] 2.5 `lab08_budget.py` — 4 canali con risposta log/esponenziale satura; KKT verificate
+- [x] 2.5 `lab08_budget.py` — 4 canali con risposta log/esponenziale satura; KKT verificate
       numericamente (ritorno marginale uguale sui canali attivi); curva valore–budget.
-- [ ] 2.6 `lab09_localizzazione.py` — 12 quartieri pesati; Weber, minimax, baricentro,
+- [x] 2.6 `lab09_localizzazione.py` — 12 quartieri pesati; Weber, minimax, baricentro,
       compromesso α; mappa con punti ottimi; distanza vs α.
-- [ ] 2.7 `lab10_ricarica_ev.py` — 6 veicoli × 24 ore, prezzi orari reali-stilizzati; costo minimo
+- [x] 2.7 `lab10_ricarica_ev.py` — 6 veicoli × 24 ore, prezzi orari reali-stilizzati; costo minimo
       LP, peak shaving minimax, profilo regolare QP; confronto profili orari.
-- [ ] 2.8 `lab11_code.py` — M/M/1: costo totale convesso, μ* analitico vs numerico; curva
+- [x] 2.8 `lab11_code.py` — M/M/1: costo totale convesso, μ* analitico vs numerico; curva
       costo-servizio; prezzo ombra del vincolo di attesa massima.
-- [ ] 2.9 `lab12_newsvendor.py` — quantile analitico (esempio del PDF: μ=100, σ=20, α*=0,6923),
+- [x] 2.9 `lab12_newsvendor.py` — quantile analitico (esempio del PDF: μ=100, σ=20, α*=0,6923),
       LP a scenari (dimostrare che coincide), multiprodotto con budget, service level,
       media-CVaR al variare di λ; valore della soluzione stocastica; figure costo/quantile/frontiera.
-- [ ] 2.10 `lab13_var_cvar.py` — esempio a 6 scenari del PDF (VaR=12, CVaR=18,67) verificato in
+- [x] 2.10 `lab13_var_cvar.py` — esempio a 6 scenari del PDF (VaR=12, CVaR=18,67) verificato in
       Gurobi; portafoglio mean-CVaR con 300 scenari e confronto con Markowitz; frontiera
       rendimento-CVaR; supply chain a due stadi con scenari avversi.
-- [ ] 2.11 `lab14_svm.py` — dataset 2D "rischio di credito" simulato (80 clienti); hard margin QP,
+- [x] 2.11 `lab14_svm.py` — dataset 2D "rischio di credito" simulato (80 clienti); hard margin QP,
       soft margin al variare di C, duale (support vector evidenziati), kernel RBF, classi
       sbilanciate con costi, SVR su domanda; figure: iperpiano, margine, frontiere non lineari.
-- [ ] 2.12 `esegui_tutti.py` + esecuzione completa e verifica di tutte le figure.
+- [x] 2.12 `esegui_tutti.py` + esecuzione completa e verifica di tutte le figure.
 
 ### FASE 3 — Capitoli LaTeX (scritti dopo i risultati numerici, così testo e numeri coincidono)
-- [ ] 3.1 cap01 Introduzione: obiettivi del laboratorio, filosofia (nessuna variabile binaria),
+- [x] 3.1 cap01 Introduzione: obiettivi del laboratorio, filosofia (nessuna variabile binaria),
       mappa dei modelli, percorso in 4 laboratori, criteri di valutazione (30/25/25/20).
-- [ ] 3.2 cap02 Richiami: LP e dualità con esempio 2×2 svolto; QP e convessità; KKT con esempio
+- [x] 3.2 cap02 Richiami: LP e dualità con esempio 2×2 svolto; QP e convessità; KKT con esempio
       svolto; il protocollo di sensitività in 6 passi (dal PDF 1, pagina 11).
-- [ ] 3.3 cap03 Python/Gurobi: installazione, anatomia di un modello (vars → constrs → obj →
+- [x] 3.3 cap03 Python/Gurobi: installazione, anatomia di un modello (vars → constrs → obj →
       optimize → query), lettura di `Pi`, `RC`, `SAObjLow/Up`; scipy per NLP generali.
-- [ ] 3.4–3.11 cap04–cap11: gli 8 modelli del PDF 1 con la scaletta in 8 passi.
-- [ ] 3.12 cap12 Newsvendor (7 sezioni del PDF 2, tutte, in forma estesa e didattica).
-- [ ] 3.13 cap13 VaR/CVaR (7 sezioni del PDF 3, con dimostrazione guidata di Rockafellar–Uryasev).
-- [ ] 3.14 cap14 SVM (7 sezioni del PDF 4, con derivazione guidata del duale e kernel).
-- [ ] 3.15 cap15 Organizzazione: calendario 4 laboratori, consegne, rubrica di valutazione,
+- [x] 3.4–3.11 cap04–cap11: gli 8 modelli del PDF 1 con la scaletta in 8 passi.
+- [x] 3.12 cap12 Newsvendor (7 sezioni del PDF 2, tutte, in forma estesa e didattica).
+- [x] 3.13 cap13 VaR/CVaR (7 sezioni del PDF 3, con dimostrazione guidata di Rockafellar–Uryasev).
+- [x] 3.14 cap14 SVM (7 sezioni del PDF 4, con derivazione guidata del duale e kernel).
+- [x] 3.15 cap15 Organizzazione: calendario 4 laboratori, consegne, rubrica di valutazione,
       template del report, domande d'esame tipiche.
 
-### FASE 4bis — Riordino, inglese e sito GitHub (richiesta aggiuntiva)
-- [ ] 4b.1 Riordinare la cartella: PDF originali in `pdf_originali/`, struttura pulita.
-- [ ] 4b.2 Versione inglese del materiale in Markdown (`docs/en/`).
-- [ ] 4b.3 Sito GitHub navigabile: repo git con README, `docs/` bilingue IT/EN in Markdown
-      (un file per capitolo), `mkdocs.yml` (tema Material) pronto per GitHub Pages;
-      istruzioni per pubblicare con `gh repo create` + push.
+### FASE 4bis — Riordino e sito GitHub
+- [x] 4b.1 Riordinare la cartella: PDF originali in `pdf_originali/`, struttura pulita.
+- [ ] 4b.2 Versione inglese — RINVIATA su richiesta: si traduce dopo la validazione
+      del materiale italiano (dispensa, slide e sito).
+- [x] 4b.3 Sito GitHub navigabile in ITALIANO: repo git con README, `docs/` in Markdown
+      (un file per capitolo, figure PNG generate dagli script), `mkdocs.yml`
+      (tema Material) + workflow GitHub Actions per Pages.
 
 ### FASE 4ter — Slide per l'insegnamento (richiesta aggiuntiva)
-- [ ] 4t.1 Slide beamer in italiano (`slides/it/`): un deck per ciascuno dei 4 laboratori
-      + deck introduttivo, coerenti con la dispensa (stessi colori e casi di studio).
-- [ ] 4t.2 Slide beamer in inglese (`slides/en/`): traduzione completa dei deck.
+- [x] 4t.1 Slide beamer in italiano (`slides/it/slides_laboratorio.tex`): deck unico
+      completo (60 slide) che copre TUTTO il materiale della dispensa, con sezioni
+      per capitolo, stessi colori, stessi casi di studio e figure dagli stessi CSV.
+- [ ] 4t.2 Slide beamer in inglese — RINVIATE: dopo la validazione dell'italiano.
 
 ### FASE 4quater — Soluzioni degli esercizi (richiesta aggiuntiva)
-- [ ] 4q.1 Fascicolo LaTeX separato `soluzioni/soluzioni.tex` con le soluzioni di tutti
+- [x] 4q.1 Fascicolo LaTeX separato `soluzioni/soluzioni.tex` con le soluzioni di tutti
       gli esercizi proposti, capitolo per capitolo; numeri verificati con
       `python/soluzioni_calcoli.py`.
 
 ### FASE 4 — Compilazione e controllo qualità
-- [ ] 4.1 Compilare con `latexmk -pdf` fino a zero errori; risolvere overfull/reference mancanti.
-- [ ] 4.2 Controllo incrociato: ogni numero citato nel testo = output degli script.
-- [ ] 4.3 Verifica finale: indice, figure, listings, esercizi numerati.
-- [ ] 4.4 Riepilogo finale a Fabio: cosa c'è, come ricompilare, come rieseguire gli script,
+- [x] 4.1 Compilare con `latexmk -pdf` fino a zero errori; risolvere overfull/reference mancanti.
+- [x] 4.2 Controllo incrociato: ogni numero citato nel testo = output degli script.
+- [x] 4.3 Verifica finale: indice, figure, listings, esercizi numerati.
+- [x] 4.4 Riepilogo finale a Fabio: cosa c'è, come ricompilare, come rieseguire gli script,
       come attivare la licenza accademica Gurobi completa.
 
 ---

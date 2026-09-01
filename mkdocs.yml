@@ -8,13 +8,19 @@ repo_url: https://github.com/fabiofurini/laboratorio-ricerca-operativa
 theme:
   name: material
   language: it
+  icon:
+    logo: material/chart-timeline-variant
   palette:
     primary: custom
   features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
+    - navigation.footer
     - content.code.copy
-    - toc.integrate
+    - search.suggest
 
 extra_css:
   - stylesheets/extra.css
@@ -27,6 +33,10 @@ markdown_extensions:
       generic: true
   - tables
   - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra_javascript:
   - javascripts/mathjax.js
