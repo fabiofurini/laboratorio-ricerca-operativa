@@ -10,8 +10,22 @@ theme:
   language: it
   icon:
     logo: material/chart-timeline-variant
+  font:
+    text: Source Sans 3
+    code: JetBrains Mono
   palette:
-    primary: custom
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      toggle:
+        icon: material/weather-night
+        name: Tema scuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Tema chiaro
   features:
     - navigation.instant
     - navigation.tabs
