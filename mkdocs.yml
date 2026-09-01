@@ -3,7 +3,7 @@ site_description: >-
   Modelli continui di ottimizzazione per l'Ingegneria Gestionale:
   dispensa, codice Python/Gurobi, dati e casi di studio.
 site_author: Fabio Furini
-repo_url: https://github.com/CAMBIAMI/laboratorio-ricerca-operativa
+repo_url: https://github.com/fabiofurini/laboratorio-ricerca-operativa
 
 theme:
   name: material
