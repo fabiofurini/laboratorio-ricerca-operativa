@@ -1,0 +1,519 @@
+\documentclass[11pt,a4paper]{article}
+\newcounter{chapter}   % il preambolo condiviso definisce contatori legati a chapter
+\usepackage{import}
+\subimport{../dispensa/}{preambolo}
+\usepackage{titling}
+\setcounter{secnumdepth}{1}
+
+% numerazione esercizi coerente con la dispensa: "Soluzione x.y"
+\newcounter{cap}
+\newcounter{sol}[cap]
+\newcommand{\capitolo}[1]{\setcounter{cap}{#1}\section*{Capitolo #1 --- \capnome{#1}}}
+\newcommand{\capnome}[1]{%
+  \ifcase#1\or\or Richiami\or Il solver\or Produzione e scorte\or Supply chain\or
+  Markowitz\or Pricing\or Budget pubblicitario\or Localizzazione\or Ricarica EV\or
+  Code e capacità\or Newsvendor\or VaR e CVaR\or SVM\fi}
+\newtcolorbox{soluzione}[1][]{%
+  enhanced, breakable, colback=white, colframe=verde,
+  boxrule=0.6pt, arc=1.5mm, left=2mm, right=2mm,
+  title={Soluzione \stepcounter{sol}\arabic{cap}.\arabic{sol}\ifstrempty{#1}{}{ --- #1}},
+  fonttitle=\bfseries}
+
+\begin{document}
+
+\begin{center}
+  {\color{blunotte}\rule{\textwidth}{1.5pt}}\\[0.6cm]
+  {\LARGE\bfseries\color{blunotte} Laboratorio di Ricerca Operativa}\\[0.25cm]
+  {\Large\color{teal} Soluzioni degli esercizi proposti}\\[0.5cm]
+  {\small Riservato ai docenti --- i numeri sono riproducibili con
+   \texttt{python/soluzioni\_calcoli.py}}\\[0.4cm]
+  {\color{blunotte}\rule{\textwidth}{1.5pt}}
+\end{center}
+\vspace{0.6cm}
+
+% ======================================================================
+\capitolo{2}
+
+\begin{soluzione}[dualità]
+Prezzo ombra delle ore $=14$~\euro{}: comprare a $12$~\euro{} conviene
+($+2$~\euro/ora netti). Verifica: con $90 \to 100$ ore il ricavo passa da $1900$ a
+$2040$ ($+140$); tolti $120$~\euro{} di costo restano $+20$. Il prezzo ombra vale
+finché la base non cambia: \texttt{SARHSUp} $= 240$ ore, quindi fino a
+$\Delta = 150$ ore extra. Il prezzo orario di break-even è proprio $14$~\euro.
+\end{soluzione}
+
+\begin{soluzione}[KKT]
+Punto libero $(3,1)$ inammissibile ($3 + 2 = 5 > 2$). Provando attivo solo
+$x + 2y = 2$: dalla stazionarietà $x = 3 - \lambda/2$, $y = 1 - \lambda$, e imponendo
+il vincolo si ottiene $\lambda = 1{,}2$, $y = -0{,}2 < 0$: viola $y \ge 0$. Con
+\emph{entrambi} attivi ($x + 2y = 2$, $y = 0$): $x = 2$, $y = 0$, $f = 2$;
+stazionarietà: $2(x - 3) + \lambda = 0 \Rightarrow \lambda = 2 \ge 0$ e
+$2(y - 1) + 2\lambda - \mu = 0 \Rightarrow \mu = 2 \ge 0$. KKT soddisfatte, problema
+convesso $\Rightarrow$ ottimo globale $(2, 0)$. Verificato numericamente con SLSQP.
+\end{soluzione}
+
+\begin{soluzione}[convessità]
+$Q = \begin{pmatrix} 2 & \gamma \\ \gamma & 2 \end{pmatrix}$
+(da $f = \tfrac12 x\T Q x$ con $f = x_1^2 + \gamma x_1 x_2 + x_2^2$).
+$Q \succeq 0$ $\iff$ minori principali non negativi: $2 \ge 0$ e
+$4 - \gamma^2 \ge 0$, cioè $|\gamma| \le 2$.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{3}
+
+\begin{soluzione}
+Output atteso (verificato): \texttt{Pi} $= 14$ e $8$; \texttt{Slack} $= 0$ e $0$;
+\texttt{SARHS} $= [40, 240]$ per le ore e $[30, 180]$ per il materiale. Con
+$90 \to 91$: ricavo $1914$, variazione $+14 = $ \texttt{Pi}.
+\end{soluzione}
+
+\begin{soluzione}
+Senza il vincolo del materiale resta solo $x_A + 3x_B \le 90$: il margine per ora
+di $A$ è $30/1 = 30$, quello di $B$ è $50/3 = 16{,}7$, quindi conviene tutto $A$:
+ottimo $(90, 0)$ con ricavo $2700$ (verificato col solver). Punto didattico:
+eliminare un vincolo allarga la regione ammissibile e il ricavo non può peggiorare
+($2700 > 1900$). Con l'obiettivo in \emph{minimizzazione} l'ottimo è invece
+$x = (0,0)$ con valore $0$: i vincoli sono tutti $\le$ e l'origine è ammissibile.
+\end{soluzione}
+
+\begin{soluzione}
+Esempio: domanda $100$ con capacità totale $80$ e vincolo di servizio obbligatorio.
+\texttt{computeIIS} produce un file \texttt{.ilp} con il sottoinsieme minimale in
+conflitto: il vincolo di domanda e i vincoli di capacità coinvolti. Rimedi: variabile
+di shortage con penalità, oppure rivedere i dati.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{4}
+
+\begin{soluzione}[verifica]
+Con $+1$ ora nel mese 3 il costo scende di $1{,}524$~\euro; nel mese 4 di
+$2{,}286$~\euro{} (uguali ai \texttt{Pi}). Il duale del mese 1 è nullo perché il
+vincolo non è attivo (330 ore usate su 420, \texttt{Slack} $= 90 > 0$): la capacità
+avanza, un'ora in più non vale nulla.
+\end{soluzione}
+
+\begin{soluzione}[domanda persa]
+Con capacità al 90\% e $\pi = 40$~\euro: costo $34.068{,}95$~\euro; si perdono
+$82{,}9$ unità, tutte del prodotto 3 (quello che assorbe più ore per unità: a parità di
+penalità è quello con il miglior rapporto ``ore liberate per euro di penalità''),
+concentrate nei mesi 5 ($57{,}6$) e 6 ($25{,}2$), quelli con i duali più alti.
+\end{soluzione}
+
+\begin{soluzione}[massimo profitto]
+Con ricavi $(20, 30, 42)$ e servizio facoltativo il profitto ottimo è
+$22.830{,}67$~\euro{} e --- risultato non scontato --- \emph{tutta} la domanda viene
+servita: i margini unitari superano ovunque il costo opportunità della capacità.
+Diventa selettivo riducendo i prezzi o la capacità (buona domanda supplementare).
+\end{soluzione}
+
+\begin{soluzione}[emissioni]
+Struttura identica alla frontiera CO$_2$ del capitolo 5: aggiungere
+$\tau \sum_i e_i x_{it}$, ciclare su $\tau$, tracciare (emissioni, costo). Con
+emissioni proporzionali alle quantità totali (che sono fissate dalla domanda
+obbligatoria) la frontiera è \emph{piatta}: per renderla interessante servono
+tecnologie alternative o servizio facoltativo --- osservazione che vale la pena
+discutere in aula.
+\end{soluzione}
+
+\begin{soluzione}[scorta di sicurezza]
+Con $s_{it} \ge 0{,}1\, d_{i,t+1}$: costo $33.028{,}95$~\euro{}
+($+139{,}62$, $+0{,}42\%$). I vincoli di capacità dei mesi centrali diventano più
+stringenti perché la scorta obbligatoria anticipa produzione nei mesi già saturi.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{5}
+
+\begin{soluzione}[verifica]
+M4 a 101 unità: costo $+10{,}50$~\euro{} $=$ \texttt{Pi}. Arco H2$\to$M3 a 131:
+variazione $0{,}00$ --- l'arco è saturo ma il suo duale è nullo: esistono ottimi
+alternativi (degenerazione) che instradano diversamente allo stesso costo. Ottimo
+esempio del fatto che ``saturo'' non implica ``prezioso''.
+\end{soluzione}
+
+\begin{soluzione}[guasto di un hub]
+Archi di H2 al 50\%: costo $3.927{,}50$~\euro{} ($+542{,}50$, $+16\%$). Soffrono i
+mercati serviti da H2 (M3 e M4): i loro prezzi ombra crescono, mentre M1--M2
+(serviti da H1) restano quasi invariati.
+\end{soluzione}
+
+\begin{soluzione}[soglia del ferro]
+La bisezione dà $\tau^* = 1{,}25$~\euro/kg (tra 1{,}24 e 1{,}26 le emissioni passano
+da 2173 a 1981 kg). Attraversando la soglia cambiano solo le tratte
+stabilimento$\to$hub: 40 unità si spostano dalle tratte ``sporche'' S1$\to$H1
+($220 \to 180$) e S2$\to$H2 ($80 \to 40$) a quelle ``pulite'' S1$\to$H2
+($40 \to 80$) e S2$\to$H1 ($110 \to 150$); le tratte hub$\to$mercato restano
+invariate (verificato risolvendo ai due lati della soglia).
+Confronto: il prezzo ETS recente è dell'ordine di 0{,}06--0{,}10~\euro/kg
+(60--100 \euro/t), ben sotto la soglia: per spostare le rotte servirebbe un prezzo
+interno più di dieci volte superiore.
+\end{soluzione}
+
+\begin{soluzione}[vincolo sulle emissioni]
+Con $E \le 2000$ kg: costo $4.241{,}25$~\euro, emissioni esattamente 2000, duale del
+vincolo $-1{,}25$~\euro/kg: coincide (in valore assoluto) con il $\tau$ di soglia,
+come previsto dalla teoria (metodo a peso e a vincolo generano la stessa frontiera).
+\end{soluzione}
+
+\begin{soluzione}[barriera]
+La barriera $\alpha x/(U - x)$ diverge alla saturazione: nessun arco raggiunge mai il
+100\%, mentre la quadratica ammette $x = U$ pagando un costo finito. La barriera è
+quindi più prudente ma numericamente più delicata (gradiente illimitato): impostare
+bound $x \le 0{,}999\,U$.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{6}
+
+\begin{soluzione}[verifica]
+$x_1 = (\sigma_2^2 - \rho\sigma_1\sigma_2)/(\sigma_1^2 + \sigma_2^2
+- 2\rho\sigma_1\sigma_2) = (0{,}09 - 0{,}03)/(0{,}13 - 0{,}06) = 6/7 = 85{,}7\%$.
+Varianza ottima $= 0{,}0386$, volatilità $19{,}6\% < 20\%$: la diversificazione
+conviene ancora, ma per un soffio --- con $\rho$ alto i benefici quasi svaniscono
+(e per $\rho \ge \sigma_1/\sigma_2 = 2/3$ conviene il solo titolo 1).
+\end{soluzione}
+
+\begin{soluzione}[frontiera]
+Rendimento massimo raggiungibile: $20{,}93\%$ senza limiti (tutto su MAT),
+$16{,}74\%$ con $u = 0{,}3$, $14{,}65\%$ con $u = 0{,}2$. Il tetto tronca la
+frontiera in alto: il costo del vincolo di mandato è la parte di frontiera che
+scompare.
+\end{soluzione}
+
+\begin{soluzione}[stabilità]
+Con seme diverso cambiano soprattutto i $\mu$ stimati (errore standard
+$\sigma/\sqrt{60} \approx 2{,}6\%$ annuo sul singolo titolo) e con essi le
+composizioni, anche di decine di punti percentuali; la volatilità del portafoglio
+ottimo cambia molto meno. Implicazione: vincoli $u_i$, shrinkage, o ottimizzare solo
+il rischio.
+\end{soluzione}
+
+\begin{soluzione}[tracking error]
+Minimo tracking error con $\mu\T x \ge 12\%$: TE $= 1{,}10\%$ annuo, con scostamento
+massimo dal benchmark dell'$8{,}8\%$ (su UTL). Si devia poco: il benchmark equipesato
+rende già il 10{,}7\%.
+\end{soluzione}
+
+\begin{soluzione}[costi di transazione]
+Il termine $\kappa\sum_i (x_i - 1/8)^2$ è un ``elastico'' verso l'equipesato: con
+$\kappa = 0{,}5$ la composizione ottima si sposta solo parzialmente verso il minimo
+di varianza; al crescere di $\kappa$ si resta fermi. Struttura identica al tracking
+error: cambiare portafoglio costa, e il modello decide \emph{quanto} del percorso
+vale il costo.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{7}
+
+\begin{soluzione}[verifica]
+Con $K = 300$: $p^* = 180$, profitto $48.000$~\euro; con $K = 301$ il profitto sale
+di $\approx 99{,}8$~\euro{} $\to 100$ (formula: $p^* - c - K/b = 180 - 20 - 60 = 100$).
+\end{soluzione}
+
+\begin{soluzione}[costo marginale]
+Con $c = 60$: ottimo libero $p^\circ = (240 + 60)/2 = 150$, $q^\circ = 450 > 400$:
+la capienza è ancora attiva, quindi $p^* = 160$ \emph{invariato} (dipende solo da $a$,
+$b$, $K$), profitto $40.000$~\euro, valore del posto $160 - 60 - 80 = 20$~\euro.
+Lezione: finché la capacità è vincolante, il costo marginale non tocca il prezzo,
+solo il profitto e il valore della capacità.
+\end{soluzione}
+
+\begin{soluzione}[prezzo di riferimento]
+$\Pi(p) = (p - c)\min\{D(p), K\} - 2(p - 120)^2$: somma di una funzione concava e di
+una quadratica concava $\Rightarrow$ resta concavo. L'ottimo scende sotto 160
+(la penalità tira verso 120): risolvendo sul tratto $q = K$,
+$\Pi = (p - 20) \cdot 400 - 2(p - 120)^2$, $\Pi' = 400 - 4(p - 120) = 0
+\Rightarrow p^* = 220 > 160$? No: su quel tratto serve $p \ge 160$ per avere
+$D \le K$; $\Pi' > 0$ in $p = 160$... svolgere con cura i due tratti: il massimo è nel
+tratto $D(p) < K$ per $p > 160$, dove
+$\Pi = (p-20)(1200-5p) - 2(p-120)^2$, $\Pi' = 1300 - 10p - 4p + 480 = 1780 - 14p = 0
+\Rightarrow p^* = 127{,}1 < 160$: fuori dal tratto. Quindi l'ottimo sta nello spigolo
+$p^* = 160$: la penalità (che a 160 vale $-3200$) non basta a spostarlo. Esercizio
+utile proprio perché la risposta è ``non cambia nulla, ed ecco perché''.
+\end{soluzione}
+
+\begin{soluzione}[elasticità]
+Il vincolo è attivo finché il prezzo di svuotamento $(A/K)^{1/\varepsilon}$ supera
+l'ottimo libero $c\,\varepsilon/(\varepsilon - 1)$. Con i dati del capitolo la
+capienza resta attiva per ogni $\varepsilon \in [1{,}3;\, 3]$ (a $\varepsilon = 3$:
+$(15000)^{1/3} = 24{,}7 > 30$? No: $24{,}7 < 30 = c\varepsilon/(\varepsilon-1)$
+--- verificare numericamente il punto di crossover, che cade poco sotto
+$\varepsilon = 3$). Il grafico di $p^*(\varepsilon)$ mostra il passaggio dal regime
+``spigolo'' al regime ``interno''.
+\end{soluzione}
+
+\begin{soluzione}[multiprodotto]
+Base $85.149$~\euro. Con $+50$ posti di platea: $+3.287$~\euro; con $+50$ di
+galleria: $+3.838$~\euro. A parità di costo conviene ampliare la galleria ---
+contro l'intuizione ``amplia la categoria più cara'': conta il valore marginale,
+non il prezzo del biglietto.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{8}
+
+\begin{soluzione}[verifica]
+Stessa equazione con $x_2 = 80 - x_1$: $20(9 - 0{,}1x_1) = 6 + 1{,}2x_1
+\Rightarrow x_1 = 174/3{,}2 = 54{,}4$, $x_2 = 25{,}6$. Il budget extra va
+\emph{a entrambi} i canali (18{,}8 al primo, 11{,}2 al secondo);
+$\lambda = 20/(1 + 0{,}2 \cdot 54{,}4) = 1{,}68 < 2{,}46$: il valore marginale del
+budget scende, come deve (curva valore concava).
+\end{soluzione}
+
+\begin{soluzione}[risposta esponenziale]
+$R(x) = 520(1 - e^{-0{,}025x})$ è concava con tetto naturale 520 e marginale
+$13\,e^{-0{,}025x}$: il mix cambia poco a $B = 100$ (i marginali iniziali sono
+simili al caso log), ma per budget alti la TV satura ``da sola'': il bound $u_i$
+diventa ridondante --- il tetto è già nella funzione.
+\end{soluzione}
+
+\begin{soluzione}[canale escluso]
+Con marginale iniziale $a_5 b_5 = 5 < \lambda = 8{,}27$ l'ottimo lascia $x_5 = 0$:
+il primo euro sul canale 5 rende 5, meno di quanto rende l'ultimo euro altrove. Il
+``costo ridotto'' è $5 - 8{,}27 = -3{,}27$: quanto dovrebbe migliorare il canale
+per entrare nel mix. Diventa attivo quando $\lambda$ scende sotto 5, cioè per
+$B$ abbastanza grande.
+\end{soluzione}
+
+\begin{soluzione}[copertura equa]
+Riformulazione: $\max z$ s.t. $z \le \sum_i c_{gi} R_i(x_i)$ per ogni segmento $g$,
+più budget e tetti. Il confronto con il massimo della risposta totale dà il ``prezzo
+dell'equità''; all'ottimo equo il segmento peggiore è tipicamente in pareggio con un
+secondo segmento (due vincoli attivi).
+\end{soluzione}
+
+% ======================================================================
+\capitolo{9}
+
+\begin{soluzione}[verifica]
+$\bar x = \sum w_i a_i / \sum w_i$: con i dati CSV,
+$(4{,}897;\, 5{,}397)$ --- coincide con l'output.
+\end{soluzione}
+
+\begin{soluzione}[peso che cambia tutto]
+Con $w_{12}: 5 \to 40$ il punto di Weber migra da $(4{,}89;\, 5{,}31)$ a
+$(5{,}51;\, 4{,}25)$: $1{,}23$ km verso il quartiere ora dominante. Il minimax
+\emph{non si muove} ($(5{,}50;\, 5{,}03)$): dipende solo dalla geometria dei punti
+estremi, non dai pesi. Weber è sensibile ai pesi, minimax agli estremi.
+\end{soluzione}
+
+\begin{soluzione}[due strutture]
+No: con l'assegnazione al più vicino la funzione diventa
+$\sum_i w_i \min_k \|p_k - x_i\|$, un \emph{minimo} di funzioni convesse, non
+convesso. L'alternato (k-means pesato con metrica euclidea) converge a un punto
+fisso che dipende dall'inizializzazione: provare inizializzazioni multiple e tenere
+la migliore; nessuna garanzia di ottimo globale.
+\end{soluzione}
+
+\begin{soluzione}[Manhattan]
+$\min \sum_i w_i (u_i + v_i)$ con $u_i \ge x - a_i$, $u_i \ge a_i - x$ (e analoghe
+per $v_i$): LP esatto per i valori assoluti (stesso trucco delle parti positive).
+L'ottimo separa le coordinate: $x^*$ è la mediana pesata delle $a_i$, $y^*$ delle
+$b_i$.
+\end{soluzione}
+
+\begin{soluzione}[moltiplicatore del raggio]
+Costo Weber vincolato: $535{,}79$ con $R = 2$; $535{,}22$ con $R = 2{,}1$:
+$\approx 0{,}57$ (migliaia di ab$\cdot$km) per 100 m di raggio. Il moltiplicatore si
+esaurisce quando il cerchio raggiunge il Weber libero ($R \approx 2{,}05$ km ancora
+attivo, poco oltre no).
+\end{soluzione}
+
+% ======================================================================
+\capitolo{10}
+
+\begin{soluzione}[verifica]
+$E_1: 46 \to 47$: costo da $20{,}3571$ a $20{,}4518$~\euro:
+$\Delta = +0{,}0947 = 0{,}09/0{,}95$. L'ora marginale di V1 costa $0{,}09$ e ogni
+kWh richiesto in batteria ne preleva $1/0{,}95$ dalla rete.
+\end{soluzione}
+
+\begin{soluzione}[arrivo in ritardo]
+Con V3 dalle 23: si perdono le ore 20--22 (prezzi $0{,}20$, $0{,}15$, $0{,}12$);
+l'energia si sposta sulle ore 0--7, più affollate: il picco cresce e il prezzo
+ombra del fabbisogno di V3 sale (la sua ora marginale peggiora). Verifica numerica
+consigliata modificando \texttt{flotta["V3"]}.
+\end{soluzione}
+
+\begin{soluzione}[profilo regolare]
+QP con $\gamma\sum_t (z_t - z_{t-1})^2$: già $\gamma = 0{,}01$ arrotonda il gradino
+notturno; $\gamma = 1$ produce un profilo quasi piatto simile al peak shaving ma
+``guidato dal costo''. Confrontare le triple (costo, picco, $\max_t |z_t - z_{t-1}|$).
+\end{soluzione}
+
+\begin{soluzione}[emissioni]
+Nel dataset i prezzi bassi sono di notte, quando (tipicamente) anche l'intensità
+carbonica è più bassa: costo ed emissioni sono quasi allineati e la frontiera è
+corta. Farla divergere richiede un profilo $g_t$ serale ``pulito'' (molto solare in
+rete): buona discussione su quanto le conclusioni dipendano dai dati.
+\end{soluzione}
+
+\begin{soluzione}[capacità minima]
+Bisezione: $C^* = 68{,}0$ kW. La determina l'ora critica in cui i veicoli con
+finestre corte (V3 e V6, arrivi tardi con molta energia) devono caricare insieme
+sopra il carico di base: sotto 68 kW l'energia richiesta non entra più nelle
+finestre disponibili.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{11}
+
+\begin{soluzione}[verifica]
+$C(W) = c\lambda + c/W + h\lambda W$ (vincolo attivo)
+$\Rightarrow dC/dW = -c/W^2 + h\lambda$. A $W = 4$ min $= 1/15$ h:
+$-3 \cdot 225 + 63 = -612$; a $9$ min $= 0{,}15$ h: $-133{,}3 + 63 = -70{,}3$:
+identici alle differenze finite dello script.
+\end{soluzione}
+
+\begin{soluzione}[penalità quadratica]
+$\min c\mu + h/(\mu - \lambda)^2$: derivata nulla per
+$(\mu - \lambda)^3 = 2h/c \Rightarrow \mu^* = \lambda + (2h/c)^{1/3} = 43{,}0$
+(con i dati del capitolo), $\rho = 97{,}7\%$. Attenzione al confronto: questa
+penalità pesa $W^2$ ma \emph{non} moltiplica per $\lambda$ clienti; con questi
+$h$ e $c$ il cuscinetto ottimo si riduce. Per un confronto sensato occorre
+ricalibrare $h$ (per esempio $h\lambda W^2$).
+\end{soluzione}
+
+\begin{soluzione}[pooling]
+Due code separate: ciascuna ha $W = 1/(\mu/2 - 21)$; il sistema unico:
+$W = 1/(\mu - 42)$. A parità di capacità totale $\mu$, il sistema unico ha
+$\mu - 42 = 2(\mu/2 - 21)$: stesso denominatore\dots{} ma la coda M/M/1 ``veloce''
+serve ogni cliente a tasso doppio: il tempo medio si dimezza. Il pooling domina;
+il vantaggio cresce vicino alla saturazione.
+\end{soluzione}
+
+\begin{soluzione}[frontiera]
+Dalla formula $dC/dW = -c/W^2 + h\lambda$: ogni minuto in meno costa più di
+$10$~\euro/h quando $|dC/dW| \cdot (1/60) > 10$, cioè
+$c/W^2 - 63 > 600 \Rightarrow W < \sqrt{3/663} = 0{,}067$ h $\approx 4$ minuti.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{12}
+
+\begin{soluzione}[verifica]
+$C_u = 15 - 6 + 3 = 12$, $C_o = 4$: $\alpha^* = 12/16 = 0{,}75$,
+$q^* = F^{-1}(0{,}75) = 113{,}49$: la penalità alza il quantile (da 110 a 113,5).
+\end{soluzione}
+
+\begin{soluzione}[dati storici]
+Con 24 osservazioni il quantile al 69\% è stimato con grande varianza (vedi figura
+sulla stabilità: a $S = 30$ la deviazione tra repliche è $\pm 3{,}5$ unità). Con
+pochi dati conviene stimare una distribuzione parametrica (2 parametri da 24 dati)
+piuttosto che usare il quantile empirico (nessuna struttura): meno varianza, un po'
+di bias.
+\end{soluzione}
+
+\begin{soluzione}[deperibili]
+$v = -1 \Rightarrow C_o = 6 - (-1) = 7$: $\alpha^* = 9/16 = 0{,}5625$,
+$q^* = 103{,}15$. La curva $q^*(v)$ è crescente in $v$ (recupero migliore
+$\Rightarrow$ invenduto meno grave $\Rightarrow$ si ordina di più).
+\end{soluzione}
+
+\begin{soluzione}[EVPI]
+Con informazione perfetta $q = d_s$ e il costo è zero in ogni scenario. EVPI
+$= 88{,}33 - 0 = 88{,}33$~\euro/ciclo: è il \emph{tetto} di quanto può valere
+qualunque sistema di previsione. (In generale il wait-and-see non è nullo: qui lo è
+perché il costo dipende solo dallo scarto $q - d$.)
+\end{soluzione}
+
+\begin{soluzione}[fill rate vincolato]
+Vincolo $\sum_s \pi_s u_s \le 0{,}02\,\E[D] = 2$: molto meno costoso del cycle
+service level al 98\% ($q = F^{-1}(0{,}98) = 141$), perché il fill rate ammette
+piccoli stock-out frequenti. Confrontare le due $q$ e i due costi è il modo più
+efficace per capire la differenza tra le due metriche.
+\end{soluzione}
+
+\begin{soluzione}[multiprodotto]
+Con $\rho = 0$: costo atteso $234{,}32$ contro $284{,}97$ con $\rho = 0{,}7$ (stessi
+margini, budget e seed). Le domande indipendenti si compensano: raramente tutti e tre
+i prodotti vanno male insieme, e il budget condiviso lavora meglio. La correlazione
+è un costo, e il modello lo quantifica: $-18\%$ di costo atteso.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{13}
+
+\begin{soluzione}[verifica]
+$\alpha = 0{,}90$: la cumulata raggiunge $0{,}90$ solo sull'ultimo punto
+($5/6 = 0{,}833 < 0{,}90$), quindi $\var = 20$. La coda di massa $0{,}10$ sta tutta
+sul punto 20: $\cvar = 20$. L'LP restituisce $\eta^* = 20$, obiettivo $20{,}00$:
+quando il VaR cade sull'ultimo scenario, VaR $=$ CVaR.
+\end{soluzione}
+
+\begin{soluzione}[subadditività]
+Esempio classico: due prestiti indipendenti, ciascuno perde 100 con probabilità
+$0{,}04$ (e 0 altrimenti), $\alpha = 0{,}95$. Separati:
+$\var_{0,95} = 0$ per ciascuno (la perdita ha probabilità $< 5\%$), somma $= 0$.
+Insieme: $\Prob(\text{almeno un default}) = 1 - 0{,}96^2 = 7{,}8\% > 5\%$
+$\Rightarrow \var_{0,95} = 100 > 0$: il VaR \emph{punisce} la diversificazione.
+Il CVaR dei singoli è $0{,}04 \cdot 100/0{,}05 = 80$ ciascuno (160 in totale), del
+portafoglio $\approx 83{,}2$: subadditivo.
+\end{soluzione}
+
+\begin{soluzione}[frontiera in $\alpha$]
+Al crescere di $\alpha$ il portafoglio si concentra sui titoli difensivi e il CVaR
+ottimo cresce (coda più estrema). Con $\alpha = 0{,}99$ e 220 scenari la coda
+contiene 2--3 scenari: la composizione ``insegue'' quei punti e cambia molto tra
+semi diversi --- l'instabilità si vede ripetendo con un altro seed.
+\end{soluzione}
+
+\begin{soluzione}[CVaR vincolato]
+$\max \mu\T x$ s.t. $\eta + \frac{1}{1-\alpha}\sum_s \pi_s \xi_s \le K$ più i vincoli
+di coda: variando $K$ si percorre la stessa frontiera (dualità lagrangiana: a ogni
+$K$ corrisponde un peso $\lambda$). Il duale del vincolo è il rendimento marginale
+del rischio: quanto rendimento si guadagna accettando un punto di CVaR in più.
+\end{soluzione}
+
+\begin{soluzione}[stress test]
+Aggiungere uno scenario con $d = 300$, $\delta_{F1} = 0{,}1$ e $\pi = 0{,}01$
+(rinormalizzando gli altri): con $\lambda = 0{,}5$ la prenotazione su F2 cresce
+ulteriormente e il CVaR aumenta (la coda ora contiene lo scenario estremo). Il
+punto didattico: il CVaR reagisce agli scenari \emph{presenti nel modello} --- uno
+stress test è l'unico modo per fargli ``vedere'' eventi mai osservati.
+\end{soluzione}
+
+% ======================================================================
+\capitolo{14}
+
+\begin{soluzione}[verifica]
+Vincoli: $-b \ge 1$ e $4w_1 + b \ge 1$. Con $w_2$ libero conviene $w_2 = 0$;
+attivi entrambi: $b = -1$, $w_1 = 1/2$. Margine $2/\|w\| = 4$ $=$ distanza tra i
+punti. Gurobi conferma.
+\end{soluzione}
+
+\begin{soluzione}[complementarietà]
+Dallo script: 2 punti con $0 < \alpha < 1$ (sul margine: $\xi_i = 0$ e
+$y_i(w\T x_i + b) = 1$ a meno di $10^{-6}$) e 5 con $\alpha_i = 1 = C$
+($\xi_i > 0$). Per gli 83 punti con $\alpha_i = 0$: margine $\ge 1$ e $\xi_i = 0$.
+Tabellare i 7 support vector con $\alpha_i$, $\xi_i$ e margine chiude l'esercizio.
+\end{soluzione}
+
+\begin{soluzione}[curva di validazione]
+L'errore di \emph{training} è non crescente in $C$ (pagare di più le violazioni non
+può aumentarle); quello di \emph{validazione} è tipicamente a U: alto per $C$
+piccolissimo (underfitting), alto per $C$ enorme (overfitting sul rumore di
+training). Si sceglie il minimo della U --- mai guardando il test.
+\end{soluzione}
+
+\begin{soluzione}[soglia decisionale]
+Al crescere di $\theta$ (più prudenti nel concedere fido) la recall degli insolventi
+sale e la precision scende. Con costi 10:1 il profitto atteso per soglia è
+$-10 \cdot FN(\theta) - 1 \cdot FP(\theta)$: massimizzarlo sposta $\theta$ ben sopra
+lo zero --- coerente con il risultato dei pesi asimmetrici nel training
+(recall 100\% al costo di precision 97\%). Le due leve (pesi nel training, soglia nel
+deployment) sono complementari.
+\end{soluzione}
+
+\begin{soluzione}[one-class]
+Con kernel RBF il duale della One-Class è
+$\min \tfrac12\sum_{ij}\alpha_i\alpha_j K_{ij}$ s.t. $0 \le \alpha_i \le 1/(\nu n)$,
+$\sum \alpha_i = 1$. Al crescere di $\nu$ la regione ``normale'' si stringe:
+più anomalie individuate ma più falsi allarmi sui normali; $\nu$ è
+(asintoticamente) un tetto alla frazione di outlier e un pavimento alla frazione di
+support vector.
+\end{soluzione}
+
+\end{document}

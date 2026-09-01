@@ -1,0 +1,54 @@
+site_name: Laboratorio di Ricerca Operativa
+site_description: >-
+  Modelli continui di ottimizzazione per l'Ingegneria Gestionale:
+  dispensa, codice Python/Gurobi, dati e casi di studio.
+site_author: Fabio Furini
+repo_url: https://github.com/CAMBIAMI/laboratorio-ricerca-operativa
+
+theme:
+  name: material
+  language: it
+  palette:
+    primary: custom
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.integrate
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+  - tables
+  - attr_list
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Strumenti:
+      - Il solver, passo per passo: guida-gurobi.md
+      - Richiami di teoria: richiami.md
+  - Modelli deterministici:
+      - Produzione e scorte: produzione.md
+      - Supply chain e CO2: supplychain.md
+      - Portafoglio di Markowitz: markowitz.md
+      - Pricing e revenue management: pricing.md
+      - Budget pubblicitario: budget.md
+      - Localizzazione continua: localizzazione.md
+      - Ricarica di veicoli elettrici: ricarica-ev.md
+      - Code e capacità di servizio: code.md
+  - Decisioni sotto incertezza:
+      - Il Newsvendor: newsvendor.md
+      - VaR e CVaR: var-cvar.md
+  - Ottimizzazione e machine learning:
+      - Support Vector Machine: svm.md
+  - Organizzazione del laboratorio: organizzazione.md

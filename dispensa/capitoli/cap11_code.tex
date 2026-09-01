@@ -1,0 +1,229 @@
+\chapter{Capacità di servizio e tempi di attesa}
+\label{cap:code}
+
+\noindent\textbf{Classe:} NLP convesso (coda M/M/1) \hfill
+\textbf{Script:} \texttt{python/lab11\_code.py}
+
+\section{Motivazione gestionale}
+
+Quanta capacità assegnare a un servizio clienti, a uno sportello, a un servizio cloud?
+Più capacità costa; poca capacità fa esplodere le attese. La teoria delle code fornisce
+la relazione quantitativa tra capacità e attesa, e l'ottimizzazione la trasforma in una
+decisione. Il messaggio centrale è contro-intuitivo per chi ragiona ``a efficienza'':
+\textbf{l'utilizzazione ottima non è il 100\%}.
+
+
+
+Ogni servizio con arrivi aleatori --- call center, pronto soccorso, help desk,
+API di un servizio cloud --- vive lo stesso dilemma: la capacità costa, l'attesa
+pure. La teoria delle code dà la relazione esatta tra le due; l'ottimizzazione
+sceglie il punto giusto. Il capitolo è breve ma il suo messaggio (l'utilizzazione
+ottima non è il 100\%) vale da solo una discussione in consiglio di
+amministrazione.
+
+\textbf{In questo capitolo impareremo a:} (1) usare le formule M/M/1 dentro un
+problema di ottimizzazione; (2) ricavare l'ottimo analiticamente e confermarlo
+numericamente; (3) prezzare una promessa di servizio; (4) proteggere il
+dimensionamento dall'incertezza sulla domanda.
+
+\section{Costruzione guidata del modello}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} quanta capacità di servizio
+acquistare. \emph{L'obiettivo} è minimizzare il costo totale: capacità comprata più
+il valore del tempo che i clienti passano nel sistema. \emph{Il vincolo} strutturale
+è uno solo, la stabilità della coda ($\mu > \lambda$); nelle varianti si aggiunge la
+promessa di servizio $w \le w_{\max}$.
+
+Usiamo il modello di coda più semplice, indicato con la notazione standard
+\textbf{M/M/1}: arrivi \emph{markoviani} (processo di Poisson), tempi di servizio
+\emph{markoviani} (esponenziali) e \emph{un} servente. Per questo sistema valgono le
+formule chiuse riportate in tabella; ciò che qui è nuovo è trattare la capacità
+$\mu$ come una variabile di ottimizzazione.
+
+\subsection*{Dati (input del modello)}
+\begin{center}\small
+\begin{tabular}{llp{7.4cm}}
+\toprule
+Simbolo & Tipo & Significato \\
+\midrule
+$\lambda$ & $\in \R_{> 0}$ & tasso medio di arrivo dei clienti (richieste/ora) \\
+$c$ & $\in \R_{> 0}$ & costo di un'unità di capacità (\euro{} per unità di $\mu$ all'ora) \\
+$h$ & $\in \R_{> 0}$ & valore di un'ora di permanenza di un cliente nel sistema \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Variabile decisionale e grandezze derivate}
+\begin{center}\small
+\begin{tabular}{llp{7.4cm}}
+\toprule
+$\mu$ & $> \lambda$, continua & capacità (tasso di servizio) \\
+$w(\mu) = 1/(\mu - \lambda)$ & derivata dal modello & tempo medio nel sistema
+  (nella letteratura delle code: $W$) \\
+$l(\mu) = \lambda/(\mu - \lambda)$ & derivata dal modello & numero medio di clienti
+  nel sistema (legge di Little; in letteratura: $L$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[Costo totale capacità + attesa]
+\[
+\min_{\mu > \lambda}\;\; C(\mu) = c\,\mu + h\,\frac{\lambda}{\mu - \lambda}
+\]
+Il primo termine compra capacità; il secondo monetizza l'attesa complessiva
+($h \cdot l(\mu)$). $C$ è convessa su $(\lambda, +\infty)$; annullando la derivata:
+\[
+C'(\mu) = c - \frac{h\lambda}{(\mu - \lambda)^2} = 0
+\quad\Longrightarrow\quad
+\boxed{\;\mu^* = \lambda + \sqrt{h\lambda/c}\;}
+\]
+\end{modello}
+
+\begin{spiegazione}
+La formula ha la struttura classica ``capacità = domanda + scorta di sicurezza'':
+si copre la domanda media $\lambda$ e si aggiunge un margine
+$\sqrt{h\lambda/c}$ che cresce con il valore del tempo dei clienti e decresce con il
+costo della capacità. Il margine cresce come $\sqrt{\lambda}$: i sistemi grandi godono
+di economie di scala nel ``cuscinetto'' (pooling).
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Sportello con 8 clienti l'ora]
+$\lambda = 8$/h, $c = 2$~\euro{} per unità di capacità, $h = 4$~\euro/h.
+
+\textbf{Passo 1.} $\mu^* = 8 + \sqrt{4 \cdot 8 / 2} = 8 + 4 = 12$ clienti/ora.
+
+\textbf{Passo 2.} Utilizzazione $\rho = 8/12 = 66{,}7\%$; tempo medio
+$w = 1/(12-8) = 15$ minuti; costo $C = 2 \cdot 12 + 4 \cdot 8/4 = 32$~\euro/h.
+
+\textbf{Passo 3 — perché non tagliare la capacità?} Con $\mu = 9$
+($\rho = 89\%$, ``più efficiente''): $C = 18 + 32/1 = 50$~\euro/h, molto peggio.
+L'apparente spreco ($33\%$ di capacità inutilizzata) è ciò che tiene corte le code.
+\end{esempio}
+
+\section{Caso di studio e risultati}
+
+Servizio clienti: $\lambda = 42$ richieste/ora, $c = 3$~\euro, $h = 1{,}5$~\euro.
+
+\begin{lstlisting}[style=output]
+Analitico : mu* = 42 + sqrt(1,5*42/3) = 46,583   costo 153,495 EUR/h
+Numerico  : mu* = 46,583 (scipy, coincide)
+All'ottimo: rho = 90,2%   w = 13,1 minuti
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Il costo totale è convesso in $\mu$},
+  xlabel={capacità $\mu$}, ylabel={\euro/ora}, ymin=0, ymax=260]
+\addplot [grigiomedio, dashed] table [col sep=comma, x=mu, y=capacita]
+  {\figdat{cap11_costo}};
+\addplot [arancio, densely dotted, thick] table [col sep=comma, x=mu, y=attesa]
+  {\figdat{cap11_costo}};
+\addplot [teal, very thick] table [col sep=comma, x=mu, y=totale]
+  {\figdat{cap11_costo}};
+\addplot [rossomattone, dash dot] coordinates {(46.583, 0) (46.583, 260)};
+\legend{capacità $c\mu$, attesa $h\lambda/(\mu-\lambda)$, totale,
+        $\mu^* = 46{,}6$}
+\end{axis}
+\end{tikzpicture}%
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Il muro dell'utilizzazione},
+  xlabel={utilizzazione $\rho$ (\%)}, ylabel={tempo medio $w$ (minuti)}, ymax=125]
+\addplot [teal, very thick] table [col sep=comma, x=rho, y=W_min]
+  {\figdat{cap11_muro}};
+\addplot [rossomattone, dash dot] coordinates {(90.2, 0) (90.2, 125)};
+\legend{$w(\rho)$, ottimo $\rho = 90\%$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{A sinistra: le due componenti del costo (capacità, crescente;
+attesa, decrescente) e il costo totale, convesso, con il minimo in
+$\mu^* = 46{,}6$. A destra: il ``muro dell'utilizzazione'' --- il tempo medio nel
+sistema $w$ in funzione dell'utilizzazione $\rho$: oltre il 90\% l'attesa esplode
+in modo iperbolico.}
+\end{center}
+
+\begin{insight}
+Il grafico di destra è forse il più importante della dispensa da mostrare a un
+manager: tra $\rho = 90\%$ e $\rho = 99\%$ il tempo di attesa si moltiplica per dieci.
+``Saturare le risorse'' e ``dare un buon servizio'' sono obiettivi in conflitto
+matematico, non organizzativo: nessuna riorganizzazione elimina l'iperbole
+$w = 1/(\mu - \lambda)$.
+\end{insight}
+
+\section{Analisi di sensitività: il prezzo di una promessa}
+
+Se il marketing promette ``tempo medio sotto $w_{\max}$'', serve
+$\mu \ge \lambda + 1/w_{\max}$: il vincolo diventa attivo quando è più stringente
+dell'ottimo economico ($13{,}1$ minuti).
+
+\begin{lstlisting}[style=output]
+w_max = 12 min: mu = 47,00  costo 153,60   (quasi gratis)
+w_max =  9 min: mu = 48,67  costo 155,45
+w_max =  6 min: mu = 52,00  costo 162,30
+w_max =  4 min: mu = 57,00  costo 175,20
+w_max =  3 min: mu = 62,00  costo 189,15
+w_max =  2 min: mu = 72,00  costo 218,10   (+42% sul costo base)
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, title={Quanto costa una promessa di servizio più ambiziosa},
+  xlabel={promessa $w_{\max}$ (minuti)}, ylabel={costo ottimo (\euro/h)},
+  x dir=reverse]
+\addplot+ [mark=*, mark size=1.8pt] table [col sep=comma, x=W_max_min, y=costo]
+  {\figdat{cap11_promessa}};
+\addplot [grigiomedio, dashed] coordinates {(12, 153.495) (2, 153.495)};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Costo ottimo in funzione della promessa di servizio $w_{\max}$
+(asse invertito: verso destra la promessa diventa più ambiziosa). La linea
+tratteggiata è il costo senza promessa: fino a 12 minuti la promessa è quasi
+gratuita, sotto i 4 minuti ogni minuto in meno costa in modo esplosivo.}
+\end{center}
+
+\begin{spiegazione}[Il costo marginale della promessa]
+Il prezzo ombra del vincolo cresce in modo esplosivo: passare da 12 a 9 minuti costa
+$1{,}85$~\euro/h, da 3 a 2 minuti costa $28{,}95$~\euro/h. Quando il vincolo è attivo,
+$\mu = \lambda + 1/w_{\max}$ e $C = c\lambda + c/w_{\max} + h\lambda\, w_{\max}$, da cui
+$dC/dw_{\max} = -c/w_{\max}^2 + h\lambda$ (con $w_{\max}$ in ore): a $w_{\max} = 6$
+minuti vale $-300 + 63 = -237$~\euro/h per ora di promessa --- esattamente la stima
+per differenze finite dello script. È il numero da dare al marketing \emph{prima} che
+firmi lo SLA (\emph{Service Level Agreement}, l'impegno contrattuale sul livello di
+servizio).
+\end{spiegazione}
+
+\subsection*{Robustezza}
+
+Se $\lambda$ è incerto in $[36, 48]$, dimensionare sull'ottimo nominale
+$\mu^* = 46{,}58$ è \textbf{instabile}: con $\lambda = 48 > \mu^*$ la coda diverge
+(costo infinito). Minimizzare il costo del caso peggiore dà $\mu_{\text{rob}} = 52{,}90$
+con costo worst-case $173{,}39$~\euro/h: si paga un premio assicurativo di
+$\approx 13\%$ per essere protetti da un disastro. Le decisioni di capacità vanno
+sempre verificate contro il \emph{massimo} plausibile della domanda, non solo contro
+la media.
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Ricavare per conto proprio la formula $dC/dw_{\max} = -c/w_{\max}^2 + h\lambda$ della
+spiegazione precedente e verificarla numericamente a $w_{\max} = 4$ e $9$ minuti
+con differenze finite.
+\end{esercizio}
+
+\begin{esercizio}[penalità quadratica]
+Sostituire il costo d'attesa lineare con $h\,[1/(\mu - \lambda)]^2$: ricavare
+$\mu^*$ analiticamente e confrontare l'utilizzazione ottima con il caso lineare.
+\end{esercizio}
+
+\begin{esercizio}[due code vs una]
+Due sportelli separati ricevono $\lambda = 21$ ciascuno; in alternativa un unico
+sistema riceve $\lambda = 42$ con capacità aggregata. A parità di costo di capacità,
+quale configurazione dà attese minori? (È l'argomento quantitativo per il pooling.)
+\end{esercizio}
+
+\begin{esercizio}[frontiera capacità-servizio]
+Tracciare la frontiera (costo, $w$) variando $w_{\max}$ con continuità e
+individuare il punto oltre il quale ogni minuto promesso in meno costa più di
+$10$~\euro/h.
+\end{esercizio}

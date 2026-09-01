@@ -1,0 +1,247 @@
+\chapter{Allocazione del budget pubblicitario}
+\label{cap:budget}
+
+\noindent\textbf{Classe:} NLP convesso \hfill
+\textbf{Script:} \texttt{python/lab08\_budget.py}
+
+\section{Motivazione gestionale}
+
+Come ripartire una campagna da 100.000~\euro{} tra social, search, TV e influencer,
+quando ogni canale mostra rendimenti marginali decrescenti? I primi euro su un canale
+rendono molto, i successivi sempre meno: la risposta è una funzione concava della
+spesa, e l'ottimo segue una regola economica elegante che questo capitolo dimostra e
+verifica numericamente.
+
+
+
+L'allocazione di un budget tra impieghi con rendimenti decrescenti è uno schema
+universale: marketing su più canali, fondi tra progetti, tempo tra attività,
+fertilizzante tra campi. La teoria dice qualcosa di forte e verificabile:
+all'ottimo i rendimenti marginali si eguagliano --- ed è esattamente ciò che il
+solver restituirà, cifra per cifra.
+
+\textbf{In questo capitolo impareremo a:} (1) modellare rendimenti decrescenti con
+funzioni concave; (2) risolvere NLP convessi con scipy; (3) verificare
+numericamente le condizioni KKT; (4) costruire la curva valore-budget e usare
+$\lambda$ per negoziare il budget.
+
+\section{Costruzione guidata del modello}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} quanto spendere in ciascun canale
+pubblicitario. \emph{L'obiettivo} è massimizzare la risposta totale attesa della
+campagna. \emph{I vincoli}: la spesa complessiva non può superare il budget, e
+ciascun canale ha un investimento massimo utile.
+
+\subsection*{Insiemi e dati (input del modello)}
+\begin{center}\small
+\begin{tabular}{llp{7.2cm}}
+\toprule
+Simbolo & Tipo & Significato \\
+\midrule
+$I$ & insieme finito & canali pubblicitari \\
+$b$ & $\in \R_{> 0}$ & budget totale \\
+$r_i(\cdot)$ & funzione concava crescente & risposta attesa del canale $i \in I$ \\
+$u_i$ & $\in \R_{> 0}$ & massimo investimento utile o consentito nel canale $i$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Variabili decisionali}
+\begin{center}\small
+\begin{tabular}{llp{7.2cm}}
+\toprule
+$x_i$ & $\ge 0$, continua & investimento nel canale $i \in I$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[Allocazione con risposta concava]
+\begin{align}
+\max\;& \sum_{i \in I} r_i(x_i) \notag\\
+\text{s.t.}\;\; & \sum_{i \in I} x_i \le b, \qquad 0 \le x_i \le u_i \;\;\forall i \in I \notag
+\end{align}
+Nel caso di studio $r_i(x) = a_i \log(1 + k_i x)$, con $a_i, k_i \in \R_{>0}$ dati:
+concava, nulla in zero, con rendimento marginale
+$r_i'(x) = a_i k_i / (1 + k_i x)$ decrescente.
+\end{modello}
+
+\begin{spiegazione}
+\textbf{Funzione obiettivo.} La risposta totale $\sum_{i \in I} r_i(x_i)$ è separabile
+per canale e concava: sommare funzioni concave preserva la concavità, quindi il
+problema ha ottimo globale certificabile.
+
+\textbf{Vincolo di budget ($\sum_{i \in I} x_i \le b$).} È l'unico vincolo che lega i
+canali tra loro: senza di esso ogni canale andrebbe al proprio tetto.
+
+\textbf{Bound ($0 \le x_i \le u_i$).} Il tetto $u_i$ modella il limite oltre cui il
+canale non assorbe altra spesa utile (inventario pubblicitario, saturazione del
+pubblico).
+\end{spiegazione}
+
+\begin{spiegazione}[La condizione economica all'ottimo]
+Per le KKT, all'ottimo esiste $\lambda \ge 0$ (prezzo ombra del budget) tale che, per
+ogni canale non bloccato ai limiti $0$ o $u_i$:
+\[
+r_i'(x_i^*) = \lambda .
+\]
+In parole: \textbf{l'ultimo euro investito rende lo stesso in tutti i canali attivi}.
+Se così non fosse, spostare un euro dal canale con marginale basso a quello con
+marginale alto migliorerebbe la risposta: non saremmo all'ottimo. I canali al tetto
+$u_i$ possono avere marginale $> \lambda$ (vorremmo investirci di più ma non si può);
+quelli a zero hanno marginale iniziale $< \lambda$ (non valgono nemmeno il primo euro).
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Due canali logaritmici]
+$r_1(x) = 100\log(1 + 0{,}2x)$, $r_2(x) = 60\log(1 + 0{,}1x)$, budget $b = 50$
+(migliaia di \euro), senza tetti.
+
+\textbf{Passo 1 — condizione di uguaglianza dei marginali.}
+\[
+\frac{100 \cdot 0{,}2}{1 + 0{,}2x_1} = \frac{60 \cdot 0{,}1}{1 + 0{,}1x_2}
+\quad\Longrightarrow\quad
+\frac{20}{1 + 0{,}2x_1} = \frac{6}{1 + 0{,}1x_2}.
+\]
+
+\textbf{Passo 2 — budget.} $x_2 = 50 - x_1$. Sostituendo:
+$20\,(1 + 0{,}1(50 - x_1)) = 6\,(1 + 0{,}2 x_1)$, cioè
+$20\,(6 - 0{,}1x_1) = 6 + 1{,}2x_1 \Rightarrow 120 - 2x_1 = 6 + 1{,}2x_1
+\Rightarrow x_1 = \dfrac{114}{3{,}2} = 35{,}6$, $x_2 = 14{,}4$.
+
+\textbf{Passo 3 — prezzo ombra.} $\lambda = 20/(1 + 0{,}2 \cdot 35{,}6) = 2{,}46$:
+un euro di budget in più renderebbe $\approx 2{,}46$ unità di risposta ---
+lo stesso numero da qualunque canale lo si faccia entrare.
+\end{esempio}
+
+\section{Caso di studio e implementazione}
+
+Quattro canali, $r_i(x) = a_i\log(1 + k_i x)$, budget $b = 100$ (migliaia di \euro), dati in
+\texttt{dati/budget\_canali.csv}. Il problema è concavo e lo risolviamo con
+\texttt{scipy} con il metodo SLSQP (\emph{Sequential Least Squares Programming},
+un algoritmo per NLP vincolati che risolve una successione di sottoproblemi
+quadratici):
+
+\begin{lstlisting}[style=python]
+res = minimize(lambda x: -risposta(x),
+               x0=np.full(4, B/4),
+               bounds=[(0, ui) for ui in u],
+               constraints=[{"type": "ineq",
+                             "fun": lambda x: B - x.sum()}],
+               method="SLSQP")
+\end{lstlisting}
+
+\section{Risultati e verifica delle KKT}
+
+\begin{lstlisting}[style=output]
+Risposta totale: 1.449,8 (migliaia di contatti utili)
+     canale |  spesa | tetto | risposta | marginale
+     social |   24,3 |    60 |    385,3 |   8,2693
+     search |   34,8 |    80 |    539,5 |   8,2693
+         TV |   22,9 |   120 |    235,2 |   8,2693
+ influencer |   18,0 |    35 |    289,8 |   8,2693
+
+Verifica: +1000 EUR di budget -> risposta +8,244 ~ lambda
+\end{lstlisting}
+
+\begin{insight}
+La condizione teorica si vede nei numeri: i quattro marginali coincidono alla quarta
+cifra ($\lambda = 8{,}2693$), e l'aumento reale di risposta con mille euro in più
+(8,244) conferma la lettura del moltiplicatore. Nota manageriale: la TV riceve
+\emph{meno} dei social nonostante il tetto più alto --- non conta la dimensione del
+canale ma la velocità con cui satura ($k_i$).
+\end{insight}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Curve di risposta concave},
+  xlabel={spesa nel canale (migliaia \euro)},
+  ylabel={risposta (migliaia contatti)}]
+\addplot [teal, thick] table [col sep=comma, x=x, y=social] {\figdat{cap08_risposte}};
+\addplot [rossomattone, thick] table [col sep=comma, x=x, y=search] {\figdat{cap08_risposte}};
+\addplot [verde, thick] table [col sep=comma, x=x, y=TV] {\figdat{cap08_risposte}};
+\addplot [arancio, thick] table [col sep=comma, x=x, y=influencer] {\figdat{cap08_risposte}};
+\legend{social, search, TV, influencer}
+\end{axis}
+\end{tikzpicture}%
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Valore del budget e $\lambda$ decrescente},
+  xlabel={budget totale (migliaia \euro)}, ylabel={risposta totale ottima}]
+\addplot [teal, very thick] table [col sep=comma, x=budget, y=risposta]
+  {\figdat{cap08_valore_budget}};
+\legend{risposta ottima}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{A sinistra: le curve di risposta $r_i(x) = a_i\log(1 + k_i x)$
+dei quattro canali --- concave, con velocità di saturazione diverse. A destra: la
+risposta totale ottima al crescere del budget (curva valore), concava: ogni tranche
+di budget rende meno della precedente.}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.9\textwidth, stack plots=y, grid=none, area legend,
+  title={Mix ottimo al crescere del budget: i canali saturano ai tetti},
+  xlabel={budget totale (migliaia \euro)}, ylabel={spesa per canale},
+  legend columns=4, legend style={at={(0.5,-0.24)}, anchor=north},
+  enlargelimits=false, ymin=0]
+\addplot [fill=teal!80, draw=none] table [col sep=comma, x=budget, y=social]
+  {\figdat{cap08_mix}} \closedcycle;
+\addplot [fill=rossomattone!75, draw=none] table [col sep=comma, x=budget, y=search]
+  {\figdat{cap08_mix}} \closedcycle;
+\addplot [fill=verde!75, draw=none] table [col sep=comma, x=budget, y=TV]
+  {\figdat{cap08_mix}} \closedcycle;
+\addplot [fill=arancio!80, draw=none] table [col sep=comma, x=budget, y=influencer]
+  {\figdat{cap08_mix}} \closedcycle;
+\legend{social, search, TV, influencer}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Mix ottimo di spesa (aree impilate, migliaia di \euro) al crescere
+del budget totale: i canali entrano e crescono insieme mantenendo uguali i ritorni
+marginali; l'influencer satura per primo al suo tetto (35), seguito dagli altri.}
+\end{center}
+
+\section{Analisi di sensitività}
+
+\begin{lstlisting}[style=output]
+b =  20: risposta   515,9   lambda = 18,971
+b =  60: risposta 1.070,4   lambda = 10,909
+b = 100: risposta 1.449,8   lambda =  8,244
+b = 180: risposta 1.988,2   lambda =  5,538
+b = 260: risposta 2.370,2   lambda =  4,049
+b = 300: risposta 2.498,1   lambda =  0,000  (tutti i canali ai tetti)
+\end{lstlisting}
+
+\begin{spiegazione}
+La curva valore-budget è concava: $\lambda$ scende da 19 a 4 man mano che il budget
+cresce. A $b = 300$ tutti i canali sono ai tetti ($60+80+120+35 = 295$): il budget
+smette di essere la risorsa scarsa e $\lambda$ crolla a zero. Per un CFO: la
+\emph{curva} di $\lambda$ è l'argomento quantitativo per decidere quanto budget
+concedere al marketing --- si finanzia finché $\lambda$ supera il valore di un euro
+investito altrove.
+\end{spiegazione}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Risolvere l'esempio a mano con $b = 80$: dove finisce il budget aggiuntivo? Come
+cambia $\lambda$?
+\end{esercizio}
+
+\begin{esercizio}[risposta esponenziale]
+Sostituire la risposta della TV con $r(x) = 520\,(1 - e^{-0{,}025x})$ e ripetere
+l'ottimizzazione: cambia il mix? La funzione ha un tetto naturale: il bound $u_i$
+serve ancora?
+\end{esercizio}
+
+\begin{esercizio}[canale escluso]
+Aggiungere un quinto canale con marginale iniziale $a_5 k_5 = 5 < \lambda$: verificare
+che l'ottimo lo lascia a zero e interpretare il suo ``costo ridotto''
+$a_5 k_5 - \lambda$.
+\end{esercizio}
+
+\begin{esercizio}[copertura equa]
+Il budget serve tre segmenti di clientela con coperture diverse per canale.
+Massimizzare la copertura del segmento peggiore ($\max z$ con
+$z \le \text{copertura}_g$): quanto costa l'equità in risposta totale?
+\end{esercizio}

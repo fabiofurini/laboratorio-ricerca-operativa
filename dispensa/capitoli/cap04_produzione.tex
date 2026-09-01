@@ -1,0 +1,341 @@
+\chapter{Produzione e scorte multiperiodali}
+\label{cap:produzione}
+
+\noindent\textbf{Classe:} LP / QP convesso \hfill
+\textbf{Script:} \texttt{python/lab04\_produzione.py}
+
+\section{Motivazione gestionale}
+
+Un'azienda decide quanto produrre oggi e quanto conservare a scorta per la domanda
+futura. Produrre in anticipo costa giacenza; produrre all'ultimo momento rischia di
+sbattere contro il limite di capacità proprio nei mesi di picco. Il modello bilancia
+margini, capacità, scorte e stabilità del piano --- ed è il punto di partenza ideale del
+laboratorio perché ogni suo numero ha un'interpretazione economica immediata.
+
+
+
+In pratica questo problema si presenta ogni volta che un'azienda pianifica la
+produzione su più periodi con risorse condivise: piani principali di produzione
+(MPS), pianificazione aggregata, contratti di fornitura con profili mensili. Il
+nucleo della difficoltà è il \emph{legame intertemporale}: la decisione di oggi
+(produrre in anticipo o no) cambia i vincoli di domani.
+
+\textbf{In questo capitolo impareremo a:} (1) formulare un LP multiperiodale con
+vincoli di bilancio delle scorte; (2) leggere e verificare i prezzi ombra della
+capacità e i loro intervalli di validità; (3) usare un termine quadratico per
+stabilizzare il piano; (4) costruire la curva del valore della capacità.
+
+\section{Costruzione guidata del modello}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} quante unità di ogni prodotto
+produrre in ogni mese e quante tenerne a scorta. \emph{L'obiettivo} è minimizzare la
+somma dei costi di produzione e di giacenza sull'intero orizzonte. \emph{I vincoli}
+sono due: la contabilità di magazzino deve tornare in ogni mese (ciò che entra
+uguaglia ciò che esce, e tutta la domanda va servita) e le ore macchina usate in un
+mese non possono superare quelle disponibili.
+
+\subsection*{Insiemi e dati (input del modello)}
+\begin{center}\small
+\begin{tabular}{llp{7.6cm}}
+\toprule
+Simbolo & Tipo & Significato \\
+\midrule
+$I$, $T$ & insiemi finiti & prodotti e periodi (mesi) \\
+$d_{it}$ & $\in \R_{\ge 0}$ & domanda del prodotto $i \in I$ nel mese $t \in T$ \\
+$c_{it},\, h_{it}$ & $\in \R_{\ge 0}$ & costo unitario di produzione e di giacenza \\
+$a_i$ & $\in \R_{> 0}$ & ore macchina per unità del prodotto $i$ \\
+$b_t$ & $\in \R_{\ge 0}$ & ore macchina disponibili nel mese $t$ \\
+$s_{i0}$ & $\in \R_{\ge 0}$ & scorta iniziale del prodotto $i$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Variabili decisionali}
+\begin{center}\small
+\begin{tabular}{llp{7.6cm}}
+\toprule
+$x_{it}$ & $\ge 0$, continua & quantità prodotta di $i \in I$ nel mese $t \in T$ \\
+$s_{it}$ & $\ge 0$, continua & scorta di $i$ alla fine del mese $t$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[LP di produzione e scorte a costo minimo]
+\begin{align}
+\min\;& \sum_{i \in I}\sum_{t \in T} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr) \notag\\
+\text{s.t.}\;\;
+& s_{i,t-1} + x_{it} = d_{it} + s_{it} && \forall i \in I,\ t \in T \label{eq:bilancio}\\
+& \sum_{i \in I} a_i\, x_{it} \le b_t && \forall t \in T \label{eq:capacita}\\
+& x_{it},\, s_{it} \ge 0 && \forall i \in I,\ t \in T \notag
+\end{align}
+\end{modello}
+
+\begin{spiegazione}
+\textbf{Funzione obiettivo.} Somma, su tutti i prodotti e i mesi, i costi di
+produzione $c_{it} x_{it}$ e i costi di giacenza $h_{it} s_{it}$: il modello cerca il
+piano complessivamente più economico, libero di scambiare produzione anticipata
+(più giacenza) con produzione al limite di capacità.
+
+\textbf{Vincolo \eqref{eq:bilancio} (bilancio delle scorte).} È la ``contabilità di
+magazzino'': ciò che entra (scorta precedente + produzione) è uguale a ciò che esce
+(domanda servita + scorta successiva). È il vincolo che \emph{lega i mesi tra loro}: senza
+di esso il problema si spezzerebbe in $|T|$ problemi indipendenti e le scorte non
+avrebbero senso. Per $t=1$ si usa la scorta iniziale $s_{i0}$.
+
+\textbf{Vincolo \eqref{eq:capacita} (capacità).} Le ore macchina sono condivise tra i
+prodotti: è la risorsa scarsa che rende il problema interessante. Il suo prezzo ombra
+dirà quanto vale un'ora in più.
+
+\textbf{Cosa succede se\dots} togliamo il bilancio? Il modello produce zero (costo
+minimo!) perché nulla lo obbliga a servire la domanda. Se la domanda totale supera la
+capacità cumulata, il modello diventa inammissibile: in tal caso o si consente la
+domanda persa con una variabile $u_{it} \ge 0$ e una penalità $\pi_{it}$ in obiettivo,
+oppure si rivede la capacità.
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Un prodotto, due mesi]
+Domanda $d_1 = 60$, $d_2 = 100$; capacità $b_1 = b_2 = 80$ unità/mese ($a = 1$);
+costo di produzione $c = 10$ \euro, giacenza $h = 1$ \euro/unità/mese, scorta iniziale nulla.
+
+\textbf{Passo 1 — è ammissibile?} Domanda totale $160 \le$ capacità totale $160$: sì,
+ma solo producendo al massimo in entrambi i mesi.
+
+\textbf{Passo 2 — bilanci.} $x_1 = 60 + s_1$ e $s_1 + x_2 = 100$. Con $x_2 \le 80$
+serve $s_1 \ge 20$, quindi $x_1 \ge 80$: ma $x_1 \le 80$, dunque $x_1 = 80$, $s_1 = 20$,
+$x_2 = 80$.
+
+\textbf{Passo 3 — costo.} $10\cdot(80+80) + 1\cdot 20 = 1620$~\euro. La soluzione è
+\emph{forzata}: entrambi i vincoli di capacità sono attivi.
+
+\textbf{Passo 4 — prezzo ombra a mano.} Con un'ora in più nel mese 2
+($b_2 = 81$): $x_2 = 81$, $s_1 = 19$, $x_1 = 79$: il costo scende di $1$~\euro{}
+(un'unità non sta più a scorta un mese). Il duale della capacità del mese 2 è
+dunque $-1$~\euro/unità. Con un'ora in più nel mese 1 invece non cambia nulla
+(il mese 1 produce già il necessario): duale $0$.
+Questo meccanismo --- \emph{la capacità di un mese vale quanto giacenza fa risparmiare} ---
+riappare identico nel caso di studio.
+\end{esempio}
+
+\section{Caso di studio}
+
+Tre prodotti (indicati con $i = 1, 2, 3$) su sei mesi, con domanda stagionale crescente (picco nei mesi
+4--5), un'unica risorsa condivisa e questi parametri (file CSV
+\texttt{produzione\_domanda} e \texttt{produzione\_capacita} nella cartella
+\texttt{dati/}):
+
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+Prodotto & $c_i$ (\euro/u) & $h_i$ (\euro/u/mese) & $a_i$ (ore/u) & $s_{i0}$ \\
+\midrule
+1 & 12{,}00 & 0{,}80 & 0{,}9 & 30 \\
+2 & 18{,}00 & 1{,}20 & 1{,}4 & 20 \\
+3 & 25{,}00 & 1{,}60 & 2{,}1 & 10 \\
+\bottomrule
+\end{tabular}
+\qquad
+\begin{tabular}{lrrrrrr}
+\toprule
+mese & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+$b_t$ (ore) & 420 & 420 & 460 & 460 & 460 & 420 \\
+$d_{1,t}$ & 110 & 130 & 150 & 190 & 210 & 160 \\
+$d_{2,t}$ & 70 & 80 & 110 & 140 & 150 & 100 \\
+$d_{3,t}$ & 50 & 55 & 60 & 80 & 95 & 70 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Implementazione}
+
+Il cuore dello script (versione integrale in \texttt{lab04\_produzione.py}):
+
+\begin{lstlisting}[style=python]
+m = gp.Model("produzione_scorte")
+x = m.addVars(prodotti, mesi, name="x")   # quantità prodotta
+s = m.addVars(prodotti, mesi, name="s")   # scorta a fine mese
+
+# bilancio: scorta entrante + produzione
+#           = domanda + scorta uscente
+m.addConstrs(
+    ((s0[i] if t == 1 else s[i, t-1]) + x[i, t]
+     == domanda[i, t] + s[i, t]
+     for i in prodotti for t in mesi), name="bilancio")
+
+# capacità condivisa (conservo i vincoli per i duali)
+v_cap = m.addConstrs(
+    (gp.quicksum(a[i] * x[i, t] for i in prodotti)
+     <= capacita[t] for t in mesi), name="capacita")
+
+m.setObjective(
+    gp.quicksum(c[i]*x[i, t] + h[i]*s[i, t]
+                for i in prodotti for t in mesi),
+    GRB.MINIMIZE)
+m.optimize()
+\end{lstlisting}
+
+\section{Risultati}
+
+\begin{lstlisting}[style=output]
+Costo totale ottimo: 32.889,33 EUR
+
+Piano di produzione (unita'/mese):
+mese       1      2      3      4      5      6
+prod.1  80.0  130.0  150.0  190.0  210.0  160.0
+prod.2  50.0   80.0  110.0  140.0  150.0  100.0
+prod.3  89.5   91.0   81.4   44.3   29.0   64.8
+
+Scorte a fine mese:
+mese       1     2      3     4    5    6
+prod.1   0.0   0.0    0.0   0.0  0.0  0.0
+prod.2   0.0   0.0    0.0   0.0  0.0  0.0
+prod.3  49.5  85.5  106.9  71.2  5.2  0.0
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.98\textwidth, height=6.2cm, ybar, bar width=5.5pt,
+  title={Piano di produzione ottimo e domanda totale},
+  xlabel={mese}, ylabel={unità}, ymin=0,
+  xtick={1,2,3,4,5,6}, enlarge x limits=0.1, area legend]
+\addplot [fill=teal!85, draw=none] table [col sep=comma, x=mese, y=x1] {\figdat{cap04_piano}};
+\addplot [fill=rossomattone!80, draw=none] table [col sep=comma, x=mese, y=x2] {\figdat{cap04_piano}};
+\addplot [fill=arancio!85, draw=none] table [col sep=comma, x=mese, y=x3] {\figdat{cap04_piano}};
+\addplot [sharp plot, grigiomedio, thick, dashed, mark=o]
+  table [col sep=comma, x=mese, y=domtot] {\figdat{cap04_piano}};
+\legend{prodotto 1, prodotto 2, prodotto 3, domanda totale}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Piano di produzione ottimo dell'LP: barre $=$ unità prodotte dei
+tre prodotti in ciascun mese; linea tratteggiata $=$ domanda totale del mese. Nei mesi
+di picco (4--5) la produzione totale resta sotto la domanda: la differenza è coperta
+dalle scorte del prodotto 3 accumulate nei primi mesi.}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Scorte di fine mese}, xlabel={mese}, ylabel={unità}, ymin=0]
+\addplot+ [mark=*] table [col sep=comma, x=mese, y=s1] {\figdat{cap04_piano}};
+\addplot+ [mark=square*] table [col sep=comma, x=mese, y=s2] {\figdat{cap04_piano}};
+\addplot+ [mark=triangle*] table [col sep=comma, x=mese, y=s3] {\figdat{cap04_piano}};
+\legend{prodotto 1, prodotto 2, prodotto 3}
+\end{axis}
+\end{tikzpicture}%
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Effetto dello smoothing ($\gamma$)},
+  xlabel={mese}, ylabel={produzione totale}]
+\addplot+ [mark=*] table [col sep=comma, x=mese, y=gzero] {\figdat{cap04_smoothing}};
+\addplot+ [mark=square*] table [col sep=comma, x=mese, y=gmezzo] {\figdat{cap04_smoothing}};
+\addplot+ [mark=triangle*] table [col sep=comma, x=mese, y=gdue] {\figdat{cap04_smoothing}};
+\legend{$\gamma=0$, $\gamma=0.5$, $\gamma=2$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{A sinistra: scorte di fine mese per prodotto --- solo il prodotto 3 usa il
+magazzino (strategia di pre-build), e le scorte si azzerano nel mese finale.
+A destra: produzione totale mensile per tre valori del peso di smoothing $\gamma$:
+già con $\gamma = 0{,}5$ il profilo diventa quasi piatto.}
+\end{center}
+
+\begin{insight}
+Il solver ha scoperto da solo la strategia del \emph{pre-build}: i prodotti 1 e 2 (margini di
+giacenza alti rispetto alle ore assorbite) vengono prodotti su domanda, mentre il
+prodotto 3 --- il più oneroso in ore macchina --- viene prodotto in anticipo nei mesi
+1--3 e accumulato (fino a 107 unità a scorta) per liberare capacità nei mesi di picco.
+Le scorte tornano a zero nel mese finale: una scorta terminale positiva sarebbe denaro
+sprecato, e il modello lo sa.
+\end{insight}
+
+\section{Analisi di sensitività}
+
+\subsection*{Prezzi ombra della capacità}
+
+\begin{lstlisting}[style=output]
+mese 1: uso 330.0/420  | Pi =  0.000 EUR/ora | valido per b_t in [330.0, +inf]
+mese 2: uso 420.0/420  | Pi = -0.762 EUR/ora | valido per b_t in [330.0, 524.0]
+mese 3: uso 460.0/460  | Pi = -1.524 EUR/ora | valido per b_t in [370.0, 564.0]
+mese 4: uso 460.0/460  | Pi = -2.286 EUR/ora | valido per b_t in [370.0, 564.0]
+mese 5: uso 460.0/460  | Pi = -3.048 EUR/ora | valido per b_t in [399.0, 564.0]
+mese 6: uso 420.0/420  | Pi = -3.810 EUR/ora | valido per b_t in [330.0, 431.0]
+
+Verifica: +1 ora nel mese 6 -> costo da 32889.33 a 32885.52 (delta -3.810)
+\end{lstlisting}
+
+\begin{spiegazione}[Da dove viene il numero 0{,}762]
+I duali crescono di esattamente $0{,}762$ \euro{} al mese. Non è un caso:
+$0{,}762 = h_3 / a_3 = 1{,}6 / 2{,}1$. Un'ora in più nel mese $t$ permette di produrre
+$1/a_3$ unità del prodotto 3 \emph{un mese più tardi}, risparmiando un mese di giacenza:
+$h_3 \cdot (1/a_3)$. Il duale del mese 6 vale $5 \times 0{,}762 = 3{,}81$ perché
+un'ora lì evita cinque mesi di giacenza a un'unità prodotta nel mese 1. Quando il
+solver e un ragionamento economico elementare danno lo stesso numero, il modello è
+probabilmente giusto.
+\end{spiegazione}
+
+\subsection*{Il valore della capacità e il costo della regolarità}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Curva valore della capacità},
+  xlabel={capacità (\% dell'attuale)}, ylabel={costo ottimo (\euro)}]
+\addplot+ [mark=*, mark size=1.4pt] table [col sep=comma, x=percento, y=costo]
+  {\figdat{cap04_capacita}};
+\addplot [arancio, dashed] coordinates {(100, 32300) (100, 33100)};
+\end{axis}
+\end{tikzpicture}%
+\hfill
+\begin{minipage}[b]{0.46\textwidth}\small
+La curva è \textbf{convessa e decrescente}: le prime ore extra valgono molto, poi
+sempre meno. Sotto il 97\% dell'attuale capacità il modello diventa
+\emph{inammissibile}: la domanda non è più servibile per intero --- informazione
+gestionale preziosa quanto l'ottimo stesso.
+
+\vspace{1ex}
+La variante QP aggiunge in obiettivo $\gamma \sum_{t \in T,\, t>1} (X_t - X_{t-1})^2$ con
+$X_t = \sum_{i \in I} x_{it}$: con $\gamma = 0{,}5$ il profilo produttivo diventa quasi piatto
+(variazione massima da 81 a 1 unità/mese) al costo di appena
+$33.003 - 32.889 = 114$~\euro{} ($+0{,}35\%$).
+\end{minipage}
+\captionof{figure}{Costo totale ottimo in funzione della capacità disponibile
+(in \% dell'attuale; la linea tratteggiata arancione segna la capacità corrente):
+curva convessa e decrescente, interrotta a sinistra dove il problema diventa
+inammissibile.}
+\end{center}
+
+\begin{insight}
+Raccomandazione tipo da relazione di laboratorio: ``Conviene acquistare ore
+straordinarie nei mesi 5--6 fino a 3--3,8 \euro/ora sotto il prezzo interno; un piano
+livellato costa solo lo 0,35\% in più e riduce drasticamente i cambi di ritmo; sotto
+il 97\% della capacità attuale il servizio completo non è garantibile.''
+\end{insight}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Verificare per perturbazione i duali dei mesi 3 e 4 (aggiungere un'ora e riottimizzare).
+Perché il duale del mese 1 è nullo?
+\end{esercizio}
+
+\begin{esercizio}[domanda persa]
+Aggiungere la variabile $u_{it}$ (domanda non servita) con penalità
+$\pi = 40$ \euro/unità e ridurre la capacità al 90\%: quanta domanda si perde, di
+quale prodotto, in quali mesi? Interpretare la scelta del modello.
+\end{esercizio}
+
+\begin{esercizio}[massimo profitto]
+Trasformare il modello in massimizzazione del profitto con ricavi
+$p = (20, 30, 42)$ \euro{} e servizio facoltativo ($y_{it} \le d_{it}$).
+Quale domanda conviene \emph{non} servire, e perché?
+\end{esercizio}
+
+\begin{esercizio}[emissioni]
+Ogni unità del prodotto 3 emette 2{,}5 kg di CO$_2$, i prodotti 1 e 2 un kg. Aggiungere il termine
+$\tau \sum_{i \in I}\sum_{t \in T} e_i\, x_{it}$ all'obiettivo e tracciare la frontiera costo-emissioni per
+$\tau \in [0, 10]$ \euro/kg (si veda l'analoga analisi nel
+capitolo~\ref{cap:supplychain}).
+\end{esercizio}
+
+\begin{esercizio}[scorta di sicurezza]
+Imporre $s_{it} \ge 0{,}1\, d_{i,t+1}$ (scorta di sicurezza del 10\%). Quanto costa
+questa politica? Quale vincolo di capacità diventa più critico?
+\end{esercizio}

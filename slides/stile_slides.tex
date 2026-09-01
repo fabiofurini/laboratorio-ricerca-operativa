@@ -1,0 +1,47 @@
+% Stile comune delle slide del laboratorio (incluso da slides/it e slides/en)
+\usetheme{default}
+\usefonttheme{professionalfonts}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{eurosym}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{shapes.geometric,arrows.meta}
+
+\definecolor{blunotte}{HTML}{16324A}
+\definecolor{teal}{HTML}{0E7490}
+\definecolor{tealchiaro}{HTML}{E3F2F5}
+\definecolor{verde}{HTML}{1E8449}
+\definecolor{arancio}{HTML}{CA6F1E}
+\definecolor{rossomattone}{HTML}{C0392B}
+\definecolor{grigiomedio}{HTML}{7F8C8D}
+\definecolor{viola}{HTML}{8E44AD}
+\definecolor{ocra}{HTML}{B7950B}
+
+\setbeamercolor{structure}{fg=teal}
+\setbeamercolor{frametitle}{fg=white, bg=blunotte}
+\setbeamercolor{title}{fg=white, bg=blunotte}
+\setbeamercolor{block title}{fg=white, bg=teal}
+\setbeamercolor{block body}{bg=tealchiaro}
+\setbeamercolor{alerted text}{fg=rossomattone}
+\setbeamertemplate{itemize items}[circle]
+
+\pgfplotsset{
+  slide/.style={width=0.72\textwidth, height=5.4cm, grid=major,
+    grid style={black!12}, tick label style={font=\scriptsize},
+    label style={font=\small}, title style={font=\small\bfseries, color=blunotte},
+    legend style={font=\scriptsize, draw=none, fill=none,
+      at={(0.5,-0.28)}, anchor=north}, legend columns=3, legend cell align=left},
+}
+% i CSV delle figure vengono dalla dispensa: un'unica fonte di verità
+\newcommand{\figdat}[1]{../../dispensa/figure/dat/#1.csv}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\vet}[1]{\boldsymbol{#1}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\var}{\mathrm{VaR}}
+\newcommand{\cvar}{\mathrm{CVaR}}
+\newcommand{\T}{^{\mathsf T}}

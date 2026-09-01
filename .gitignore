@@ -1,0 +1,21 @@
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+dispensa/main.pdf
+soluzioni/soluzioni.pdf
+slides/it/slides_laboratorio.pdf
+# Python
+__pycache__/
+*.pyc
+# MkDocs
+site/
+# varie
+.DS_Store

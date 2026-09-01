@@ -1,0 +1,121 @@
+\chapter{Organizzazione del laboratorio}
+\label{cap:organizzazione}
+
+\section{Percorso essenziale in quattro laboratori}
+
+\begin{center}\small
+\begin{tabular}{lp{5.2cm}p{6.6cm}}
+\toprule
+ & Contenuto & Obiettivi di apprendimento \\
+\midrule
+Lab 1 & Produzione e scorte (cap.~\ref{cap:produzione}) &
+formulare un LP multiperiodale; leggere duali, slack e range; verificare un prezzo
+ombra per perturbazione \\
+Lab 2 & Markowitz (cap.~\ref{cap:markowitz}) &
+costruire un QP convesso; tracciare una frontiera; discutere la fragilità delle stime \\
+Lab 3 & Pricing \emph{oppure} budget (capp.~\ref{cap:pricing}--\ref{cap:budget}) &
+modellare funzioni non lineari; studiare concavità; verificare le KKT numericamente \\
+Lab 4 & Progetto a scelta &
+supply chain, ricarica EV, localizzazione, code, Newsvendor, CVaR o SVM; presentazione
+manageriale dei risultati \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+I capitoli~\ref{cap:newsvendor}--\ref{cap:svm} possono sostituire i laboratori 3--4 in
+un'edizione orientata all'incertezza e al machine learning, oppure diventare
+approfondimenti per progetti individuali.
+
+\section{Struttura della consegna}
+
+Ogni gruppo consegna un notebook o un breve report (max 8 pagine) con questa
+struttura obbligatoria, che ricalca la scaletta dei capitoli:
+
+\begin{enumerate}
+  \item \textbf{Problema e ipotesi} --- il contesto in una pagina, le semplificazioni
+        dichiarate esplicitamente;
+  \item \textbf{Modello} --- insiemi, parametri, variabili, vincoli, obiettivo, con la
+        spiegazione di ogni vincolo (non solo la formula);
+  \item \textbf{Dati} --- origine, unità di misura, eventuale generazione;
+  \item \textbf{Risultati} --- valore ottimo, decisioni principali, vincoli attivi;
+  \item \textbf{Sensitività} --- protocollo del capitolo~\ref{cap:richiami},
+        sezione~\ref{sec:protocollo}: almeno prezzi ombra verificati, una
+        one-at-a-time e una frontiera di trade-off;
+  \item \textbf{Raccomandazione manageriale} --- massimo dieci righe, senza formule:
+        cosa fare, quanto vale, quanto è robusto.
+\end{enumerate}
+
+\section{Criteri di valutazione}
+
+\begin{center}\small
+\begin{tabular}{lc p{7.6cm}}
+\toprule
+Dimensione & Peso & Che cosa si valuta \\
+\midrule
+Correttezza della formulazione & 30\% & vincoli giusti e giustificati, unità coerenti,
+convessità discussa \\
+Implementazione e verifica & 25\% & codice riproducibile; stato del solver
+controllato; almeno una verifica indipendente (esempio a mano, perturbazione,
+caso limite) \\
+Analisi di sensitività & 25\% & protocollo completo; duali interpretati con i range
+di validità; trade-off tracciati \\
+Interpretazione e comunicazione & 20\% & raccomandazione chiara; figure leggibili;
+onestà sui limiti del modello \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Domande tipiche di discussione}
+
+Le domande con cui difendere la consegna --- e che conviene porsi \emph{prima}:
+
+\begin{itemize}
+  \item Quale risorsa conviene aumentare per prima, e quanto si può pagare per essa?
+  \item Qual è il costo di una promessa di servizio più ambiziosa?
+  \item La soluzione resta credibile se i dati cambiano del 5\%? Quale parametro è
+        il più fragile?
+  \item Quale compromesso consigliereste a un decisore, e perché proprio quel punto
+        della frontiera?
+  \item Che cosa NON dice il modello? (ipotesi, orizzonte, variabili escluse)
+\end{itemize}
+
+\section{Errori ricorrenti da evitare}
+
+\begin{attenzione}[Checklist degli errori visti più spesso]
+\begin{enumerate}
+  \item Leggere \texttt{.X} o \texttt{.Pi} senza controllare \texttt{m.Status}.
+  \item Dimenticare \texttt{lb=-GRB.INFINITY} sulle variabili libere
+        ($b$ della SVM, $\eta$ del CVaR).
+  \item Interpretare un prezzo ombra fuori dal suo intervallo di validità
+        (\texttt{SARHSLow/Up}).
+  \item Confondere il segno dei duali nei problemi di minimo (vincolo $\le$:
+        $\texttt{Pi} \le 0$).
+  \item Aggiornare il RHS di un vincolo che contiene costanti a sinistra
+        (capitolo~\ref{cap:ricaricaev}).
+  \item Ottimizzare un solo obiettivo quando il problema ne ha due (minimax puro
+        senza costo).
+  \item Scegliere gli iperparametri ($C$, $\gamma$, $\lambda$) guardando il test set
+        o gli scenari usati per decidere.
+  \item Riportare sei cifre decimali da stime che ballano alla seconda.
+\end{enumerate}
+\end{attenzione}
+
+\section{Materiali del corso}
+
+\begin{center}\small
+\begin{tabular}{lp{8.6cm}}
+\toprule
+\texttt{dispensa/} & questa dispensa (\texttt{main.tex}; le figure leggono i CSV in
+\texttt{figure/dat/}) \\
+\texttt{python/} & uno script per capitolo; \texttt{esegui\_tutti.py} rigenera
+dati e figure \\
+\texttt{dati/} & tutti i dati dei casi di studio in CSV \\
+\texttt{GUIDA\_GUROBI.md} & guida autonoma al solver \\
+\texttt{soluzioni/} & soluzioni degli esercizi (per i docenti) \\
+\texttt{slides/} & slide dei quattro laboratori (italiano e inglese) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Riproducibilità: \texttt{python3 -m pip install gurobipy matplotlib pandas scipy},
+poi \texttt{python3 python/esegui\_tutti.py} e \texttt{latexmk -pdf dispensa/main.tex}.

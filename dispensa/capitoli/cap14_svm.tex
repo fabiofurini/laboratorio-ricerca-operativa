@@ -1,0 +1,296 @@
+\chapter[Support Vector Machine]{Support Vector Machine: ottimizzazione per il machine learning}
+\label{cap:svm}
+
+\noindent\textbf{Classe:} QP convesso \hfill
+\textbf{Script:} \texttt{python/lab14\_svm.py}
+
+\section{Motivazione gestionale}
+
+La Support Vector Machine collega direttamente l'ottimizzazione convessa al machine
+learning: il classificatore si ottiene risolvendo un QP, con una lettura geometrica
+chiara. Le applicazioni gestionali sono immediate: rischio di credito, churn,
+manutenzione predittiva, controllo qualità, frodi. In questo capitolo \emph{non}
+usiamo librerie di ML: ogni modello è un QP scritto e risolto con Gurobi, perché
+l'obiettivo è capire \emph{che cosa} ottimizza un classificatore.
+
+Nota modellistica: le etichette $y_i \in \{-1, +1\}$ sono \emph{dati osservati}, non
+variabili --- le variabili (coefficienti, intercetta, scarti, moltiplicatori) sono
+tutte continue.
+
+
+
+Questo capitolo chiude il cerchio: gli stessi strumenti usati per produzione,
+logistica e finanza --- QP convessi, dualità, moltiplicatori --- sono il motore di
+uno dei classificatori più eleganti del machine learning. Capire la SVM come
+problema di ottimizzazione, e non come scatola nera di libreria, dà il controllo
+completo su ciò che il modello sta davvero facendo.
+
+\textbf{In questo capitolo impareremo a:} (1) formulare hard e soft margin come QP;
+(2) derivare e risolvere il duale, identificando i support vector; (3) ottenere
+frontiere non lineari con i kernel restando nel mondo convesso; (4) gestire classi
+sbilanciate con costi asimmetrici e valutare con le metriche giuste.
+
+\section{Hard margin: la geometria}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} i coefficienti di un iperpiano che
+separi due classi di osservazioni. \emph{L'obiettivo} è massimizzare il margine, cioè
+la distanza tra l'iperpiano e i punti più vicini delle due classi (un classificatore
+con margine ampio generalizza meglio). \emph{I vincoli} chiedono che ogni osservazione
+stia dal lato giusto dell'iperpiano --- nel soft margin, a meno di uno scarto pagato
+in obiettivo.
+
+Dati $n$ punti $\vet x_i \in \R^p$ con etichette $y_i \in \{-1, +1\}$ (input del
+modello), si cercano il vettore $\vet w \in \R^p$ e l'intercetta $b \in \R$
+(variabili) dell'iperpiano $\vet w\T \vet x + b = 0$ che separa le classi
+\emph{massimizzando il margine}.
+
+\begin{modello}[Hard margin]
+\[
+\min_{\vet w,\, b}\;\; \tfrac12 \|\vet w\|^2 = \tfrac12 \sum_{j=1}^{p} w_j^2
+\qquad \text{s.t.} \qquad
+y_i \Bigl( \sum_{j=1}^{p} w_j\, x_{ij} + b \Bigr) \ge 1 \quad \forall i = 1, \dots, n ,
+\]
+Il margine geometrico tra gli iperpiani di supporto è $2/\|\vet w\|$: minimizzare
+$\|\vet w\|^2$ equivale a massimizzare il margine.
+\end{modello}
+
+\begin{esempio}[Due punti, tutto a mano]
+$\vet x_1 = (0,0)$ con $y_1 = -1$ e $\vet x_2 = (2,2)$ con $y_2 = +1$.
+
+\textbf{Passo 1 — vincoli.} $-(b) \ge 1$ e $2w_1 + 2w_2 + b \ge 1$, cioè
+$b \le -1$ e $2(w_1 + w_2) \ge 1 - b \ge 2$.
+
+\textbf{Passo 2 — simmetria e ottimo.} Per minimizzare $w_1^2 + w_2^2$ con
+$w_1 + w_2 \ge 1$ conviene $w_1 = w_2 = t$ e prendere le disuguaglianze attive:
+$4t + b = 1$, $b = -1$ $\Rightarrow$ $t = 1/2$. Quindi $\vet w = (0{,}5;\, 0{,}5)$,
+$b = -1$: l'iperpiano $0{,}5x_1 + 0{,}5x_2 = 1$ è l'asse del segmento tra i due punti.
+
+\textbf{Passo 3 — margine.} $2/\|\vet w\| = 2/\sqrt{0{,}5} = 2\sqrt 2 = 2{,}83$: esattamente
+la distanza tra i due punti. Entrambi i vincoli sono attivi: entrambi i punti sono
+\emph{support vector}. Con dati reali sovrapposti, però, l'hard margin è
+inammissibile: serve il soft margin.
+\end{esempio}
+
+\section{Soft margin}
+
+\begin{modello}[Soft margin (primale)]
+\begin{align*}
+\min_{\vet w,\, b,\, \vet\xi}\;\; & \tfrac12\|\vet w\|^2 + C \sum_{i=1}^{n} \xi_i \\
+\text{s.t.}\;\; & y_i \Bigl( \sum_{j=1}^{p} w_j\, x_{ij} + b \Bigr) \ge 1 - \xi_i, \qquad \xi_i \ge 0 \quad \forall i = 1, \dots, n
+\end{align*}
+Lo scarto $\xi_i$ misura quanto il punto $i$ viola il margine ($\xi_i > 1$:
+classificato male). $C$ è il prezzo delle violazioni rispetto alla semplicità del
+modello.
+\end{modello}
+
+\subsection*{Caso di studio: rischio di credito}
+
+90 clienti, due indicatori standardizzati (solidità patrimoniale, puntualità nei
+pagamenti), 55 affidabili e 35 insolventi, parzialmente sovrapposti
+(\texttt{dati/svm\_clienti.csv}).
+
+\begin{lstlisting}[style=output]
+C =  0,05: w = (0,678, 0,474)  b = -0,148 | margine 2,418 | errori 2 | nel margine 22
+C =  1,00: w = (1,433, 0,611)  b = -0,236 | margine 1,284 | errori 2 | nel margine  7
+C = 20,00: w = (5,058, 2,338)  b = -2,936 | margine 0,359 | errori 0 | nel margine  3
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.86\textwidth, height=7.8cm,
+  title={Soft margin: iperpiano, margine e support vector ($C = 1$)},
+  xlabel={solidità patrimoniale}, ylabel={puntualità pagamenti}, xmin=-3.1, xmax=4.4, ymin=-3.4, ymax=3.6]
+% punti (dal QP: colonna sv = support vector del duale)
+\addplot [only marks, mark=*, mark size=1.5pt, teal,
+  discard if not={y}{1.0}] table [col sep=comma, x=x1, y=x2] {\figdat{cap14_punti}};
+\addplot [only marks, mark=*, mark size=1.5pt, rossomattone,
+  discard if not={y}{-1.0}] table [col sep=comma, x=x1, y=x2] {\figdat{cap14_punti}};
+\addplot [only marks, mark=o, mark size=3.4pt, verde, thick,
+  discard if not={sv}{1}] table [col sep=comma, x=x1, y=x2] {\figdat{cap14_punti}};
+% rette: coefficienti dal file cap14_rette.csv, riscritte come y=-(w1 x + b)/w2
+\addplot [black, thick, domain=-3.1:4.4] {-(1.433*x - 0.236)/0.611};
+\addplot [black, thin, dashed, domain=-3.1:4.4] {-(1.433*x - 0.236 - 1)/0.611};
+\addplot [black, thin, dashed, forget plot, domain=-3.1:4.4]
+  {-(1.433*x - 0.236 + 1)/0.611};
+\addplot [grigiomedio, densely dotted, thick, domain=-3.1:4.4]
+  {-(0.678*x - 0.148)/0.474};
+\addplot [arancio, dash dot, domain=-3.1:4.4] {-(5.058*x - 2.936)/2.338};
+\legend{affidabili ($+1$), insolventi ($-1$), support vector,
+        iperpiano $C=1$, margine, $C = 0{,}05$, $C = 20$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{I 90 clienti nel piano dei due indicatori: affidabili (teal),
+insolventi (rosso), support vector cerchiati in verde. La retta nera è l'iperpiano
+ottimo per $C = 1$ con le sue rette di margine (tratteggiate); le rette grigia e
+arancione sono gli iperpiani per $C = 0{,}05$ (margine ampio) e $C = 20$ (margine
+stretto).}
+\end{center}
+
+\begin{insight}
+$C$ piccolo compra un margine ampio accettando 22 punti dentro il margine; $C$ grande
+insegue ogni punto del training set (zero errori, margine strettissimo): è il
+compromesso \textbf{regolarizzazione--aderenza}, e va scelto con dati di validazione,
+mai guardando il test set. Si noti che le tre rette sono simili ma non uguali:
+la pendenza cambia perché i punti ``pagati'' cambiano.
+\end{insight}
+
+\section{La formulazione duale e i support vector}
+
+\begin{modello}[Duale del soft margin]
+\begin{align*}
+\max_{\vet\alpha}\;\; & \sum_{i=1}^{n} \alpha_i - \tfrac12 \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j\,
+   y_i y_j\, \vet x_i\T \vet x_j \\
+\text{s.t.}\;\; & \textstyle\sum_{i=1}^{n} \alpha_i y_i = 0, \qquad 0 \le \alpha_i \le C \;\;\forall i = 1, \dots, n
+\end{align*}
+Relazione primale-duale: $\vet w = \sum_{i=1}^{n} \alpha_i y_i \vet x_i$;\;
+$f(\vet x) = \mathrm{sign}(\vet w\T \vet x + b)$.
+\end{modello}
+
+\begin{lstlisting}[style=output]
+w dal duale = (1,433, 0,611)   b = -0,236     (identici al primale)
+valore duale 4,7868 = valore primale (dualita' forte)
+alpha = 0        : 83 punti  -> NON influenzano la frontiera
+0 < alpha < C    :  2 punti  -> support vector esattamente sul margine
+alpha = C        :  5 punti  -> dentro il margine o mal classificati
+\end{lstlisting}
+
+\begin{spiegazione}[Perché si chiamano support vector]
+La soluzione dipende \emph{solo} dai 7 punti con $\alpha_i > 0$: sono loro a
+``sostenere'' l'iperpiano; gli altri 83 potrebbero sparire senza cambiare nulla. La
+complementarietà KKT organizza tutto: $\alpha_i = 0$ $\Rightarrow$ punto oltre il
+margine; $0 < \alpha_i < C$ $\Rightarrow$ esattamente sul margine
+(da questi si ricava $b$); $\alpha_i = C$ $\Rightarrow$ il vincolo ``paga'' scarto
+$\xi_i > 0$. Il duale, inoltre, dipende dai dati solo tramite i prodotti scalari
+$\vet x_i\T \vet x_j$: questa osservazione apre la porta al kernel.
+\end{spiegazione}
+
+\section{Kernel: frontiere non lineari da un QP convesso}
+
+Sostituendo $\vet x_i\T \vet x_j$ con un kernel $K(\vet x_i, \vet x_j)$ --- ad esempio il kernel RBF
+(\emph{Radial Basis Function}) gaussiano
+$K(\vet x, \vet z) = e^{-\gamma\|\vet x - \vet z\|^2}$ --- si classifica in uno spazio trasformato senza
+mai costruirlo: $f(\vet x) = \mathrm{sign}\bigl(\sum_{i=1}^{n} \alpha_i y_i K(\vet x_i, \vet x) + b\bigr)$.
+La frontiera nello spazio originale può essere arbitrariamente curva, ma il problema
+di training \emph{resta un QP convesso} se il kernel è valido (matrice semidefinita
+positiva).
+
+\subsection*{Caso di studio: anomalie ``a corona''}
+
+90 osservazioni di processo: il funzionamento normale al centro, le anomalie disposte
+ad anello --- nessuna retta può separarle.
+
+\begin{lstlisting}[style=output]
+gamma = 0,1: errori di training  1   support vector 20
+gamma = 0,7: errori di training  0   support vector 15
+gamma = 5,0: errori di training  0   support vector 61  <- "memorizza" i punti
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.8\textwidth, height=7.6cm,
+  title={Kernel RBF: la frontiera di livello $0$ per tre valori di $\gamma$},
+  xlabel={$x_1$}, ylabel={$x_2$},
+  xmin=-3.2, xmax=3.2, ymin=-3.2, ymax=3.2, axis equal image]
+\addplot [only marks, mark=*, mark size=1.4pt, teal,
+  discard if not={y}{1.0}] table [col sep=comma, x=x1, y=x2] {\figdat{cap14_corona}};
+\addplot [only marks, mark=*, mark size=1.4pt, rossomattone,
+  discard if not={y}{-1.0}] table [col sep=comma, x=x1, y=x2] {\figdat{cap14_corona}};
+\addplot [black, thick] table [col sep=comma, x=x, y=y] {\figdat{cap14_rbf_g0_1}};
+\addplot [verde, thick] table [col sep=comma, x=x, y=y] {\figdat{cap14_rbf_g0_7}};
+\addplot [arancio, thick] table [col sep=comma, x=x, y=y] {\figdat{cap14_rbf_g5_0}};
+\legend{normale ($+1$), anomalia ($-1$), $\gamma = 0{,}1$, $\gamma = 0{,}7$,
+        $\gamma = 5$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Il dataset ``a corona'' (funzionamento normale al centro,
+anomalie ad anello) e le frontiere di decisione del kernel RBF per tre valori di
+$\gamma$: con $\gamma = 0{,}1$ la frontiera è un cerchio regolare, con $\gamma = 5$
+si frammenta intorno ai singoli punti (overfitting).}
+\end{center}
+
+\begin{attenzione}
+Con $\gamma = 5$ la frontiera si frammenta in isole intorno ai singoli punti e i
+support vector salgono a 61 su 90: il modello sta memorizzando il training set
+(overfitting), pur restando un QP convesso --- convessità del \emph{training} e
+capacità di \emph{generalizzare} sono proprietà diverse. $C$ e $\gamma$ vanno scelti
+insieme per cross-validation.
+\end{attenzione}
+
+\section{Classi sbilanciate e costi asimmetrici}
+
+Nelle applicazioni gestionali la classe importante è rara e l'errore sui rari costa
+di più. Basta pesare gli scarti: $C_-\!\sum_{i:\, y_i = -1}\xi_i + C_+\!\sum_{i:\, y_i=+1}\xi_i$.
+
+\begin{lstlisting}[style=output]
+costi uguali (C=1)          : precision 1,00   recall insolventi 0,94
+costo 10x sugli insolventi  : precision 0,97   recall insolventi 1,00
+\end{lstlisting}
+
+\begin{insight}
+Con il costo $10\times$ la frontiera arretra verso la classe ``sana'': nessun
+insolvente sfugge (recall 100\%) al prezzo di qualche falso allarme in più
+(precision dal 100\% al 97\%). I pesi devono riflettere i \emph{costi decisionali}
+(quanto costa un fido concesso a chi non ripagherà vs.\ un cliente buono respinto),
+non le frequenze delle classi.
+\end{insight}
+
+\section{Support Vector Regression}
+
+La SVR stima una funzione continua ignorando gli errori entro un tubo di ampiezza
+$\varepsilon$: $\min \tfrac12\|\vet w\|^2 + C\sum_{i=1}^{n} (\xi_i + \xi_i^*)$ con
+$|y_i - (\vet w\T \vet x_i + b)| \le \varepsilon + \xi_i^{(*)}$ per ogni $i$.
+
+\begin{lstlisting}[style=output]
+Retta SVR: domanda = -10,86 * prezzo + 220,32    (vera: -11p + 220)
+Tubo eps = 8: 14 punti su 40 fuori dal tubo -> solo loro determinano la retta
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, title={SVR: solo i punti fuori dal tubo pagano penalità},
+  xlabel={prezzo (\euro)}, ylabel={domanda (unità)}]
+\addplot [only marks, mark=*, mark size=1.5pt, teal]
+  table [col sep=comma, x=prezzo, y=domanda] {\figdat{cap14_svr}};
+\addplot [rossomattone, thick, domain=4:16] {-10.86*x + 220.32};
+\addplot [rossomattone, dashed, domain=4:16] {-10.86*x + 220.32 + 8};
+\addplot [rossomattone, dashed, domain=4:16] {-10.86*x + 220.32 - 8};
+\legend{osservazioni, retta SVR, tubo $\pm\varepsilon$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Support Vector Regression sulla relazione prezzo--domanda: le 40
+osservazioni, la retta stimata e il tubo di tolleranza $\pm\varepsilon = 8$: solo i
+14 punti fuori dal tubo pagano penalità e determinano la retta.}
+\end{center}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Risolvere a mano l'hard margin con $\vet x_1 = (0,0)$, $y_1 = -1$ e $\vet x_2 = (4,0)$,
+$y_2 = +1$, e verificare con Gurobi ($\vet w = (0{,}5;\, 0)$, $b = -1$, margine 4).
+\end{esercizio}
+
+\begin{esercizio}[complementarietà]
+Per $C = 1$, elencare dallo script i 7 punti con $\alpha_i > 0$ e verificare
+numericamente le tre condizioni di complementarietà
+($\alpha_i = 0 \Rightarrow \xi_i = 0$ e margine $\ge 1$; ecc.).
+\end{esercizio}
+
+\begin{esercizio}[curva di validazione]
+Dividere i 90 clienti in training (60) e validazione (30); tracciare l'errore di
+validazione per $C \in \{0{,}01;\, 0{,}1;\, 1;\, 10;\, 100\}$ e scegliere $C$.
+L'errore di training è monotono in $C$? E quello di validazione?
+\end{esercizio}
+
+\begin{esercizio}[soglia decisionale]
+A parità di modello ($C = 1$), spostare la soglia: classificare insolvente se
+$\vet w\T \vet x + b < \theta$ con $\theta \in [-1, 1]$. Tracciare precision e recall in
+funzione di $\theta$: dove sta il punto che massimizza il profitto se un insolvente
+non individuato costa 10 e un falso allarme 1?
+\end{esercizio}
+
+\begin{esercizio}[one-class]
+Implementare la One-Class SVM sul dataset a corona usando solo i punti normali:
+$\min \tfrac12\|\vet w\|^2 + \tfrac{1}{\nu n}\sum_{i=1}^{n} \xi_i - \rho$ s.t.
+$\vet w\T\phi(\vet x_i) \ge \rho - \xi_i$ (kernel RBF, $\gamma = 0{,}7$). Quale frazione di
+anomalie individua per $\nu \in \{0{,}05;\, 0{,}1;\, 0{,}2\}$?
+\end{esercizio}

@@ -1,0 +1,267 @@
+\chapter{Portafoglio di Markowitz}
+\label{cap:markowitz}
+
+\noindent\textbf{Classe:} QP convesso \hfill
+\textbf{Script:} \texttt{python/lab06\_markowitz.py}
+
+\section{Motivazione gestionale}
+
+Quanto investire in ciascun titolo per bilanciare rendimento atteso e rischio? Il
+modello di Markowitz è il QP più famoso della storia: minimizza la varianza del
+portafoglio imponendo un rendimento minimo. Il risultato non è un numero ma una
+\emph{frontiera efficiente}: il menu completo dei compromessi rischio-rendimento tra
+cui il decisore sceglie in base alla propria avversione al rischio.
+
+
+
+Il problema nasce in finanza (Markowitz, 1952, premio Nobel) ma la sua struttura
+--- allocare un budget tra alternative rischiose e correlate --- riappare ovunque:
+mix di progetti di R\&S, portafogli di clienti, perfino l'allocazione di capacità
+produttiva tra mercati volatili. È anche il ponte naturale tra l'ottimizzazione e
+la statistica: i dati del modello sono \emph{stime}, con tutte le conseguenze del
+caso.
+
+\textbf{In questo capitolo impareremo a:} (1) formulare e risolvere un QP convesso;
+(2) costruire e leggere la frontiera efficiente; (3) capire l'effetto dei vincoli
+di mandato; (4) diffidare delle stime dei rendimenti attesi.
+
+\section{Costruzione guidata del modello}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} la quota di capitale da investire
+in ciascun titolo. \emph{L'obiettivo} è minimizzare il rischio del portafoglio,
+misurato dalla varianza del suo rendimento. \emph{I vincoli}: investire tutto il
+capitale (le quote sommano a 1), garantire un rendimento atteso minimo e rispettare
+le quote minime e massime per titolo.
+
+\subsection*{Insiemi e dati (input del modello)}
+\begin{center}\small
+\begin{tabular}{llp{7.2cm}}
+\toprule
+Simbolo & Tipo & Significato \\
+\midrule
+$I$ & insieme finito & titoli, con $n = |I|$ \\
+$\boldsymbol\mu \in \R^n$ & vettore di reali & rendimenti attesi: $\mu_i$ per il titolo $i \in I$ \\
+$\mat Q \in \R^{n \times n}$ & matrice, $\mat Q \succeq 0$ & covarianze dei rendimenti \\
+$\bar r$ & $\in \R$ & rendimento minimo richiesto \\
+$\ell_i,\, u_i$ & $\in [0, 1]$ & quote minima e massima per il titolo $i$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Variabili decisionali}
+\begin{center}\small
+\begin{tabular}{llp{7.2cm}}
+\toprule
+$\vet x \in \R^n$ & continue & $x_i$ = quota di capitale investita nel titolo $i \in I$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[Minima varianza con rendimento minimo]
+\begin{align}
+\min\;& \sum_{i \in I}\sum_{j \in I} q_{ij}\, x_i\, x_j \notag\\
+\text{s.t.}\;\; & \sum_{i \in I} \mu_i\, x_i \ge \bar r \label{eq:rendmin}\\
+& \sum_{i \in I} x_i = 1, \qquad \ell_i \le x_i \le u_i \;\;\forall i \in I \label{eq:budget6}
+\end{align}
+Formulazioni equivalenti: $\max\, \sum_{i \in I} \mu_i x_i - \lambda \sum_{i \in I}\sum_{j \in I} q_{ij} x_i x_j$
+(media-varianza) e $\max\, \sum_{i \in I} \mu_i x_i$ con varianza $\le \bar\sigma^2$
+(massimo rendimento a rischio limitato).
+Variando $\bar r$ (o $\lambda$, o $\bar\sigma$) si percorre la stessa frontiera.
+\end{modello}
+
+\begin{spiegazione}
+\textbf{Obiettivo.} $\sum_{i \in I}\sum_{j \in I} q_{ij}\, x_i x_j$ è la varianza del rendimento
+di portafoglio: contiene le covarianze, ed è qui che nasce la diversificazione ---
+combinare titoli poco correlati abbassa il rischio complessivo sotto quello di ciascun
+componente.
+
+\textbf{Vincolo \eqref{eq:rendmin} (rendimento minimo).} Impone che il rendimento
+atteso del portafoglio raggiunga la soglia $\bar r$: è la ``manopola'' con cui si
+percorre la frontiera efficiente, e il suo moltiplicatore dice quanta varianza costa
+ogni punto di rendimento in più.
+
+\textbf{Vincolo \eqref{eq:budget6} (budget e limiti).} Con $x_i \ge 0$ la vendita allo scoperto è
+vietata; il tetto $u_i$ è un tipico vincolo regolamentare o di mandato.
+
+\textbf{Convessità.} Ogni matrice di covarianza è semidefinita positiva, quindi il QP
+è convesso e l'ottimo trovato è \emph{globale certificato}.
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Due titoli non correlati]
+Volatilità $\sigma_1 = 20\%$, $\sigma_2 = 30\%$, correlazione nulla. Minimizzare la
+varianza con $x_1 + x_2 = 1$ (senza vincolo di rendimento).
+
+\textbf{Passo 1.} Sostituendo $x_2 = 1 - x_1$:
+$f(x_1) = 0{,}04\,x_1^2 + 0{,}09\,(1 - x_1)^2$.
+
+\textbf{Passo 2.} $f'(x_1) = 0{,}08\,x_1 - 0{,}18\,(1 - x_1) = 0
+\;\Rightarrow\; x_1 = \dfrac{0{,}09}{0{,}04 + 0{,}09} = \dfrac{9}{13} \approx 69{,}2\%$.
+
+\textbf{Passo 3.} Varianza del portafoglio:
+$f(9/13) = 0{,}04 \cdot 0{,}479 + 0{,}09 \cdot 0{,}095 = 0{,}0277$, cioè volatilità
+$16{,}6\%$: \textbf{meno rischioso di entrambi i titoli}. È l'effetto diversificazione
+nella sua forma più pura: i pesi ottimi sono inversamente proporzionali alle varianze.
+\end{esempio}
+
+\section{Caso di studio}
+
+Otto ETF settoriali (\emph{Exchange Traded Fund}: fondi quotati che replicano un
+paniere di titoli di un settore), 60 rendimenti mensili simulati con un modello a un fattore di
+mercato (file \texttt{dati/markowitz\_rendimenti.csv}); $\boldsymbol\mu$ e $\mat Q$ sono \emph{stimati}
+da questi dati, come nella pratica. Statistiche annualizzate:
+
+\begin{lstlisting}[style=output]
+ENE: mu = 19,12%  vol = 18,65%      SAN: mu =  2,80%  vol = 11,93%
+FIN: mu =  8,27%  vol = 19,59%      CON: mu = 11,25%  vol = 11,67%
+TEC: mu =  1,58%  vol = 29,27%      UTL: mu = 11,99%  vol =  7,53%
+IND: mu =  9,97%  vol = 16,60%      MAT: mu = 20,93%  vol = 23,93%
+\end{lstlisting}
+
+\begin{lstlisting}[style=python]
+m = gp.Model("markowitz")
+x = m.addVars(n, ub=u, name="x")          # quote, 0 <= x_i <= u
+m.addConstr(x.sum() == 1, name="budget")
+m.addConstr(gp.quicksum(mu[i]*x[i] for i in range(n)) >= r_min)
+m.setObjective(gp.quicksum(Q[i, j]*x[i]*x[j]
+                           for i in range(n) for j in range(n)),
+               GRB.MINIMIZE)
+m.optimize()
+\end{lstlisting}
+
+\section{Risultati}
+
+\begin{lstlisting}[style=output]
+Minima varianza globale : rendimento 11,06%, volatilita'  6,03%
+Equipesato (1/n)        : rendimento 10,74%, volatilita' 10,13%
+Composizione min varianza: ENE 5,2%  IND 1,9%  SAN 11,5%  CON 22,3%  UTL 58,3%
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.9\textwidth, height=7.4cm,
+  title={Frontiera efficiente: la diversificazione domina i titoli singoli},
+  xlabel={volatilità annua (\%)}, ylabel={rendimento atteso annuo (\%)}, xmin=4]
+\addplot [teal, very thick] table [col sep=comma, x=vol, y=rend]
+  {\figdat{cap06_front_libera}};
+\addplot [arancio, thick, dashed] table [col sep=comma, x=vol, y=rend]
+  {\figdat{cap06_front_limiti}};
+\addplot [only marks, mark=*, mark size=1.8pt, grigiomedio,
+  point meta=explicit symbolic, nodes near coords,
+  every node near coord/.append style={font=\tiny, anchor=west, color=grigiomedio}]
+  table [col sep=comma, x=vol, y=mu, meta=titolo] {\figdat{cap06_titoli}};
+\addplot [only marks, mark=star, mark size=4pt, rossomattone]
+  table [col sep=comma, x=vol, y=rend, discard if not={nome}{minvar}]
+  {\figdat{cap06_speciali}};
+\addplot [only marks, mark=diamond*, mark size=3pt, viola]
+  table [col sep=comma, x=vol, y=rend, discard if not={nome}{equipesato}]
+  {\figdat{cap06_speciali}};
+\legend{frontiera senza limiti, frontiera con $u_i = 30\%$, titoli singoli,
+        minima varianza, equipesato $1/n$}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Piano rischio-rendimento: gli otto titoli (punti grigi), la
+frontiera efficiente senza limiti (linea teal), la frontiera con tetto del 30\% per
+titolo (tratteggiata arancione), il portafoglio di minima varianza (stella rossa) e
+l'equipesato $1/n$ (rombo viola), che risulta dominato.}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, width=0.9\textwidth, height=6.4cm, stack plots=y, grid=none,
+  area legend,
+  title={Composizione ottima lungo la frontiera},
+  xlabel={rendimento richiesto $\bar r$ (\%)}, ylabel={quota (\%)},
+  legend columns=8, legend style={at={(0.5,-0.28)}, anchor=north},
+  ymin=0, ymax=100, enlargelimits=false]
+\addplot [fill=teal!80, draw=none] table [col sep=comma, x=rend, y=ENE]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=rossomattone!75, draw=none] table [col sep=comma, x=rend, y=FIN]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=verde!75, draw=none] table [col sep=comma, x=rend, y=TEC]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=arancio!80, draw=none] table [col sep=comma, x=rend, y=IND]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=blunotte!75, draw=none] table [col sep=comma, x=rend, y=SAN]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=grigiomedio!70, draw=none] table [col sep=comma, x=rend, y=CON]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=viola!70, draw=none] table [col sep=comma, x=rend, y=UTL]
+  {\figdat{cap06_composizione}} \closedcycle;
+\addplot [fill=ocra!75, draw=none] table [col sep=comma, x=rend, y=MAT]
+  {\figdat{cap06_composizione}} \closedcycle;
+\legend{ENE, FIN, TEC, IND, SAN, CON, UTL, MAT}
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Composizione del portafoglio ottimo (aree impilate, in \%) al
+crescere del rendimento richiesto $\bar r$: a sinistra domina il mix difensivo
+(UTL, CON, SAN), verso destra il portafoglio si concentra progressivamente sui
+titoli ad alto rendimento (MAT, ENE) fino al portafoglio monotitolo all'estremo.}
+\end{center}
+
+\begin{insight}
+Tre messaggi dalla figura. (1)~Il portafoglio di minima varianza (volatilità 6\%) è
+molto meno rischioso del miglior titolo singolo (UTL, 7,5\%) pur rendendo l'11\%.
+(2)~L'equipesato $1/n$ --- la strategia ``non so nulla'' --- è nettamente dominato:
+stessa area di rendimento ma quasi il doppio della volatilità.
+(3)~Il tetto $u_i = 30\%$ taglia la parte alta della frontiera: il costo dei vincoli
+di mandato si \emph{vede} come distanza tra le due curve.
+\end{insight}
+
+\section{Analisi di sensitività}
+
+\begin{lstlisting}[style=output]
+r_min =  6%: vol 6,03%   (vincolo NON attivo: coincide col min varianza)
+r_min =  8%: vol 6,03%   (idem)
+r_min = 10%: vol 6,03%   (idem)
+r_min = 12%: vol 6,10%   d(varianza)/d(r_min) ~ 0,0221
+\end{lstlisting}
+
+\begin{spiegazione}[Un vincolo che non costa nulla]
+Fino a $\bar r = 11\%$ il vincolo di rendimento è \emph{inattivo}: il portafoglio di
+minima varianza rende già l'11,06\%, quindi chiedere ``almeno l'8\%'' non costa nulla
+e il moltiplicatore è zero. Solo oltre l'11,06\% il vincolo morde e ogni punto di
+rendimento in più si paga in varianza (moltiplicatore $\approx 0{,}022$ a
+$\bar r = 12\%$). Riconoscere i vincoli inattivi evita di ``pagare'' vincoli gratis.
+\end{spiegazione}
+
+\begin{attenzione}[La fragilità delle stime]
+Nei dati simulati il titolo TEC ha $\alpha$ vero dell'11\% annuo, ma su 60 mesi il
+rendimento \emph{stimato} è 1,6\%: il rumore domina. È la lezione pratica più
+importante di Markowitz: \textbf{le stime dei rendimenti attesi sono molto più
+instabili di quelle delle covarianze}, e i portafogli ottimizzati inseguono gli errori
+di stima. Rimedi usati in pratica: vincoli $u_i$, shrinkage delle stime, oppure
+ottimizzare solo il rischio (minima varianza).
+\end{attenzione}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Verificare a mano l'esempio dei due titoli con $\rho = 0{,}5$: la formula diventa
+$x_1 = (\sigma_2^2 - \rho\sigma_1\sigma_2)/(\sigma_1^2 + \sigma_2^2
+- 2\rho\sigma_1\sigma_2)$. La diversificazione conviene ancora?
+\end{esercizio}
+
+\begin{esercizio}[frontiera]
+Ricalcolare la frontiera con $u_i = 20\%$: quanto rendimento massimo si perde?
+Rappresentare le tre frontiere ($u = 1$, $0{,}3$, $0{,}2$) nello stesso grafico.
+\end{esercizio}
+
+\begin{esercizio}[stabilità delle stime]
+Rieseguire lo script con un seme casuale diverso (\texttt{default\_rng(1)}) e
+confrontare le composizioni ottime a parità di $\bar r$: quanto cambiano? Quale
+implicazione operativa ne traete?
+\end{esercizio}
+
+\begin{esercizio}[tracking error]
+Il benchmark è l'equipesato $x^B_i = 1/8$. Minimizzare il tracking error
+$\sum_{i \in I}\sum_{j \in I} q_{ij} (x_i - x^B_i)(x_j - x^B_j)$ con rendimento atteso $\ge 12\%$: quanto ci si deve scostare dal
+benchmark?
+\end{esercizio}
+
+\begin{esercizio}[costi di transazione]
+Partendo dal portafoglio equipesato, aggiungere il costo quadratico
+$\kappa \sum_{i \in I} (x_i - 1/8)^2$ con $\kappa = 0{,}5$: come cambia la composizione
+rispetto all'ottimo ``pulito''?
+\end{esercizio}

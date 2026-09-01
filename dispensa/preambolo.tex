@@ -1,0 +1,147 @@
+% ============================================================
+% Preambolo comune della dispensa del Laboratorio di RO
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage[a4paper,top=2.6cm,bottom=2.8cm,left=2.6cm,right=2.6cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{etoolbox}
+\usepackage{titlesec}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{shapes.geometric,arrows.meta}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- palette istituzionale della dispensa ----------
+\definecolor{blunotte}{HTML}{16324A}
+\definecolor{teal}{HTML}{0E7490}
+\definecolor{tealchiaro}{HTML}{E3F2F5}
+\definecolor{grigiochiaro}{HTML}{F4F6F7}
+\definecolor{verde}{HTML}{1E8449}
+\definecolor{verdechiaro}{HTML}{EAF7EE}
+\definecolor{giallo}{HTML}{B9770E}
+\definecolor{giallochiaro}{HTML}{FEF9E7}
+\definecolor{rossomattone}{HTML}{C0392B}
+\definecolor{arancio}{HTML}{CA6F1E}
+\definecolor{grigiomedio}{HTML}{7F8C8D}
+\definecolor{viola}{HTML}{8E44AD}
+\definecolor{ocra}{HTML}{B7950B}
+\definecolor{codicebg}{HTML}{FBFCFC}
+
+% ---------- titoli ----------
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{blunotte}}
+  {\filleft\Large Capitolo \thechapter}{1ex}{\titlerule\vspace{1ex}\filright}
+[\vspace{1ex}\titlerule]
+\titleformat{\section}{\Large\bfseries\color{teal}}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\large\bfseries\color{blunotte}}{\thesubsection}{0.8em}{}
+
+% ---------- box didattici ----------
+\newtcolorbox{modello}[1][Modello]{%
+  enhanced, breakable, colback=tealchiaro, colframe=teal,
+  title={#1}, fonttitle=\bfseries, boxrule=0.8pt, arc=1.5mm,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm}
+
+\newtcolorbox{spiegazione}[1][Spiegazione riga per riga]{%
+  enhanced, breakable, colback=grigiochiaro, colframe=gray!60,
+  title={#1}, fonttitle=\bfseries, coltitle=blunotte,
+  boxrule=0.5pt, arc=1.5mm, left=2mm, right=2mm}
+
+\newtcolorbox{esempio}[1][Esempio svolto]{%
+  enhanced, breakable, colback=verdechiaro, colframe=verde,
+  title={#1}, fonttitle=\bfseries, boxrule=0.8pt, arc=1.5mm,
+  left=2mm, right=2mm}
+
+\newtcolorbox{insight}[1][Insight manageriale]{%
+  enhanced, breakable, colback=tealchiaro!50, colframe=teal,
+  borderline west={2.5pt}{0pt}{teal}, sharp corners,
+  title={#1}, fonttitle=\bfseries, boxrule=0pt, frame hidden,
+  left=3mm, right=2mm}
+
+\newtcolorbox{attenzione}[1][Attenzione]{%
+  enhanced, breakable, colback=giallochiaro, colframe=giallo,
+  borderline west={2.5pt}{0pt}{giallo}, sharp corners,
+  title={#1}, fonttitle=\bfseries, boxrule=0pt, frame hidden,
+  left=3mm, right=2mm}
+
+\newcounter{esercizio}[chapter]
+\renewcommand{\theesercizio}{\thechapter.\arabic{esercizio}}
+\newtcolorbox{esercizio}[1][]{%
+  enhanced, breakable, colback=white, colframe=blunotte,
+  boxrule=0.7pt, arc=1.5mm, left=2mm, right=2mm,
+  title={Esercizio \refstepcounter{esercizio}\theesercizio\ifstrempty{#1}{}{ --- #1}},
+  fonttitle=\bfseries}
+
+% ---------- codice Python ----------
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blunotte}\bfseries,
+  stringstyle=\color{verde},
+  commentstyle=\color{gray}\itshape,
+  numbers=left, numberstyle=\tiny\color{gray}, numbersep=7pt,
+  backgroundcolor=\color{codicebg},
+  frame=single, rulecolor=\color{gray!40}, framesep=3pt,
+  breaklines=true, showstringspaces=false,
+  literate={à}{{\`a}}1 {è}{{\`e}}1 {é}{{\'e}}1 {ì}{{\`\i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+           {À}{{\`A}}1 {È}{{\`E}}1 {²}{{$^2$}}1 {≤}{{$\leq$}}1 {≥}{{$\geq$}}1
+           {α}{{$\alpha$}}1 {γ}{{$\gamma$}}1 {λ}{{$\lambda$}}1 {μ}{{$\mu$}}1
+           {σ}{{$\sigma$}}1 {ξ}{{$\xi$}}1 {η}{{$\eta$}}1 {π}{{$\pi$}}1 {τ}{{$\tau$}}1
+           {ν}{{$\nu$}}1 {ε}{{$\varepsilon$}}1 {ρ}{{$\rho$}}1 {→}{{$\to$}}1 {ombra}{{ombra}}5}
+\lstdefinestyle{output}{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{grigiochiaro},
+  frame=single, rulecolor=\color{gray!40},
+  breaklines=true, showstringspaces=false,
+  literate={à}{{\`a}}1 {è}{{\`e}}1 {é}{{\'e}}1 {ì}{{\`\i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1 {€}{{\officialeuro}}1}
+
+% ---------- stile comune delle figure pgfplots ----------
+% Tutte le figure leggono i CSV in figure/dat/ generati dagli script Python:
+% sono quindi completamente modificabili qui in LaTeX (colori, assi, etichette)
+% e si aggiornano da sole rieseguendo python3 ../python/esegui_tutti.py
+\pgfplotsset{
+  lab/.style={
+    width=0.74\textwidth, height=6.0cm, grid=major,
+    grid style={black!10}, axis line style={black!45},
+    tick label style={font=\scriptsize}, label style={font=\small},
+    title style={font=\small\bfseries, color=blunotte, align=center},
+    legend style={font=\scriptsize, draw=none, fill=none,
+      at={(0.5,-0.24)}, anchor=north, /tikz/every even column/.append style={column sep=0.35cm}},
+    legend columns=3,
+    legend cell align=left,
+    cycle list={teal, rossomattone, verde, arancio, blunotte, grigiomedio, viola, ocra},
+  },
+  labmezza/.style={lab, width=0.495\textwidth, height=5.4cm},
+}
+\newcommand{\figdat}[1]{figure/dat/#1.csv}
+% filtro per riga: scarta i punti la cui colonna #1 non vale #2
+\pgfplotsset{
+  discard if not/.style 2 args={
+    x filter/.append code={%
+      \edef\tempa{\thisrow{#1}}\edef\tempb{#2}%
+      \ifx\tempa\tempb\else\def\pgfmathresult{nan}\fi
+    }
+  }
+}
+
+% ---------- comandi matematici ricorrenti ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\var}{\mathrm{VaR}}
+\newcommand{\cvar}{\mathrm{CVaR}}
+\newcommand{\T}{^{\mathsf T}}
+\newcommand{\vet}[1]{\boldsymbol{#1}}     % vettori in grassetto
+\newcommand{\mat}[1]{\boldsymbol{#1}}     % matrici in grassetto
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\usepackage{eurosym}
+

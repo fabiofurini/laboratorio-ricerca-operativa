@@ -1,0 +1,247 @@
+\chapter{Supply chain con congestione e sostenibilità}
+\label{cap:supplychain}
+
+\noindent\textbf{Classe:} LP / NLP convesso \hfill
+\textbf{Script:} \texttt{python/lab05\_supplychain.py}
+
+\section{Motivazione gestionale}
+
+I prodotti attraversano una rete di stabilimenti, hub e mercati. Ogni tratta ha un
+costo, una capacità e un'impronta di CO$_2$; il costo effettivo cresce rapidamente
+quando una tratta si avvicina alla saturazione. Tre domande manageriali:
+come instradare i flussi al minimo costo? cosa cambia se penalizziamo la congestione?
+quanto deve valere la CO$_2$ perché le rotte ``pulite'' diventino convenienti?
+
+
+
+È il problema quotidiano di chi gestisce distribuzione e logistica: scegliere le
+rotte, decidere quanto caricare ciascuna tratta, valutare investimenti in capacità
+e, sempre più spesso, rendere conto dell'impronta carbonica delle spedizioni. La
+struttura matematica --- il flusso su rete --- è tra le più riutilizzabili di tutta
+la ricerca operativa.
+
+\textbf{In questo capitolo impareremo a:} (1) formulare un problema di flusso a
+costo minimo con vincoli di conservazione; (2) modellare la congestione con termini
+quadratici convessi; (3) tracciare una frontiera costo-emissioni con un prezzo
+interno della CO$_2$; (4) capire perché le soluzioni degli LP ``saltano'' tra
+vertici.
+
+\section{Costruzione guidata del modello}
+
+\paragraph{Il problema a parole.} \emph{Decidiamo} quante unità far viaggiare su
+ciascuna tratta della rete. \emph{L'obiettivo} è minimizzare il costo totale di
+trasporto (nelle varianti: più congestione o CO$_2$). \emph{I vincoli} impongono che
+in ogni nodo i flussi tornino --- gli stabilimenti non spediscono più di quanto
+producono, gli hub non trattengono nulla, i mercati ricevono esattamente la loro
+domanda --- e che nessuna tratta superi la propria capacità.
+
+\subsection*{Insiemi e dati (input del modello)}
+\begin{center}\small
+\begin{tabular}{llp{7.4cm}}
+\toprule
+Simbolo & Tipo & Significato \\
+\midrule
+$G=(N,A)$ & grafo diretto & nodi $N$ e archi $A \subseteq N \times N$ \\
+$b_i$ & $\in \R$ & saldo del nodo $i \in N$: offerta se $> 0$, domanda se $< 0$,
+                   transito se $= 0$ \\
+$u_{ij}$ & $\in \R_{> 0}$ & capacità dell'arco $(i,j) \in A$ \\
+$c_{ij}$ & $\in \R_{\ge 0}$ & costo unitario di trasporto sull'arco $(i,j)$ \\
+$e_{ij}$ & $\in \R_{\ge 0}$ & emissioni (kg CO$_2$) per unità trasportata su $(i,j)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Variabili decisionali}
+\begin{center}\small
+\begin{tabular}{llp{7.4cm}}
+\toprule
+$x_{ij}$ & $\ge 0$, continua & flusso inviato sull'arco $(i,j) \in A$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[Flusso a costo minimo e sue varianti]
+\begin{align}
+\min\;& \sum_{(i,j) \in A} c_{ij}\, x_{ij} \notag\\
+\text{s.t.}\;\;
+& \sum_{j:\,(i,j)\in A} x_{ij} \;-\; \sum_{j:\,(j,i)\in A} x_{ji} = b_i && \forall i \in N
+   \label{eq:flusso}\\
+& 0 \le x_{ij} \le u_{ij} && \forall (i,j) \in A \notag
+\end{align}
+Varianti sull'obiettivo (tutte con gli stessi vincoli):
+\[
+\underbrace{\textstyle\sum_{(i,j) \in A} \bigl(c_{ij} x_{ij} + \alpha\, c_{ij} x_{ij}^2 / u_{ij}\bigr)}_{\text{congestione (convessa)}}
+\qquad
+\underbrace{\textstyle\sum_{(i,j) \in A} (c_{ij} + \tau e_{ij})\, x_{ij}}_{\text{prezzo interno CO$_2$}}
+\qquad
+\underbrace{\min z \;:\; x_{ij}/u_{ij} \le z \;\; \forall (i,j) \in A}_{\text{minimax utilizzo}}
+\]
+\end{modello}
+
+\begin{spiegazione}
+\textbf{Funzione obiettivo.} Il costo totale di trasporto $\sum_{(i,j)} c_{ij} x_{ij}$:
+ogni unità che attraversa l'arco $(i,j)$ paga il suo costo unitario. Le varianti
+aggiungono a questo nucleo la congestione o il costo della CO$_2$.
+
+\textbf{Vincolo \eqref{eq:flusso} (conservazione).} In ogni nodo, ciò che esce meno ciò
+che entra è pari al saldo $b_i$: positivo negli stabilimenti (producono), negativo nei
+mercati (assorbono domanda), nullo negli hub (transito puro). La somma dei $b_i$ su tutti i nodi deve
+essere $\ge 0$, altrimenti il problema è inammissibile.
+
+\textbf{Vincolo di capacità ($0 \le x_{ij} \le u_{ij}$).} Nessuna tratta può
+trasportare più della propria capacità; è un semplice bound sulle variabili, e il suo
+``prezzo ombra'' dirà quanto vale potenziare la tratta.
+
+\textbf{Congestione.} Il termine $\alpha\, c_{ij} x_{ij}^2/u_{ij}$ è convesso e cresce
+con l'utilizzo dell'arco: rappresenta straordinari, code ai terminal, premi assicurativi.
+Il suo effetto è \emph{ripartire} i flussi su più rotte invece di saturare la più
+economica.
+
+\textbf{Prezzo della CO$_2$.} Non serve un vincolo sulle emissioni: basta aggiungerle
+al costo con un prezzo interno $\tau$. Variando $\tau$ si traccia l'intera frontiera
+costo-emissioni (approccio ``a peso''; l'alternativa ``a vincolo'' impone
+$\sum_{(i,j) \in A} e_{ij}\, x_{ij} \le \bar e$ e legge il duale).
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Due rotte in concorrenza]
+Un mercato chiede $100$ unità servibili da due rotte: rotta 1 con $c_1 = 2$ \euro{} e
+$u_1 = 80$; rotta 2 con $c_2 = 5$ \euro{} e capacità abbondante.
+
+\textbf{LP puro.} Si riempie la rotta economica e si trabocca sull'altra:
+$x_1 = 80$, $x_2 = 20$, costo $2 \cdot 80 + 5 \cdot 20 = 260$ \euro.
+Prezzo ombra della domanda: servire la 101-esima unità costerebbe $5$ \euro{}
+(la rotta 1 è satura); prezzo ombra della capacità $u_1$: $+1$ unità di capacità fa
+risparmiare $5 - 2 = 3$ \euro.
+
+\textbf{Con congestione} ($\alpha = 1$): costo rotta 1 $= 2x_1 + 2x_1^2/80$. Il costo
+marginale della rotta 1, $2 + 4x_1/80$, va eguagliato a quello della rotta 2
+(altrimenti conviene spostare flusso): $2 + x_1/20 = 5 \Rightarrow x_1 = 60$,
+$x_2 = 40$. La rotta economica \emph{non viene più saturata}: il modello lascia
+margine di sicurezza, proprio come farebbe un pianificatore prudente.
+\end{esempio}
+
+\section{Caso di studio}
+
+Rete con 2 stabilimenti (S1, S2), 2 hub (H1, H2) e 4 mercati (M1--M4); 12 archi con
+capacità, costi ed emissioni \emph{non} proporzionali ai costi: le tratte economiche
+sono ``su strada'' (inquinanti), quelle costose ``su ferro'' (pulite). Dati in
+\texttt{dati/supplychain\_archi.csv}; offerta $(260, 240)$, domanda totale $450$.
+
+\begin{lstlisting}[style=python]
+m = gp.Model("supply_chain")
+x = m.addVars(A, name="x", ub=U)   # ub direttamente sull'arco
+m.addConstrs((x.sum(s, "*") <= offerta[s] for s in offerta))
+m.addConstrs((x.sum("*", h) == x.sum(h, "*") for h in hub))
+v_dom = m.addConstrs((x.sum("*", k) == domanda[k]
+                      for k in domanda), name="domanda")
+obj = gp.quicksum((c[a] + tau * e[a]) * x[a] for a in A)
+if congestione > 0:   # termine quadratico convesso
+    obj += gp.quicksum(congestione * c[a] * x[a] * x[a] / U[a]
+                       for a in A)
+m.setObjective(obj, GRB.MINIMIZE)
+\end{lstlisting}
+
+\section{Risultati}
+
+\begin{lstlisting}[style=output]
+LP costo minimo : costo 3.385,00 EUR  emissioni 2.730 kg  utilizzo max 100%
+  archi saturi: S1->H1, S2->H2, H2->M3
+  prezzi ombra della domanda: M1 8,00  M2 9,50  M3 10,00  M4 10,50 EUR/unita'
+Congestione a=1: costo 3.702,81 EUR  emissioni 2.530 kg  utilizzo max  90%
+Minimax        : utilizzo massimo minimo possibile 58,4%
+\end{lstlisting}
+
+\begin{center}
+\begin{minipage}{\textwidth}
+\centering
+\input{figure/cap05_rete_lp}\\[1.2ex]
+\input{figure/cap05_rete_congestione}
+\captionof{figure}{I flussi ottimi sulla rete (stabilimenti S verdi, hub H arancioni,
+mercati M teal; lo spessore degli archi è proporzionale al flusso, il rosso indica un
+arco saturo, il numero è il flusso in unità). Sopra: LP a costo minimo, che satura
+tre archi. Sotto: modello con congestione quadratica, che ripartisce i flussi su più
+rotte e non satura alcun arco.}
+\end{minipage}
+\end{center}
+
+\begin{insight}
+I prezzi ombra della domanda ($8$--$10{,}50$ \euro/unità) sono i \emph{costi marginali
+di servizio} dei quattro mercati: è il numero da confrontare con il margine commerciale
+prima di accettare nuovi ordini, e la base corretta per un prezzo di trasferimento
+interno. M4 è il mercato più caro da servire: +31\% rispetto a M1.
+\end{insight}
+
+\section{Analisi di sensitività: il prezzo della CO$_2$}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[lab, title={Frontiera costo-emissioni al crescere di $\tau$},
+  xlabel={emissioni totali (kg CO$_2$)}, ylabel={costo di trasporto (\euro)}]
+\addplot+ [mark=*, mark size=1.6pt, nodes near coords={},] table
+  [col sep=comma, x=emissioni, y=costo] {\figdat{cap05_frontiera_co2}};
+\node [font=\scriptsize, anchor=south east] at (axis cs:2730,3385) {$\tau \le 1$};
+\node [font=\scriptsize, anchor=west] at (axis cs:1680,4745) {$\tau \ge 4$};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{Frontiera costo-emissioni: ogni punto è la soluzione ottima per un
+prezzo interno della CO$_2$ ($\tau$); in basso a destra l'assetto ``su strada''
+(economico, 2730 kg), in alto a sinistra l'assetto ``su ferro'' (caro, 1645 kg). La
+frontiera procede per salti tra vertici dell'LP.}
+\end{center}
+
+\begin{lstlisting}[style=output]
+tau = 0.0 ... 1.0 : costo 3385  emissioni 2730   (rotte su strada)
+tau = 1.24        : costo 4025  emissioni 2173   (vertice intermedio)
+tau = 1.26        : costo 4265  emissioni 1981
+tau = 1.5         : costo 4705  emissioni 1661   (assetto "ferro")
+tau = 4.0 e oltre : costo 4745  emissioni 1645   (stabile)
+\end{lstlisting}
+
+\begin{spiegazione}[Perché la frontiera procede a salti]
+Le soluzioni di un LP stanno nei \emph{vertici} del poliedro ammissibile: al crescere
+di $\tau$ l'ottimo resta fermo su un vertice, poi \emph{salta} al successivo. Una
+bisezione sul modello mostra che fino a $\tau = 1$ non cambia nulla, che tra
+$\tau = 1{,}0$ e $\tau = 1{,}5$ la rete attraversa vertici intermedi
+(a $\tau = 1{,}24$: 2173 kg) e che il salto principale avviene esattamente a
+$\tau = 1{,}25$ \euro/kg. Managerialmente: un prezzo interno della CO$_2$ sotto la
+soglia non cambia le rotte; appena sopra, ristruttura la rete in blocco. Il modello
+con congestione, strettamente convesso, si sposterebbe invece con continuità.
+\end{spiegazione}
+
+\begin{attenzione}
+Il minimax ``puro'' ($\min z$) è degenere: qualunque instradamento con utilizzo
+$\le z^*$ è ottimo, anche costosissimo. In pratica si usa sempre una combinazione
+(costo $+ \rho \cdot z$) o si vincola $z$ e si minimizza il costo --- lo stesso
+accorgimento riappare per il peak shaving nel capitolo~\ref{cap:ricaricaev}.
+\end{attenzione}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Verificare per perturbazione il prezzo ombra della domanda di M4 (portarla a 101) e
+quello della capacità dell'arco H2$\to$M3.
+\end{esercizio}
+
+\begin{esercizio}[guasto di un hub]
+Ridurre del 50\% le capacità degli archi entranti e uscenti da H2: quanto costa il
+guasto? quali mercati soffrono di più? (Confrontare i prezzi ombra prima/dopo.)
+\end{esercizio}
+
+\begin{esercizio}[soglia del ferro]
+Riprodurre con una bisezione su $\tau$ la soglia $\tau = 1{,}25$ \euro/kg trovata nel
+testo, ed elencare quali archi cambiano flusso attraversandola. Confrontare la soglia
+con il prezzo ETS corrente della CO$_2$.
+\end{esercizio}
+
+\begin{esercizio}[vincolo sulle emissioni]
+Riformulare con vincolo $\sum_{(i,j) \in A} e_{ij}\, x_{ij} \le \bar e$ per $\bar e = 2000$ kg e verificare che
+il duale del vincolo coincide con il $\tau$ ``a peso'' che produce le stesse emissioni.
+\end{esercizio}
+
+\begin{esercizio}[barriera]
+Sostituire il termine di congestione con la barriera
+$\alpha\, x_{ij}/(u_{ij} - x_{ij})$ e confrontare: quale formulazione tiene i flussi
+più lontani dalla saturazione?
+\end{esercizio}

@@ -1,0 +1,64 @@
+\documentclass[11pt,a4paper,oneside]{book}
+\input{preambolo}
+
+\title{Laboratorio di Ricerca Operativa}
+\author{Fabio Furini}
+
+\begin{document}
+
+% ================= FRONTESPIZIO =================
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  {\color{blunotte}\rule{\textwidth}{2pt}}\\[1.2cm]
+  {\Huge\bfseries\color{blunotte} Laboratorio di\\[0.3cm] Ricerca Operativa\par}
+  \vspace{0.9cm}
+  {\Large\color{teal} Modelli continui di ottimizzazione\\per l'Ingegneria Gestionale\par}
+  \vspace{0.6cm}
+  {\color{blunotte}\rule{\textwidth}{2pt}}\\[1.4cm]
+  \begin{tcolorbox}[colback=tealchiaro,colframe=teal,width=0.86\textwidth,arc=2mm]
+    \small Dispensa didattica con modelli, esempi numerici svolti, casi di studio,
+    implementazioni complete in Python/Gurobi e analisi di sensitività.
+    Programmazione lineare, quadratica e non lineare; decisioni sotto incertezza
+    (Newsvendor, VaR e CVaR); ottimizzazione per il machine learning (SVM).
+  \end{tcolorbox}
+  \vfill
+  {\large Fabio Furini\par}
+  {\small Sapienza Università di Roma\par}
+  \vspace{0.4cm}
+  {\small Anno accademico 2026--2027\par}
+\end{titlepage}
+
+\tableofcontents
+
+% ================= PARTE I =================
+\part{Strumenti}
+\include{capitoli/cap01_introduzione}
+\include{capitoli/cap02_richiami}
+\include{capitoli/cap03_python_gurobi}
+
+% ================= PARTE II =================
+\part{Modelli deterministici continui}
+\include{capitoli/cap04_produzione}
+\include{capitoli/cap05_supplychain}
+\include{capitoli/cap06_markowitz}
+\include{capitoli/cap07_pricing}
+\include{capitoli/cap08_budget}
+\include{capitoli/cap09_localizzazione}
+\include{capitoli/cap10_ricarica_ev}
+\include{capitoli/cap11_code}
+
+% ================= PARTE III =================
+\part{Decisioni sotto incertezza}
+\include{capitoli/cap12_newsvendor}
+\include{capitoli/cap13_var_cvar}
+
+% ================= PARTE IV =================
+\part{Ottimizzazione e machine learning}
+\include{capitoli/cap14_svm}
+
+% ================= PARTE V =================
+\part{Organizzazione del laboratorio}
+\include{capitoli/cap15_organizzazione}
+
+\end{document}

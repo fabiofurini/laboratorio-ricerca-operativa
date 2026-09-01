@@ -1,0 +1,39 @@
+% Mappa dei quartieri e localizzazioni ottime (generato da lab09_localizzazione.py)
+\begin{tikzpicture}[scale=0.82, >=stealth]
+  \draw[black!20, very thin] (0,0) grid[step=1] (10.5,10);
+  \draw[->, black!50] (0,0) -- (10.8,0) node[below left, font=\scriptsize] {km est};
+  \draw[->, black!50] (0,0) -- (0,10.3) node[below left, rotate=90, font=\scriptsize] {km nord};
+  \fill[teal, opacity=0.45] (1.00,8.50) circle (0.38);
+  \node[font=\tiny, text=black!55, anchor=west] at (1.38,8.50) {Q1};
+  \fill[teal, opacity=0.45] (2.50,6.00) circle (0.47);
+  \node[font=\tiny, text=black!55, anchor=west] at (2.97,6.00) {Q2};
+  \fill[teal, opacity=0.45] (4.00,9.00) circle (0.33);
+  \node[font=\tiny, text=black!55, anchor=west] at (4.33,9.00) {Q3};
+  \fill[teal, opacity=0.45] (5.50,7.50) circle (0.52);
+  \node[font=\tiny, text=black!55, anchor=west] at (6.02,7.50) {Q4};
+  \fill[teal, opacity=0.45] (7.00,8.00) circle (0.43);
+  \node[font=\tiny, text=black!55, anchor=west] at (7.43,8.00) {Q5};
+  \fill[teal, opacity=0.45] (9.00,9.50) circle (0.27);
+  \node[font=\tiny, text=black!55, anchor=west] at (9.27,9.50) {Q6};
+  \fill[teal, opacity=0.45] (1.50,3.00) circle (0.41);
+  \node[font=\tiny, text=black!55, anchor=west] at (1.91,3.00) {Q7};
+  \fill[teal, opacity=0.45] (3.00,1.50) circle (0.31);
+  \node[font=\tiny, text=black!55, anchor=west] at (3.31,1.50) {Q8};
+  \fill[teal, opacity=0.45] (5.00,3.50) circle (0.55);
+  \node[font=\tiny, text=black!55, anchor=west] at (5.55,3.50) {Q9};
+  \fill[teal, opacity=0.45] (6.50,2.00) circle (0.35);
+  \node[font=\tiny, text=black!55, anchor=west] at (6.85,2.00) {Q10};
+  \fill[teal, opacity=0.45] (8.00,4.00) circle (0.44);
+  \node[font=\tiny, text=black!55, anchor=west] at (8.44,4.00) {Q11};
+  \fill[teal, opacity=0.45] (9.50,1.00) circle (0.25);
+  \node[font=\tiny, text=black!55, anchor=west] at (9.75,1.00) {Q12};
+  % traiettoria del compromesso efficienza-equità
+  \draw[black!45, thick, densely dotted] (5.496,5.029) -- (5.449,5.026) -- (5.401,5.024) -- (5.354,5.021) -- (5.308,5.018) -- (5.261,5.015) -- (5.215,5.013) -- (5.169,5.010) -- (5.124,5.007) -- (5.078,5.005) -- (5.048,5.018) -- (5.032,5.048) -- (5.016,5.077) -- (5.000,5.107) -- (4.983,5.136) -- (4.967,5.165) -- (4.951,5.194) -- (4.935,5.223) -- (4.918,5.253) -- (4.902,5.282) -- (4.886,5.310);
+  % vincolo geografico: cerchio della cabina
+  \draw[viola, dashed, thick] (7.0,6.0) circle (2.0);
+  \node[rectangle, fill=viola, minimum size=2.2mm, inner sep=0] at (7.0,6.0) {};
+  \node[star, star points=5, fill=rossomattone, minimum size=3.2mm, inner sep=0pt, label={[font=\scriptsize, text=rossomattone, label distance=2.5mm]190:Weber}] at (4.886,5.310) {};
+  \node[star, star points=5, fill=arancio, minimum size=3.2mm, inner sep=0pt, label={[font=\scriptsize, text=arancio, label distance=2.5mm]-55:minimax}] at (5.496,5.029) {};
+  \node[star, star points=5, fill=verde, minimum size=3.2mm, inner sep=0pt, label={[font=\scriptsize, text=verde, label distance=2.5mm]120:baricentro}] at (4.897,5.397) {};
+  \node[star, star points=5, fill=viola, minimum size=3.2mm, inner sep=0pt, label={[font=\scriptsize, text=viola, label distance=2.5mm]35:Weber vincolato}] at (5.083,5.429) {};
+\end{tikzpicture}

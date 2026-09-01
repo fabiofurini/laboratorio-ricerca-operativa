@@ -1,0 +1,270 @@
+\chapter[VaR e CVaR]{VaR e CVaR: misurare e ottimizzare il rischio}
+\label{cap:varcvar}
+
+\noindent\textbf{Classe:} LP a scenari \hfill
+\textbf{Script:} \texttt{python/lab13\_var\_cvar.py}
+
+\section{Motivazione gestionale}
+
+Molti modelli ottimizzano un valore medio. Scelta semplice, ma che può nascondere
+perdite rare e molto elevate. VaR e CVaR descrivono la \emph{coda} della
+distribuzione delle perdite e trasformano l'avversione al rischio in decisioni
+quantitative. Il VaR risponde a ``qual è una soglia di perdita elevata?'';
+il CVaR risponde anche a ``quanto perdiamo \emph{in media} quando quella soglia viene
+superata?''.
+
+
+
+Dopo le crisi finanziarie, ``quanto perdiamo negli scenari peggiori?'' è diventata
+una domanda regolamentare oltre che gestionale. VaR e CVaR sono il linguaggio
+standard con cui banche, assicurazioni e, sempre più, supply chain manager parlano
+di rischio di coda. La sorpresa didattica è che il CVaR --- concetto
+apparentemente sofisticato --- si ottimizza con un semplice LP.
+
+\textbf{In questo capitolo impareremo a:} (1) definire e calcolare VaR e CVaR;
+(2) usare la formulazione lineare di Rockafellar--Uryasev; (3) costruire portafogli
+e piani logistici protetti dagli scenari peggiori; (4) riconoscere i limiti
+statistici delle stime di coda.
+
+\section{Definizioni e proprietà}
+
+\paragraph{Il problema a parole.} Nei modelli di questo capitolo \emph{decidiamo}
+come prima (quote di portafoglio, quantità, capacità prenotate), ma
+\emph{l'obiettivo} cambia: non minimizzare la perdita \emph{media}, bensì una misura
+della sua \emph{coda} --- quanto si perde negli scenari peggiori. \emph{I vincoli}
+restano quelli del problema sottostante, più i vincoli lineari ausiliari che
+definiscono il CVaR.
+
+Sia $L$ la perdita aleatoria (valori alti $=$ esiti peggiori) e $\alpha \in (0,1)$
+un livello di confidenza (tipicamente $0{,}90$--$0{,}99$).
+
+\begin{modello}[VaR e CVaR]
+\[
+\var_\alpha(L) = \inf\{\eta \in \R : \Prob(L \le \eta) \ge \alpha\}
+\qquad\quad
+\cvar_\alpha(L) = \text{perdita media nella coda peggiore di massa } 1 - \alpha .
+\]
+\end{modello}
+
+\begin{center}\small
+\begin{tabular}{lp{10.2cm}}
+\toprule
+Convessità & il CVaR è convesso nelle decisioni (se $L$ lo è); il VaR in generale no \\
+Subadditività & il CVaR premia la diversificazione; il VaR può violarla \\
+Coda & il VaR non distingue due code con lo stesso quantile ma gravità diversa \\
+Ottimizzazione & il CVaR ammette una formulazione LP a scenari; il VaR no \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{modello}[Formulazione lineare di Rockafellar--Uryasev]
+Con un insieme finito di scenari $S$, ciascuno con probabilità $\pi_s \ge 0$
+($\sum_{s \in S} \pi_s = 1$) e perdita $\ell_s(\vet x)$ lineare nel vettore delle
+decisioni $\vet x$:
+\begin{align}
+\min_{\vet x,\,\eta,\,\vet\xi}\;\; & \eta + \frac{1}{1-\alpha} \sum_{s \in S} \pi_s\, \xi_s \notag\\
+\text{s.t.}\;\; & \xi_s \ge \ell_s(\vet x) - \eta, \qquad \xi_s \ge 0 && \forall s \in S \notag\\
+& \vet x \in X \notag
+\end{align}
+All'ottimo $\eta^*$ è un VaR e il valore obiettivo è il CVaR: si ottengono
+\emph{entrambe} le misure da un solo LP.
+\end{modello}
+
+\begin{spiegazione}
+La variabile $\xi_s = (\ell_s - \eta)^+$ è l'eccesso di perdita oltre la soglia
+candidata $\eta$: solo gli scenari nella coda contribuiscono (stesso trucco delle
+parti positive del Newsvendor). Minimizzare su $\eta$ bilancia due spinte: alzare
+$\eta$ riduce gli eccessi ma sposta in su la soglia; il punto di equilibrio è
+esattamente il quantile $\alpha$. Se $X$ è un poliedro e $\ell_s$ è lineare, tutto il
+modello è un LP.
+\end{spiegazione}
+
+\section{Esempio svolto a mano}
+
+\begin{esempio}[Sei scenari, $\alpha = 0{,}80$]
+Perdite equiprobabili $\{2, 4, 5, 7, 12, 20\}$.
+
+\textbf{VaR.} La cumulata raggiunge $0{,}80$ in corrispondenza della quinta perdita
+ordinata: $\var_{0,80} = 12$.
+
+\textbf{CVaR con la formula.} La coda peggiore ha massa $0{,}20$; lo scenario da 20
+pesa $1/6 = 0{,}167$, e la massa restante $0{,}033$ sta \emph{sul punto} 12:
+\[
+\cvar_{0,80} = 12 + \frac{1}{0{,}20} \cdot \frac{1}{6}\,(20 - 12)
+= 12 + 6{,}67 = 18{,}67 .
+\]
+
+\textbf{Verifica con l'LP} (script): $\eta^* = 12$, $\xi = (0,0,0,0,0,8)$, valore
+$18{,}6667$. La formula tratta correttamente la massa ``a cavallo'' del quantile
+senza selezionare scenari con variabili binarie.
+
+\textbf{Confronto.} Perdita media $8{,}33$; VaR $12$; CVaR $18{,}67$: tre numeri,
+tre storie. La media rassicura, il VaR dà una soglia, il CVaR dice quanto fa male
+quando va male.
+\end{esempio}
+
+\section{Caso di studio 1: portafoglio mean-CVaR contro Markowitz}
+
+Stessi otto titoli del capitolo~\ref{cap:markowitz}, ma 220 scenari mensili generati
+con \emph{code grasse} (fattore di mercato $t$ di Student, gradi di libertà 4):
+il mondo in cui il CVaR mostra il suo valore. Perdita di scenario:
+$\ell_s(\vet x) = -\sum_{i \in I} r_{is}\, x_i$, dove $r_{is}$ è il rendimento del titolo $i$ nello scenario $s$. Minimizziamo $\cvar_{0,90}$ con rendimento atteso
+$\ge 8\%$ annuo.
+
+\begin{lstlisting}[style=python]
+eta = m.addVar(lb=-GRB.INFINITY, name="eta")   # soglia: libera!
+xi  = m.addVars(S, name="xi")
+m.addConstr(x.sum() == 1)
+m.addConstr(gp.quicksum(mu[i]*x[i] for i in range(n)) >= r_min)
+m.addConstrs((xi[s] >= -gp.quicksum(R[s, i]*x[i] for i in range(n))
+              - eta for s in range(S)))
+m.setObjective(eta + gp.quicksum(xi[s] for s in range(S))
+                     / (S * (1 - alpha)), GRB.MINIMIZE)
+\end{lstlisting}
+
+\begin{lstlisting}[style=output]
+            | perdita media | VaR90  | CVaR90   (perdite mensili)
+  mean-CVaR |       -0,0067 | 0,0327 | 0,0489
+  Markowitz |       -0,0067 | 0,0329 | 0,0531
+Composizioni: mean-CVaR: ENE 9,9 FIN 1,9 TEC 10,5 SAN 8,6 UTL 46,5 MAT 22,5
+              Markowitz: ENE 18,4 FIN 6,4 TEC 6,5 SAN 13,6 UTL 40,4 MAT 14,6
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[labmezza, ybar, bar width=2.6pt,
+  title={Distribuzione delle perdite (mean-CVaR)},
+  xlabel={perdita mensile (\%)}, ylabel={scenari}, ymin=0]
+\addplot [fill=teal!70, draw=none, forget plot] table [col sep=comma, x=centro, y=freq]
+  {\figdat{cap13_istogramma}};
+\addplot [verde, dashed, thick] coordinates {(-0.67, 0) (-0.67, 30)};
+\addplot [arancio, dash dot, thick] coordinates {(3.27, 0) (3.27, 30)};
+\addplot [rossomattone, thick] coordinates {(4.89, 0) (4.89, 30)};
+\legend{media, VaR$_{90}$, CVaR$_{90}$}
+\end{axis}
+\end{tikzpicture}%
+\begin{tikzpicture}
+\begin{axis}[labmezza, title={Frontiera rendimento-CVaR},
+  xlabel={CVaR$_{0{,}90}$ perdita mensile (\%)},
+  ylabel={rendimento atteso annuo (\%)}]
+\addplot+ [mark=*, mark size=1.4pt] table [col sep=comma, x=cvar, y=rend]
+  {\figdat{cap13_frontiera}};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{A sinistra: istogramma delle perdite mensili del portafoglio
+mean-CVaR sui 220 scenari, con media (verde), VaR$_{90}$ (arancione) e CVaR$_{90}$
+(rosso): il CVaR è la media della coda a destra del VaR. A destra: frontiera
+rendimento-CVaR ottenuta variando il rendimento minimo richiesto.}
+\end{center}
+
+\begin{insight}
+A parità di rendimento richiesto e di perdita media, il portafoglio mean-CVaR taglia
+la coda: CVaR$_{90}$ del 4,89\% contro 5,31\% di Markowitz ($-8\%$). Lo fa riducendo
+i titoli ad alto beta (ENE dal 18\% al 10\%) a favore di UTL e --- sorpresa --- di una
+quota di TEC che, pur mediocre in media, si muove in controtendenza negli scenari
+peggiori di questo campione. La varianza penalizza simmetricamente sopra e sotto la
+media; il CVaR guarda solo dove fa male.
+\end{insight}
+
+\section{Caso di studio 2: supply chain a due stadi}
+
+Prima di osservare lo scenario si \emph{prenota} capacità dai fornitori; poi, visto
+lo scenario, si decide il ricorso. F1 è economico ma fragile (nel 12\% degli scenari
+la sua disponibilità crolla al 30\%); F2 è caro ma affidabile. Penalità di shortage:
+40~\euro/unità; 400 scenari.
+
+\begin{modello}[Due stadi con CVaR]
+\begin{align*}
+\min\;& (1-\lambda) \Bigl[\text{costo}_1(\vet x) + \textstyle\sum_{s \in S} \pi_s\,
+        \text{costo}_2(\vet f_s, u_s)\Bigr] + \lambda\, \cvar_\alpha(\text{costo totale}) \\
+\text{s.t.}\;\; & f_{as} \le \delta_{as}\, x_a \quad \forall a \in A,\ s \in S
+   \qquad\text{(uso $\le$ capacità prenotata disponibile)} \\
+& \textstyle\sum_{a \in A} f_{as} + u_s \ge d_s \quad \forall s \in S
+   \qquad\text{(domanda servita o shortage)}
+\end{align*}
+Le prenotazioni $x_a$ sono \emph{di primo stadio} (uguali in tutti gli scenari);
+flussi $f_{as}$ e shortage $u_s$ sono \emph{di ricorso}.
+\end{modello}
+
+\begin{spiegazione}
+\textbf{Funzione obiettivo.} Combina il costo medio (prenotazioni più il valore
+atteso di acquisti e penalità) con il CVaR del costo totale, pesati da $\lambda$.
+
+\textbf{Primo vincolo.} Nello scenario $s$ si può usare il fornitore $a$ solo fino
+alla capacità prenotata $x_a$ ridotta dalla disponibilità $\delta_{as} \in (0, 1]$
+(il dato che modella il guasto).
+
+\textbf{Secondo vincolo.} La domanda $d_s$ va coperta con i flussi o, in mancanza,
+conteggiata come shortage $u_s$, che in obiettivo paga la penalità: il modello non è
+mai inammissibile, ``compra'' l'inammissibilità al prezzo della penalità.
+\end{spiegazione}
+
+\begin{lstlisting}[style=output]
+lambda = 0,0: prenoto F1 161,5  F2 134,2 | medio 1.724  CVaR90 2.902 | servizio 98,7%
+lambda = 0,5: prenoto F1  92,7  F2 212,7 | medio 1.803  CVaR90 2.217 | servizio 99,9%
+lambda = 1,0: prenoto F1  68,5  F2 236,9 | medio 1.906  CVaR90 2.139 | servizio 99,0%
+\end{lstlisting}
+
+\begin{insight}
+Il decisore neutrale compra dal fornitore economico e accetta che nel 12\% degli
+scenari lo shortage faccia esplodere i costi (CVaR 2.902). Al crescere di $\lambda$
+la capacità migra verso il fornitore affidabile: $+79$~\euro{} di costo medio
+comprano $-685$~\euro{} di CVaR. Questo è il \emph{costo della resilienza}, ed è
+esattamente il numero che serve in una discussione su rishoring e dual sourcing.
+\end{insight}
+
+\section{Analisi di sensitività}
+
+I parametri da variare, con l'effetto atteso:
+
+\begin{center}\small
+\begin{tabular}{lp{9.4cm}}
+\toprule
+$\alpha$ & più alto $\Rightarrow$ coda più estrema stimata da meno scenari:
+           servono più scenari per stime stabili \\
+$\lambda$ & controlla il compromesso prestazione media / protezione \\
+$\pi_s$ & scenari ripesati o stress test (aggiungere scenari estremi) \\
+$|S|$ & stabilità statistica: ripetere con campioni diversi, come nel
+        capitolo~\ref{cap:newsvendor} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{attenzione}
+Con $\alpha = 0{,}99$ e 220 scenari la coda contiene solo 2--3 scenari: il CVaR
+stimato è quasi rumore. Regola pratica: servono almeno qualche decina di scenari
+\emph{oltre} il quantile. Inoltre con distribuzioni discrete il VaR può non essere
+unico ($\eta^*$ è \emph{un} VaR): confrontare sempre $\eta^*$ con il quantile
+empirico.
+\end{attenzione}
+
+\section{Esercizi}
+
+\begin{esercizio}[verifica]
+Ricalcolare a mano VaR e CVaR dell'esempio a 6 scenari con $\alpha = 0{,}90$ e
+verificare con l'LP. Attenzione: la coda ha massa $0{,}10$ e lo scenario da 20 pesa
+$0{,}167 > 0{,}10$.
+\end{esercizio}
+
+\begin{esercizio}[subadditività]
+Costruire un esempio a scenari con due attività in cui
+$\var(L_1 + L_2) > \var(L_1) + \var(L_2)$ e verificare che il CVaR invece non viola
+la subadditività.
+\end{esercizio}
+
+\begin{esercizio}[frontiera in $\alpha$]
+Per il portafoglio, tracciare il CVaR ottimo per
+$\alpha \in \{0{,}80;\, 0{,}90;\, 0{,}95;\, 0{,}99\}$ a parità di rendimento:
+come cambia la composizione? Quando iniziano le instabilità numeriche?
+\end{esercizio}
+
+\begin{esercizio}[CVaR vincolato]
+Riformulare il portafoglio come $\max \sum_{i \in I} \mu_i x_i$ s.t. $\cvar_{0,90} \le k$: verificare
+che variando $k$ si percorre la stessa frontiera e leggere il duale del vincolo.
+\end{esercizio}
+
+\begin{esercizio}[stress test]
+Aggiungere alla supply chain uno scenario estremo (domanda $+50\%$ e F1 al 10\%) con
+probabilità 1\%: quanto cambia la prenotazione ottima per $\lambda = 0{,}5$?
+E il CVaR?
+\end{esercizio}
