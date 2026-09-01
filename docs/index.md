@@ -137,5 +137,5 @@ latexmk -pdf dispensa/main.tex        # compila la dispensa (~85 pagine)
 ```
 
 Nel [repository](https://github.com/fabiofurini/laboratorio-ricerca-operativa)
-trovi anche le **slide beamer** complete (60 slide), le **soluzioni degli
-esercizi** per i docenti e tutti i **dati** in CSV.
+trovi il sorgente LaTeX della dispensa, tutti gli **script Python** e i **dati**
+in CSV dei casi di studio.

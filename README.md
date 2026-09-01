@@ -14,9 +14,7 @@ completa, codice Python/Gurobi, dati, slide e casi di studio**, tutto riproducib
 | `dispensa/` | dispensa LaTeX (~85 pagine): teoria, esempi svolti a mano, casi di studio, codice, esercizi; figure pgfplots/TikZ che leggono i CSV generati dagli script |
 | `python/` | uno script per capitolo (`lab04`–`lab14`); `esegui_tutti.py` rigenera dati, risultati e figure; `soluzioni_calcoli.py` verifica i numeri delle soluzioni |
 | `dati/` | dati dei casi di studio in CSV (seed fissi) |
-| `slides/it/` | slide beamer complete del corso (60 slide) |
-| `soluzioni/` | soluzioni di tutti gli esercizi (per i docenti) |
-| `docs/` | sito del corso (MkDocs Material, in italiano) |
+| `docs/` | il sito del corso: la versione online della dispensa (MkDocs Material) |
 | `GUIDA_GUROBI.md` | guida autonoma al solver: costruire, risolvere, interpretare |
 
 ## Avvio rapido
@@ -25,7 +23,6 @@ completa, codice Python/Gurobi, dati, slide e casi di studio**, tutto riproducib
 python3 -m pip install gurobipy matplotlib pandas scipy
 python3 python/esegui_tutti.py          # dati + risultati + figure (~15 s)
 latexmk -pdf -cd dispensa/main.tex      # dispensa
-latexmk -pdf -cd slides/it/slides_laboratorio.tex
 ```
 
 La licenza `gurobipy` inclusa nel pacchetto pip (fino a 2000 variabili/vincoli)
@@ -49,3 +46,4 @@ pubblica il sito a ogni push su `main` (attivare Pages → Source: GitHub Action
 
 Materiale didattico di Fabio Furini (Sapienza Università di Roma). Il contenuto è
 pensato per l'insegnamento; per usi diversi contattare l'autore.
+Slide del corso e soluzioni degli esercizi vengono distribuite a lezione.
