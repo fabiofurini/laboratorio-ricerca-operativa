@@ -28,11 +28,17 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
   ripartizione; $C$ della SVM.
 - **Indici**: quando possibile $i$ per le righe (vincoli, osservazioni) e $j$ per
   le colonne (variabili, caratteristiche): $a_{ij}$.
-- **Variabili duali**: si chiamano $\pi_i$, mai $y_i$ (coerente con l'attributo
-  `Pi` di Gurobi); i **costi ridotti** si scrivono $\bar c_j$ (c barrato), mai
-  RC nelle formule. Nelle FORMULE di teoria mai la notazione del solver
-  ($\pi_i = \partial z^*/\partial b_i$, non `Pi` in formula) — gli attributi
-  (`Pi`, `RC`) compaiono solo quando si riporta l'output del solver.
+- **Notazione allineata alle dispense LP di Fabio (cartella 3_LINEAR_PROGRAMMING)**:
+  coppia canonica con PRIMALE = MAX (vincoli ≤, x ≥ 0) e duale = min; forma
+  generale con insiemi DESCRITTIVI M_≤, M_=, M_≥ e N_{≥0}, N_{≷0}, N_{≤0};
+  variabili duali π_i (mai y); costi ridotti c̄_j; scarti s̄_i; BARRA = quantità
+  valutate in una soluzione ammissibile, TILDE = soluzione ottima (x̃, z̃, π̃),
+  MAI l'asterisco; intervalli di validità formali [b_i^min, b_i^max] (termine
+  noto) e [c_j^min, c_j^max] (coefficiente).
+- **Capitolo 2 (richiami) = solo teoria**: NIENTE notazione del solver (Pi, RC,
+  SARHS, SAObj, Gurobi); si scrive «risolvendo si ottiene». Il ponte
+  teoria ↔ attributi (π̃ ↔ Pi, c̄ ↔ RC, s̄ ↔ Slack, intervalli ↔ SARHS/SAObj) sta
+  nel capitolo 3, in una tabella dedicata.
 - **Insiemi per enumerazione**: sempre DUE valori iniziali, i puntini, l'ultimo
   valore: $\{1, 2, \dots, n\}$ — mai $\{1, \dots, n\}$.
 - **Trasposto**: con l'apice, $\vet x'$ (macro `\T`), MAI $^T$ o $^\top$.
