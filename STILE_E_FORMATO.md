@@ -135,9 +135,16 @@ Sequenza obbligatoria:
   coefficienti e termini noti. Le applicazioni concrete arrivano nei capitoli
   successivi. Gli esempi canonici, che coprono tutti i casi che si rivedranno:
   LP 2×2 (max, dualità, prezzi ombra, costi ridotti con la terza variabile);
-  LP "tutti i casi" (min 5x1+8x2−9x3, vincoli ≥/=/≤, variabili ≥0 / libera / ≤0:
-  z* = 620, Pi = (0, 8, −3), RC = (0, 0, −1)); QP (min x1²+2x2², x1+x2 ≥ 6) su
-  cui si calcolano anche le KKT.
+  LP "tutti i casi" (min 5x1+8x2−9x3 con vincoli GENERICI a più variabili
+  x1+x2 ≥ 30, x1+x2−x3 = 100, x1−2x2 ≤ −20 e variabili ≥0 / libera / ≤0:
+  z* = 620, Pi = (0, 6, −1), RC = (0, 0, −3), SAObjUp3 = −6); QP
+  (min x1²+2x2², x1+x2 ≥ 6) su cui si calcolano anche le KKT.
+- **Niente commenti tra parentesi accanto ai vincoli** nei modelli dei richiami;
+  i vincoli su singola variabile che sembrano bound si evitano: meglio vincoli
+  generici a più variabili.
+- **I calcoli e i valori si mostrano come formule centrate** (\[...\]), mai
+  incorporati nel testo; il Passo 1 di ogni esempio elenca TUTTI i valori dati
+  dal solver (x, z*, Pi, RC, range), i passi successivi li verificano.
 - **Pattern espositivo degli esempi**: "i valori li dà il solver, poi si fanno i
   conti per verificare le proprietà" (A'y = c in base, dualità forte, regole dei
   segni, formula dei costi ridotti, perturbazioni). MAI la soluzione

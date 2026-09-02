@@ -410,14 +410,14 @@ intestazione("Cap. 2/3 — LP 'tutti i casi' (620) ed es. 3.4 (log)")
 mt = gp.Model(); mt.Params.OutputFlag = 0
 t1 = mt.addVar(); t2 = mt.addVar(lb=-GRB.INFINITY)
 t3 = mt.addVar(lb=-GRB.INFINITY, ub=0)
-w1 = mt.addConstr(t1 >= 30); w2 = mt.addConstr(t1 + t2 - t3 == 100)
-w3 = mt.addConstr(t1 <= 60)
+w1 = mt.addConstr(t1 + t2 >= 30); w2 = mt.addConstr(t1 + t2 - t3 == 100)
+w3 = mt.addConstr(t1 - 2*t2 <= -20)
 mt.setObjective(5*t1 + 8*t2 - 9*t3, GRB.MINIMIZE)
 mt.optimize()
 print(f"tutti i casi: z* = {mt.ObjVal:.0f}, x = ({t1.X:.0f}, {t2.X:.0f}, {t3.X:.0f}), "
       f"Pi = ({w1.Pi:.0f}, {w2.Pi:.0f}, {w3.Pi:.0f}), "
       f"RC = ({t1.RC:.0f}, {t2.RC:.0f}, {t3.RC:.0f}), SAObjUp(x3) = {t3.SAObjUp:.0f}")
-assert (mt.ObjVal, w1.Pi, w2.Pi, w3.Pi, t3.RC, t3.SAObjUp) == (620., 0., 8., -3., -1., -8.)
+assert (mt.ObjVal, w1.Pi, w2.Pi, w3.Pi, t3.RC, t3.SAObjUp) == (620., 0., 6., -1., -3., -6.)
 
 ml = gp.Model(); ml.Params.OutputFlag = 0; ml.Params.FuncNonlinear = 1
 xl = ml.addVar(ub=10.0); gl = ml.addVar(lb=1.0)

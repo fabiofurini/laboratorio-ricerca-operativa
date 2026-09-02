@@ -325,9 +325,9 @@ m = gp.Model("tutti_i_casi")
 x1 = m.addVar(name="x1")                          # x1 >= 0 (default)
 x2 = m.addVar(lb=-GRB.INFINITY, name="x2")        # x2 libera
 x3 = m.addVar(lb=-GRB.INFINITY, ub=0, name="x3")  # x3 <= 0
-v1 = m.addConstr(x1 >= 30,            name="vincolo1")  # verso >=
-v2 = m.addConstr(x1 + x2 - x3 == 100, name="vincolo2")  # verso  =
-v3 = m.addConstr(x1 <= 60,            name="vincolo3")  # verso <=
+v1 = m.addConstr(x1 + x2 >= 30,        name="vincolo1")  # verso >=
+v2 = m.addConstr(x1 + x2 - x3 == 100,  name="vincolo2")  # verso  =
+v3 = m.addConstr(x1 - 2*x2 <= -20,     name="vincolo3")  # verso <=
 m.setObjective(5*x1 + 8*x2 - 9*x3, GRB.MINIMIZE)
 m.optimize()
 ```
@@ -335,18 +335,19 @@ m.optimize()
 ```
 Status: 2 (OPTIMAL)    ObjVal: 620.0
 x1: X =  60.0  RC =  0.0  SAObj = [-inf, 8.0]
-x2: X =  40.0  RC =  0.0  SAObj = [5.0, 9.0]
-x3: X =   0.0  RC = -1.0  SAObj = [-inf, -8.0]
-vincolo1: Slack = -30.0  Pi =  0.0  SARHS = [-inf, 60.0]
-vincolo2: Slack =   0.0  Pi =  8.0  SARHS = [-inf, inf]
-vincolo3: Slack =   0.0  Pi = -3.0  SARHS = [30.0, inf]
+x2: X =  40.0  RC =  0.0  SAObj = [5.0, 17.0]
+x3: X =   0.0  RC = -3.0  SAObj = [-inf, -6.0]
+vincolo1: Slack = -70.0  Pi =  0.0  SARHS = [-inf, 100.0]
+vincolo2: Slack =   0.0  Pi =  6.0  SARHS = [30.0, inf]
+vincolo3: Slack =   0.0  Pi = -1.0  SARHS = [-200.0, inf]
 ```
 
-Tutti i casi in un colpo solo: vincolo non attivo → `Pi = 0` (vincolo1);
-uguaglianza → duale libera, qui `+8`; `≤` in un minimo → duale `-3 ≤ 0`; due
-variabili in base con `RC = 0`; la variabile `x3` ferma al suo **bound superiore**
-(zero) con `RC = -1` e soglia `SAObjUp = -8`. Verifiche per perturbazione:
-`b_2 = 101 → 628` (+8), `b_3 = 61 → 617` (−3), `x3` forzata a −1 → `621` (+1).
+Tutti i casi in un colpo solo: vincolo non attivo → `Pi = 0` (vincolo1, per
+complementarietà); uguaglianza → duale libera, qui `+6`; `≤` in un minimo → duale
+`-1 ≤ 0`; due variabili in base con `RC = 0`; la variabile `x3` ferma al suo
+**bound superiore** (zero) con `RC = -3` e soglia `SAObjUp = -6`. Verifiche per
+perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzata a
+−1 → `623` (+3).
 
 ### 5.4 Nei modelli non lineari
 

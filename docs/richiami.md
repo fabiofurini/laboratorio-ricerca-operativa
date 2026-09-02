@@ -92,17 +92,24 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \max & 30\,x_1 & + & 50\,x_2 & & & \\
-    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(vincolo 1)}\\
-     & 2\,x_1 & + & x_2 & \le & 80, & \text{(vincolo 2)}\\
+    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \\
+     & 2\,x_1 & + & x_2 & \le & 80, & \\
      & x_1, & & x_2 & \ge & 0. &
     \end{array}
     $$
 
-    Il solver restituisce $x_1 = 30$, $x_2 = 20$ (entrambi i vincoli attivi),
-    $z^* = 1900$, e i duali $y_1 = 14$, $y_2 = 8$. Verifiche delle proprietà:
-    $\boldsymbol A' \boldsymbol y = \boldsymbol c$ sulle variabili in base
-    ($14 + 16 = 30$, $42 + 8 = 50$ ✓) e dualità forte
-    ($90 \cdot 14 + 80 \cdot 8 = 1900 = z^*$ ✓).
+    **I valori li dà il solver**: $\boldsymbol x = (30, 20)$, $z^* = 1900$,
+    $\boldsymbol y =$ `Pi` $= (14, 8)$, `RC` $= (0, 0)$, con range `SARHS`
+    $[40, 240]$ e $[30, 180]$, `SAObj` $[50/3, 100]$ e $[15, 90]$; entrambi i
+    vincoli attivi.
+
+    **Verifiche delle proprietà**, $\boldsymbol A' \boldsymbol y = \boldsymbol c$
+    sulle variabili in base e dualità forte:
+
+    $$
+    14 + 16 = 30 = c_1, \qquad 42 + 8 = 50 = c_2,
+    \qquad 90 \cdot 14 + 80 \cdot 8 = 1900 = z^* . \quad ✓
+    $$
 
     **Costi ridotti**: $\mathrm{RC}_j = c_j - \sum_i a_{ij} y_i$, il coefficiente
     al netto delle risorse consumate valutate ai prezzi ombra. Qui
@@ -132,30 +139,42 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
 
 !!! example "Tutti i casi in un solo LP: tre versi di vincolo, tre segni di variabile"
     $$
-    \begin{array}{r r@{\;}c@{\;}r@{\;}c@{\;}r c r l}
-    \min & 5\,x_1 & + & 8\,x_2 & - & 9\,x_3 & & & \\
-    \text{soggetto a} & x_1 & & & & & \ge & 30, & (M_1)\\
-     & x_1 & + & x_2 & - & x_3 & = & 100, & (M_2)\\
-     & x_1 & & & & & \le & 60, & (M_3)\\
-     & x_1 & & & & & \ge & 0, & \\
-     & & & x_2 & & & \gtreqless & 0, & \\
-     & & & & & x_3 & \le & 0. &
+    \begin{array}{r r@{\;}c@{\;}r@{\;}c@{\;}r c r}
+    \min & 5\,x_1 & + & 8\,x_2 & - & 9\,x_3 & & \\
+    \text{soggetto a} & x_1 & + & x_2 & & & \ge & 30, \\
+     & x_1 & + & x_2 & - & x_3 & = & 100, \\
+     & x_1 & - & 2\,x_2 & & & \le & -20, \\
+     & x_1 & & & & & \ge & 0, \\
+     & & & x_2 & & & \gtreqless & 0, \\
+     & & & & & x_3 & \le & 0.
     \end{array}
     $$
 
     **I valori li dà il solver**: $\boldsymbol x = (60, 40, 0)$, $z^* = 620$,
-    `Pi = (0, 8, -3)`, `RC = (0, 0, -1)`, `SAObjUp(x3) = -8`.
+    `Pi = (0, 6, -1)`, `RC = (0, 0, -3)`, `SAObjUp(x3) = -6`, con range `SARHS`
+    $(-\infty, 100]$, $[30, +\infty)$ e $[-200, +\infty)$.
 
-    **Verifiche a mano, con le regole della dualità**: $y_1 = 0$ (vincolo non
-    attivo: $60 > 30$); $y_2 = 8$ (duale libera: un'unità in più di $b_2$ si copre
-    con $x_2$ al costo 8); $y_3 = -3 \le 0$ come da regola per un $\le$ in un
-    minimo (un'unità in più di $b_3$ sostituisce $x_2$ con $x_1$: $-3$). Dualità
-    forte: $30 \cdot 0 + 100 \cdot 8 + 60 \cdot (-3) = 620 = z^*$ ✓. Costi
-    ridotti: $\mathrm{RC}_1 = 5 - (0 + 8 - 3) = 0$, $\mathrm{RC}_2 = 8 - 8 = 0$
+    **Verifiche a mano, con le regole della dualità**: $y_1 = 0$ per
+    complementarietà (vincolo lasco: $x_1 + x_2 = 100 > 30$); $y_2 = 6$
+    (uguaglianza → duale libera); $y_3 = -1 \le 0$ come da regola per un $\le$
+    in un minimo. Proprietà $\boldsymbol A' \boldsymbol y = \boldsymbol c$
+    sulle variabili in base ($x_2$ libera → uguaglianza) e dualità forte:
+
+    $$
+    0 + 6 - 1 = 5 = c_1, \qquad 0 + 6 - 2 \cdot (-1) = 8 = c_2,
+    \qquad 30 \cdot 0 + 100 \cdot 6 + (-20)(-1) = 620 = z^* . \quad ✓
+    $$
+
+    **Costi ridotti**: $\mathrm{RC}_1 = 5 - 5 = 0$, $\mathrm{RC}_2 = 8 - 8 = 0$
     (in base); $x_3$ è ferma al suo **bound superiore** (zero):
-    $\mathrm{RC}_3 = -9 + 8 = -1$, e si attiverebbe solo con coefficiente
-    $\ge -8$ (= `SAObjUp`). Per perturbazione: $b_2 = 101 → 628$ ($+8$),
-    $b_3 = 61 → 617$ ($-3$), $x_3$ forzata a $-1 → 621$ ($+1$) ✓.
+
+    $$
+    \mathrm{RC}_3 = -9 - (-1) \cdot 6 = -3 ,
+    $$
+
+    e si attiverebbe solo con coefficiente $\ge -6$ (= `SAObjUp`). Per
+    perturbazione: $b_2 = 101 → 626$ ($+6$), $b_3 = -19 → 619$ ($-1$),
+    $x_3$ forzata a $-1 → 623$ ($+3$) ✓.
 
 ## Convessità e programmazione quadratica
 
@@ -170,7 +189,7 @@ il solver può *certificare* l'ottimalità.
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \min & x_1^2 & + & 2\,x_2^2 & & & \\
-    \text{soggetto a} & x_1 & + & x_2 & \ge & 6, & \text{(soglia)}\\
+    \text{soggetto a} & x_1 & + & x_2 & \ge & 6, & \\
      & x_1, & & x_2 & \ge & 0. &
     \end{array}
     $$
