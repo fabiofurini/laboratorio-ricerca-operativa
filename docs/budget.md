@@ -17,7 +17,7 @@ Risposta concava $r_i(x) = a_i \log(1 + k_i x)$ per ogni canale:
 $$
 \max \sum_{i=1}^{n} r_i(x_i)
 \quad\text{soggetto a}\quad \sum_{i=1}^{n} x_i \le b, \qquad x_i \le u_i,
-\qquad x_i \ge 0 \;\;\forall i \in \{1,\dots,n\}.
+\qquad x_i \ge 0, \;\;\forall i \in \{1,\dots,n\}.
 $$
 
 **Condizione KKT all'ottimo:** $r_i'(x_i^*) = \lambda$ per ogni canale interno:

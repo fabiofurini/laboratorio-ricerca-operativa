@@ -43,8 +43,8 @@ costo atteso in q*: 91,43 €   |   ordinando la media: 103,72 €
 
 $$
 \min\; c_o \sum_{s=1}^{k} \pi_s o_s + c_u \sum_{s=1}^{k} \pi_s u_s
-\quad\text{soggetto a}\;\; o_s \ge q - d_s,\;\; u_s \ge d_s - q
-\;\;\forall s \in \{1,\dots,k\},\;\; q \ge 0,\;\; o_s, u_s \ge 0
+\quad\text{soggetto a}\;\; o_s \ge q - d_s,\;\; u_s \ge d_s - q,
+\;\;\forall s \in \{1,\dots,k\};\;\; q \ge 0;\;\; o_s, u_s \ge 0
 $$
 
 Il **trucco delle parti positive**: l'obiettivo schiaccia $o_s$ e $u_s$ sui valori

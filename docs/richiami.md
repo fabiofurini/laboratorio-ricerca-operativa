@@ -24,11 +24,14 @@ ripartizione $F$ e il parametro $C$ della SVM.
 ## Programmazione lineare e dualità
 
 $$
-\text{(P)}\;\; \min \sum_{j=1}^{n} c_j x_j
-\;\;\text{soggetto a}\;\; \sum_{j=1}^{n} a_{kj} x_j \ge b_k \;\;\forall k \in \{1,\dots,m\}, \;\; x_j \ge 0 \;\;\forall j \in \{1,\dots,n\}
-\qquad
-\text{(D)}\;\; \max \sum_{k=1}^{m} b_k y_k
-\;\;\text{soggetto a}\;\; \sum_{k=1}^{m} a_{kj} y_k \le c_j \;\;\forall j \in \{1,\dots,n\}, \;\; y_k \ge 0 \;\;\forall k \in \{1,\dots,m\}
+\begin{aligned}
+\text{(P)} \qquad \min ~ \sum_{j=1}^{n} c_j x_j & & \\
+\text{soggetto a} \quad \sum_{j=1}^{n} a_{kj} x_j &\ge b_k, & \forall k \in \{1,\dots,m\}, \\
+x_j &\ge 0, & \forall j \in \{1,\dots,n\}; \\[1ex]
+\text{(D)} \qquad \max ~ \sum_{k=1}^{m} b_k y_k & & \\
+\text{soggetto a} \quad \sum_{k=1}^{m} a_{kj} y_k &\le c_j, & \forall j \in \{1,\dots,n\}, \\
+y_k &\ge 0, & \forall k \in \{1,\dots,m\}.
+\end{aligned}
 $$
 
 All'ottimo i due valori coincidono (**dualità forte**) e $y_k$ è il **prezzo ombra**
@@ -70,7 +73,7 @@ in un ottimo regolare esistono $\lambda_i \ge 0$, $\nu_j$ con:
 
 $$
 \nabla f + \sum_i \lambda_i \nabla g_i + \sum_j \nu_j \nabla h_j = \boldsymbol 0,
-\qquad \lambda_i\, g_i(\boldsymbol x^*) = 0 \;\; \forall i \in \{1,\dots,m\} .
+\qquad \lambda_i\, g_i(\boldsymbol x^*) = 0, \;\; \forall i \in \{1,\dots,m\} .
 $$
 
 Se il problema è convesso le KKT sono anche sufficienti. I moltiplicatori

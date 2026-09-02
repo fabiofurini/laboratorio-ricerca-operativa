@@ -18,7 +18,7 @@ Quartieri $i \in I$ in $(a_i, b_i) \in \mathbb{R}^2$ con pesi $w_i \ge 0$:
 $$
 \text{Weber:}\ \min \sum_{i=1}^{n} w_i \sqrt{(x - a_i)^2 + (y - b_i)^2}
 \qquad
-\text{Minimax:}\ \min z \ \text{ soggetto a } \ \sqrt{(x - a_i)^2 + (y - b_i)^2} \le z \ \forall i \in \{1,\dots,n\}
+\text{Minimax:}\ \min z \ \text{ soggetto a } \ \sqrt{(x - a_i)^2 + (y - b_i)^2} \le z, \ \forall i \in \{1,\dots,n\}
 $$
 
 $$

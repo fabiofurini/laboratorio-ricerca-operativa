@@ -20,9 +20,9 @@ Variabili continue: $x_{it} \ge 0$ (produzione), $s_{it} \ge 0$ (scorta di fine 
 $$
 \begin{aligned}
 \min\;& \sum_{i=1}^{n}\sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr)\\
-\text{soggetto a}\;\;\;& s_{i,t-1} + x_{it} = d_{it} + s_{it} && \forall i \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\}\\
-& \sum_{i=1}^{n} a_i\, x_{it} \le b_t && \forall t \in \{1,\dots,m\}\\
-& x_{it} \ge 0,\quad s_{it} \ge 0 && \forall i \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\}
+\text{soggetto a}\;\;\;& s_{i,t-1} + x_{it} = d_{it} + s_{it}, && \forall i \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\},\\
+& \sum_{i=1}^{n} a_i\, x_{it} \le b_t, && \forall t \in \{1,\dots,m\},\\
+& x_{it} \ge 0,\quad s_{it} \ge 0, && \forall i \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\}.
 \end{aligned}
 $$
 

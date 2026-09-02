@@ -35,7 +35,7 @@ $$
 \min_{\boldsymbol x,\, \eta,\, \boldsymbol\xi}\;
 \eta + \frac{1}{1 - \alpha} \sum_{s=1}^{k} \pi_s\, \xi_s
 \quad\text{soggetto a}\;\;\;
-\xi_s \ge \ell_s(\boldsymbol x) - \eta \;\;\forall s \in \{1,\dots,k\},
+\xi_s \ge \ell_s(\boldsymbol x) - \eta, \;\;\forall s \in \{1,\dots,k\},
 \qquad \boldsymbol x \in X,\qquad \eta \text{ libera},\qquad \xi_s \ge 0
 $$
 
