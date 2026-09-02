@@ -35,7 +35,14 @@ All'ottimo i due valori coincidono (**dualità forte**) e $y_k$ è il **prezzo o
 della risorsa $k$: di quanto migliora l'ottimo se $b_k$ aumenta di una unità.
 
 !!! example "Esempio 2×2, svolto"
-    $\max 30x_1 + 50x_2$ soggetto a $x_1 + 3x_2 \le 90$ (ore), $2x_1 + x_2 \le 80$ (kg).
+    $$
+    \begin{array}{r r@{\;}c@{\;}r c r l}
+    \max & 30\,x_1 & + & 50\,x_2 & & & \\
+    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(ore)}\\
+     & 2\,x_1 & + & x_2 & \le & 80, & \text{(kg)}\\
+     & x_1, & & x_2 & \ge & 0. &
+    \end{array}
+    $$
 
     Entrambi i vincoli attivi all'ottimo: risolvendo il sistema, $x_2 = 20$,
     $x_1 = 30$, valore $z^* = 1900$ €. I duali risolvono $y_1 + 2y_2 = 30$,

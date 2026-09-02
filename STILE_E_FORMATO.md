@@ -12,7 +12,7 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
 
 - **Scalari e indici**: minuscoli in corsivo ($x_{it}$, $b_t$, $\lambda$, $i$, $t$).
 - **Insiemi di oggetti numerati**: gli oggetti (prodotti, canali, titoli, veicoli,
-  scenari…) si indicano con i **numeri**, mai con lettere (prodotto 1, 2, 3 — NON
+  scenari…) si indicano con i **numeri**, mai con lettere — nemmeno come pedici: $x_1, x_2$, MAI $x_A, x_B$ (prodotto 1, 2, 3 — NON
   A, B, C), e gli indici corrono su insiemi **enumerati esplicitamente**:
   `i \in \{1, 2, \dots, n\}` — così la notazione del testo è già quella del modello.
   Le sommatorie hanno sempre gli estremi espliciti: `\sum_{i=1}^{n}`.
@@ -60,10 +60,24 @@ Sequenza obbligatoria:
      obiettivo: `\min ~~ \sum ... & & \label{obj} \\[1ex]`;
      primo vincolo: `\text{soggetto a} \quad lhs &\le rhs, & ...`;
    - la dicitura è sempre **«soggetto a»** (`\text{soggetto a}`), MAI "s.t.";
-   - **punteggiatura**: virgola alla fine di ogni riga del modello, punto fermo
-     sull'ultima; virgola prima di ogni quantificatore;
+   - **punteggiatura**: virgola SEMPRE dopo il termine noto (RHS) di ogni
+     vincolo, punto fermo sull'ultima riga; virgola prima di ogni quantificatore;
    - etichette uniche per capitolo (es. `eq:p-obj`, `eq:p-cap`);
    - ATTENZIONE all'allineamento delle colonne dell'`align`.
+4bis. **Modelli numerici (di istanza)**: layout a coefficienti staccati, una
+   colonna per variabile, con verso e termine noto incolonnati (stile EX_1),
+   virgola dopo ogni RHS:
+   ```latex
+   \[
+   \begin{array}{r r@{\;}c@{\;}r c r l}
+   \max & 30\,x_1 & + & 50\,x_2 & & & \\
+   \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(ore)}\\
+    & 2\,x_1 & + & x_2 & \le & 80, & \text{(kg)}\\
+    & x_1, & & x_2 & \ge & 0. &
+   \end{array}
+   \]
+   ```
+
 5. **Descrizione puntata** subito dopo il modello (ambiente `spiegazione`):
    - «la funzione obiettivo (lineare/quadratica/…)~\eqref{obj} massimizza/minimizza …;»
    - per ogni famiglia: «i vincoli lineari~\eqref{consX} assicurano che …
