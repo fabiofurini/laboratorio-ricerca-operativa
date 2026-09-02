@@ -24,8 +24,8 @@ cambiano del 5%?
     Come si costruisce un modello, come si fa girare, come si leggono soluzione,
     prezzi ombra e costi ridotti.
 
-    [:octicons-arrow-right-24: Guida al solver](guida-gurobi.md) ·
-    [Richiami di teoria](richiami.md)
+    [:octicons-arrow-right-24: Solver, modelli lineari](solver-lp.md) ·
+    [Teoria LP](teoria-lp.md)
 
 -   :material-factory: **Pianificare la produzione**
 
@@ -99,9 +99,9 @@ cambiano del 5%?
 
 **Strumenti**
 
-1. [Il solver, passo per passo](guida-gurobi.md) — costruire il modello, farlo
+1. [Solver, modelli lineari](solver-lp.md) e [non lineari](solver-non-lineare.md) — costruire il modello, farlo
    girare, recuperare la soluzione, interpretare l'output
-2. [Richiami di teoria](richiami.md) — LP e dualità, prezzi ombra, KKT, protocollo
+2. [Teoria: programmazione lineare](teoria-lp.md) e [ottimizzazione non lineare](teoria-non-lineare.md) — dualità, prezzi ombra, KKT, protocollo
    di sensitività
 
 **Modelli deterministici**

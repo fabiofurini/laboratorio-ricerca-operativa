@@ -1,8 +1,9 @@
-# Guida a Gurobi in Python (`gurobipy`)
+# Implementazione: modelli lineari
 
-Guida autonoma per il Laboratorio di Ricerca Operativa: **come si costruisce un modello, come si
-fa girare, come si recupera la soluzione e come si interpreta l'output**. Tutti gli esempi sono
-copia-incollabili in un terminale Python.
+Come si costruisce un modello lineare con `gurobipy`, come si fa girare, come si
+recupera la soluzione e come si interpreta l'output. Tutti gli esempi sono
+copia-incollabili in un terminale Python. I modelli non lineari sono nella
+[pagina gemella](solver-non-lineare.md).
 
 ---
 
@@ -357,14 +358,7 @@ complementarietà); uguaglianza → duale libera, qui `+6`; `≤` in un minimo �
 perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzata a
 −1 → `623` (+3).
 
-### 5.4 Nei modelli non lineari
-
-Per QP/NLP convessi i moltiplicatori (`Pi` sui vincoli lineari, condizioni KKT in generale)
-hanno la stessa lettura marginale dei prezzi ombra. Verifica numerica consigliata nel
-laboratorio: perturbare il termine noto di ε e ricontrollare che
-`nuovo_ottimo ≈ vecchio_ottimo + Pi·ε`.
-
-### 5.5 Checklist di interpretazione (da usare in ogni esercitazione)
+### 5.4 Checklist di interpretazione (da usare in ogni esercitazione)
 
 1. Lo stato è `OPTIMAL`? Se no, fermarsi e diagnosticare.
 2. Il valore ottimo ha l'ordine di grandezza atteso?
@@ -419,12 +413,3 @@ assert m.Status == GRB.OPTIMAL, f"stato inatteso: {m.Status}"
 # ciclo su un parametro chiave, ri-ottimizzare, salvare figure
 ```
 
-**Un solver solo: anche gli NLP generali si risolvono con Gurobi** (dalla versione 12).
-Funzioni non lineari come vincoli funzionali su variabili ausiliarie — `addGenConstrLog`,
-`addGenConstrExp`, `addGenConstrPow` con `m.Params.FuncNonlinear = 1` — e termini bilineari
-con `m.Params.NonConvex = 2`: l'ottimo resta **globale certificato**. Esempi nel laboratorio:
-budget pubblicitario (`log`), pricing a elasticità costante (`Pow` + bilineare), code M/M/1
-(vincolo bilineare `w·(mu - lam) = 1`), Weber (vincoli conici `dx² + dy² ≤ d²`, un QCP
-convesso). Per le analisi marginali stringere `MIPGap`, `FeasibilityTol` e `OptimalityTol`
-a `1e-9`; riformulare per evitare quantità minuscole (es. `q·p^eps ≤ A` invece di
-`q ≤ A·p^(-eps)`).

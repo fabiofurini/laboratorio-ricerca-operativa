@@ -36,6 +36,12 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
   valori di una soluzione ammissibile (x̄_j, s̄_i), TILDE solo su quelli di una
   soluzione ottima (x̃, z̃, π̃), MAI l'asterisco; intervalli di validità formali [b_i^min, b_i^max] (termine
   noto) e [c_j^min, c_j^max] (coefficiente).
+- **Struttura dei capitoli 2 e 3**: due sottocapitoli (\section) ciascuno —
+  cap. 2: «Teoria della programmazione lineare» e «Teoria dell'ottimizzazione non
+  lineare» (+ protocollo di sensitività); cap. 3: «Implementazione dei modelli
+  lineari» e «Implementazione dei modelli non lineari». Sul sito le pagine sono
+  divise allo stesso modo: teoria-lp, teoria-non-lineare, solver-lp,
+  solver-non-lineare (GUIDA_GUROBI.md resta intera come file autonomo).
 - **Capitolo 2 (richiami) = solo teoria**: NIENTE notazione del solver (Pi, RC,
   SARHS, SAObj, Gurobi); si scrive «risolvendo si ottiene». Il ponte
   teoria ↔ attributi (π̃ ↔ Pi, c̄ ↔ RC, s̄ ↔ Slack, intervalli ↔ SARHS/SAObj) sta

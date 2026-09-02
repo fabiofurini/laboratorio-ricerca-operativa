@@ -59,8 +59,10 @@ extra_javascript:
 nav:
   - Home: index.md
   - Strumenti:
-      - Il solver, passo per passo: guida-gurobi.md
-      - Richiami di teoria: richiami.md
+      - Teoria, programmazione lineare: teoria-lp.md
+      - Teoria, ottimizzazione non lineare: teoria-non-lineare.md
+      - Solver, modelli lineari: solver-lp.md
+      - Solver, modelli non lineari: solver-non-lineare.md
   - Modelli deterministici:
       - Produzione e scorte: produzione.md
       - Supply chain e CO2: supplychain.md
