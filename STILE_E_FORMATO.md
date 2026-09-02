@@ -130,9 +130,20 @@ Sequenza obbligatoria:
   e `SAObjLow/Up` accanto a ogni costo ridotto (per una variabile a zero la
   soglia di convenienza è proprio `SAObjLow` nei problemi di minimo, `SAObjUp`
   nei problemi di massimo).
-- **L'esempio canonico dei richiami**: LP 2×2 dei due prodotti (dualità, prezzi
-  ombra, costi ridotti col prodotto 3) e QP dei due impianti
-  (min x1²+2x2², x1+x2 ≥ 6) su cui si calcolano anche le KKT.
+- **Capitoli 2 (richiami) e 3 (solver): esempi GENERICI.** Niente storie o unità
+  reali (ore, kg, prodotti, impianti, €): solo variabili, vincoli, "risorsa 1",
+  coefficienti e termini noti. Le applicazioni concrete arrivano nei capitoli
+  successivi. Gli esempi canonici, che coprono tutti i casi che si rivedranno:
+  LP 2×2 (max, dualità, prezzi ombra, costi ridotti con la terza variabile);
+  LP "tutti i casi" (min 5x1+8x2−9x3, vincoli ≥/=/≤, variabili ≥0 / libera / ≤0:
+  z* = 620, Pi = (0, 8, −3), RC = (0, 0, −1)); QP (min x1²+2x2², x1+x2 ≥ 6) su
+  cui si calcolano anche le KKT.
+- **Pattern espositivo degli esempi**: "i valori li dà il solver, poi si fanno i
+  conti per verificare le proprietà" (A'y = c in base, dualità forte, regole dei
+  segni, formula dei costi ridotti, perturbazioni). MAI la soluzione
+  grafica/algebrica del primale.
+- **Degenerazione**: ricordare sempre che può esistere una variabile in base a
+  valore zero (RC = 0 non implica che la variabile sia usata).
 
 ### Un solver solo: Gurobi
 

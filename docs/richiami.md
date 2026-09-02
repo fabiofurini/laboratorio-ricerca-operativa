@@ -71,16 +71,19 @@ Per ogni vincolo e variabile il solver fornisce gratis:
 
 - **prezzo ombra** (attributo `Pi`): valore marginale della risorsa;
 - **range di validità** (`SARHSLow/Up`): intervallo del termine noto in cui il prezzo
-  ombra resta esatto (per l'esempio: le ore valgono 14 €/ora finché restano in
-  $[40, 240]$);
+  ombra resta esatto (nell'esempio 2×2: il prezzo ombra 14 vale finché $b_1$ resta
+  in $[40, 240]$);
 - **costo ridotto** (attributo `RC`): per una variabile a zero, quanto deve migliorare il suo
   coefficiente perché convenga attivarla;
 - **range di validità del coefficiente in obiettivo** (`SAObjLow/Up`): l'intervallo
   in cui il coefficiente può variare senza che la base ottima cambi — il "gemello"
-  di `SARHSLow/Up` per i costi ridotti (nell'esempio: il margine del prodotto 1 può
-  variare in $[50/3 \approx 16{,}7,\, 100]$ e quello del prodotto 2 in $[15, 90]$
-  €/unità senza spostare la soluzione; per una variabile a zero `SAObjUp` è la
-  soglia di convenienza).
+  di `SARHSLow/Up` per i costi ridotti (nell'esempio 2×2: $c_1$ può variare in
+  $[50/3 \approx 16{,}7,\, 100]$ e $c_2$ in $[15, 90]$ senza spostare la
+  soluzione; per una variabile a zero `SAObjUp` è la soglia di convenienza).
+
+Attenzione alla **degenerazione**: può esistere una variabile *in base a valore
+zero*, con `RC = 0` pur non essendo usata; vale solo l'implicazione
+`RC ≠ 0` ⇒ variabile su un suo bound.
 
 Un vincolo **non attivo** ha sempre prezzo ombra nullo. Nei problemi di *minimo* un
 vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
@@ -89,34 +92,35 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \max & 30\,x_1 & + & 50\,x_2 & & & \\
-    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(ore)}\\
-     & 2\,x_1 & + & x_2 & \le & 80, & \text{(kg)}\\
+    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(risorsa 1)}\\
+     & 2\,x_1 & + & x_2 & \le & 80, & \text{(risorsa 2)}\\
      & x_1, & & x_2 & \ge & 0. &
     \end{array}
     $$
 
-    Entrambi i vincoli attivi all'ottimo: risolvendo il sistema, $x_2 = 20$,
-    $x_1 = 30$, valore $z^* = 1900$ €. I duali risolvono $y_1 + 2y_2 = 30$,
-    $3y_1 + y_2 = 50$: $y_1 = 14$ (€/ora), $y_2 = 8$ (€/kg). Verifica:
-    $90 \cdot 14 + 80 \cdot 8 = 1900 = z^*$. ✓
+    Il solver restituisce $x_1 = 30$, $x_2 = 20$ (entrambi i vincoli attivi),
+    $z^* = 1900$, e i duali $y_1 = 14$, $y_2 = 8$. Verifiche delle proprietà:
+    $\boldsymbol A' \boldsymbol y = \boldsymbol c$ sulle variabili in base
+    ($14 + 16 = 30$, $42 + 8 = 50$ ✓) e dualità forte
+    ($90 \cdot 14 + 80 \cdot 8 = 1900 = z^*$ ✓).
 
-    **Costi ridotti**: $\mathrm{RC}_j = c_j - \sum_i a_{ij} y_i$, il margine al netto
-    delle risorse consumate valutate ai prezzi ombra. Qui
+    **Costi ridotti**: $\mathrm{RC}_j = c_j - \sum_i a_{ij} y_i$, il coefficiente
+    al netto delle risorse consumate valutate ai prezzi ombra. Qui
     $\mathrm{RC}_1 = 30 - (1 \cdot 14 + 2 \cdot 8) = 0$ e
     $\mathrm{RC}_2 = 50 - (3 \cdot 14 + 1 \cdot 8) = 0$: nulli, come per ogni
     variabile positiva all'ottimo («in base»).
 
-!!! example "Costi ridotti, svolti: conviene un prodotto 3?"
+!!! example "Costi ridotti, svolti: conviene una terza variabile?"
     Nell'esempio 2×2 entrambe le variabili sono positive: i loro costi ridotti sono
-    $0$ (variabili «in base»). Aggiungiamo un **prodotto 3** con margine 20 €/unità
-    che richiede 1 ora e 1 kg.
+    $0$ (variabili «in base»). Aggiungiamo una variabile $x_3 \ge 0$ con
+    coefficiente $c_3 = 20$ e consumi $a_{13} = a_{23} = 1$.
 
     Ai prezzi ombra, le risorse assorbite da un'unità valgono
     $1 \cdot 14 + 1 \cdot 8 = 22 > 20$: non conviene. Il solver conferma: soluzione
-    invariata $(30, 20, 0)$, $z^* = 1900$ €, `x3.RC = -2` e `SAObjUp = 22` — il
-    margine deve salire di almeno 2 € (cioè a 22) perché il prodotto 3 entri in
-    soluzione. Controprova con margine 23 €: il piano ottimo cambia in $(0, 5, 75)$,
-    valore 1975 €.
+    invariata $(30, 20, 0)$, $z^* = 1900$, `x3.RC = -2` e `SAObjUp = 22` — il
+    coefficiente deve salire di almeno 2 (cioè a 22) perché $x_3$ entri in
+    soluzione. Controprova con $c_3 = 23$: la soluzione cambia in $(0, 5, 75)$,
+    valore 1975.
 
     In codice, per ogni variabile a zero (solo LP):
 
@@ -126,6 +130,33 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
             print(v.VarName, v.RC)
     ```
 
+!!! example "Tutti i casi in un solo LP: tre versi di vincolo, tre segni di variabile"
+    $$
+    \begin{array}{r r@{\;}c@{\;}r@{\;}c@{\;}r c r l}
+    \min & 5\,x_1 & + & 8\,x_2 & - & 9\,x_3 & & & \\
+    \text{soggetto a} & x_1 & & & & & \ge & 30, & (M_1)\\
+     & x_1 & + & x_2 & - & x_3 & = & 100, & (M_2)\\
+     & x_1 & & & & & \le & 60, & (M_3)\\
+     & x_1 & & & & & \ge & 0, & \\
+     & & & x_2 & & & \gtreqless & 0, & \\
+     & & & & & x_3 & \le & 0. &
+    \end{array}
+    $$
+
+    **I valori li dà il solver**: $\boldsymbol x = (60, 40, 0)$, $z^* = 620$,
+    `Pi = (0, 8, -3)`, `RC = (0, 0, -1)`, `SAObjUp(x3) = -8`.
+
+    **Verifiche a mano, con le regole della dualità**: $y_1 = 0$ (vincolo non
+    attivo: $60 > 30$); $y_2 = 8$ (duale libera: un'unità in più di $b_2$ si copre
+    con $x_2$ al costo 8); $y_3 = -3 \le 0$ come da regola per un $\le$ in un
+    minimo (un'unità in più di $b_3$ sostituisce $x_2$ con $x_1$: $-3$). Dualità
+    forte: $30 \cdot 0 + 100 \cdot 8 + 60 \cdot (-3) = 620 = z^*$ ✓. Costi
+    ridotti: $\mathrm{RC}_1 = 5 - (0 + 8 - 3) = 0$, $\mathrm{RC}_2 = 8 - 8 = 0$
+    (in base); $x_3$ è ferma al suo **bound superiore** (zero):
+    $\mathrm{RC}_3 = -9 + 8 = -1$, e si attiverebbe solo con coefficiente
+    $\ge -8$ (= `SAObjUp`). Per perturbazione: $b_2 = 101 → 628$ ($+8$),
+    $b_3 = 61 → 617$ ($-3$), $x_3$ forzata a $-1 → 621$ ($+1$) ✓.
+
 ## Convessità e programmazione quadratica
 
 Un **QP** ha obiettivo $\tfrac12 \boldsymbol x' \boldsymbol Q\, \boldsymbol x +
@@ -133,23 +164,23 @@ Un **QP** ha obiettivo $\tfrac12 \boldsymbol x' \boldsymbol Q\, \boldsymbol x +
 $\boldsymbol Q \succeq 0$. In un problema convesso ogni minimo locale è globale:
 il solver può *certificare* l'ottimalità.
 
-!!! example "Un QP svolto: ripartire la produzione tra due impianti"
-    Una domanda di 6 unità va ripartita tra due impianti con costi quadratici
-    (congestione); le variabili $x_1, x_2$ sono le quantità prodotte:
+!!! example "Un QP svolto per intero"
+    Obiettivo quadratico separabile e un vincolo di soglia sulla somma:
 
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \min & x_1^2 & + & 2\,x_2^2 & & & \\
-    \text{soggetto a} & x_1 & + & x_2 & \ge & 6, & \text{(domanda)}\\
+    \text{soggetto a} & x_1 & + & x_2 & \ge & 6, & \text{(soglia)}\\
      & x_1, & & x_2 & \ge & 0. &
     \end{array}
     $$
 
     $\boldsymbol Q = \mathrm{diag}(2, 4) \succ 0$: convesso, ottimo globale.
-    Il vincolo è attivo ($x_1 + x_2 = 6$) e all'ottimo i **costi marginali
-    coincidono**: $2x_1 = 4x_2$ → $x_1 = 4$, $x_2 = 2$, $f^* = 24$. Il prezzo
-    ombra della domanda è il costo marginale comune $\lambda = 8$: con domanda 7
-    il solver dà $f^* = 32{,}67 \approx 24 + 8$ (più il termine di curvatura).
+    **Dal solver**: $x_1 = 4$, $x_2 = 2$, $f^* = 24$, $\lambda = 8$.
+    **Verifica delle proprietà**: vincolo attivo ($4 + 2 = 6$) e derivate parziali
+    coincidenti, $2x_1 = 8 = 4x_2$ (se fossero diverse converrebbe spostare
+    quantità): la derivata comune è proprio $\lambda$. Con termine noto 7 il
+    solver dà $f^* = 32{,}67 \approx 24 + 8$ (più il termine di curvatura).
 
 ## Condizioni KKT (da Karush, Kuhn e Tucker)
 
@@ -166,12 +197,12 @@ generalizzano i prezzi ombra; quando il solver non li fornisce, si stimano **per
 perturbazione** (aumentare il termine noto di $\varepsilon$, ri-ottimizzare,
 rapporto incrementale).
 
-!!! example "Le KKT sul QP dei due impianti"
+!!! example "Le KKT sul QP dell'esempio"
     Sul modello $\min x_1^2 + 2x_2^2$ soggetto a $x_1 + x_2 \ge 6$:
     stazionarietà $2x_1 = \lambda$, $4x_2 = \lambda$; il vincolo dev'essere attivo
     (altrimenti $x_1 = x_2 = 0$ lo viola): $\lambda = 8$, $x_1 = 4$, $x_2 = 2$,
-    $f^* = 24$ — gli stessi numeri dell'esempio QP, ora dalla procedura generale.
-    Lettura: con domanda $6 + \varepsilon$ l'ottimo cresce di
+    $f^* = 24$ — gli stessi numeri dati dal solver, ora dalla procedura generale.
+    Lettura: con termine noto $6 + \varepsilon$ l'ottimo cresce di
     $\approx 8\varepsilon$ (esatto: $f^*(d) = \tfrac{2}{3}d^2$, quindi
     $24 + 8\varepsilon + \tfrac{2}{3}\varepsilon^2$).
 

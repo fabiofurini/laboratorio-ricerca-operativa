@@ -15,7 +15,7 @@ rng = np.random.default_rng(42)
 
 
 # ======================================================================
-intestazione("Cap. 2, es. 2.1 — ore extra a 12 EUR/ora")
+intestazione("Cap. 2, es. 2.1 — aumentare b1 pagando 12 per unita'")
 def lp22(ore=90):
     m = gp.Model(); m.Params.OutputFlag = 0
     x1 = m.addVar(); x2 = m.addVar()
@@ -375,7 +375,7 @@ print(f"VaR90 = 20 (cumulata 5/6 = 0,833 < 0,90); CVaR90 (LP) = {m13.ObjVal:.4f}
       f"(la coda di massa 0,10 sta tutta sul punto 20)")
 
 # ======================================================================
-intestazione("Cap. 2 — costi ridotti sull'esempio 2x2 esteso (prodotto 3)")
+intestazione("Cap. 2 — costi ridotti sull'esempio 2x2 esteso (terza variabile)")
 m2 = gp.Model(); m2.Params.OutputFlag = 0
 x1 = m2.addVar(); x2 = m2.addVar(); x3 = m2.addVar()
 m2.addConstr(x1 + 3*x2 + x3 <= 90); m2.addConstr(2*x1 + x2 + x3 <= 80)
@@ -394,7 +394,7 @@ print(f"controprova margine 23: z* = {m2b.ObjVal:.0f}, "
 assert (m2b.ObjVal, z1.X, z2.X, z3.X) == (1975.0, 0.0, 5.0, 75.0)
 
 # ======================================================================
-intestazione("Cap. 2 — QP dei due impianti (esempio svolto e KKT)")
+intestazione("Cap. 2 — QP dell'esempio (svolto e KKT)")
 for D_qp in [6.0, 7.0]:
     mqp = gp.Model(); mqp.Params.OutputFlag = 0
     q1 = mqp.addVar(); q2 = mqp.addVar()
@@ -404,5 +404,29 @@ for D_qp in [6.0, 7.0]:
     print(f"domanda {D_qp:.0f}: x = ({q1.X:.4f}, {q2.X:.4f}), f* = {mqp.ObjVal:.4f}, "
           f"lambda = {vq.Pi:.4f}")
 assert abs(mqp.ObjVal - 98 / 3) < 1e-6   # f*(7) = 2/3 * 49
+
+# ======================================================================
+intestazione("Cap. 2/3 — LP 'tutti i casi' (620) ed es. 3.4 (log)")
+mt = gp.Model(); mt.Params.OutputFlag = 0
+t1 = mt.addVar(); t2 = mt.addVar(lb=-GRB.INFINITY)
+t3 = mt.addVar(lb=-GRB.INFINITY, ub=0)
+w1 = mt.addConstr(t1 >= 30); w2 = mt.addConstr(t1 + t2 - t3 == 100)
+w3 = mt.addConstr(t1 <= 60)
+mt.setObjective(5*t1 + 8*t2 - 9*t3, GRB.MINIMIZE)
+mt.optimize()
+print(f"tutti i casi: z* = {mt.ObjVal:.0f}, x = ({t1.X:.0f}, {t2.X:.0f}, {t3.X:.0f}), "
+      f"Pi = ({w1.Pi:.0f}, {w2.Pi:.0f}, {w3.Pi:.0f}), "
+      f"RC = ({t1.RC:.0f}, {t2.RC:.0f}, {t3.RC:.0f}), SAObjUp(x3) = {t3.SAObjUp:.0f}")
+assert (mt.ObjVal, w1.Pi, w2.Pi, w3.Pi, t3.RC, t3.SAObjUp) == (620., 0., 8., -3., -1., -8.)
+
+ml = gp.Model(); ml.Params.OutputFlag = 0; ml.Params.FuncNonlinear = 1
+xl = ml.addVar(ub=10.0); gl = ml.addVar(lb=1.0)
+zl = ml.addVar(lb=-GRB.INFINITY)
+ml.addConstr(gl == 1 + xl); ml.addGenConstrLog(gl, zl)
+ml.setObjective(5*zl - xl, GRB.MAXIMIZE)
+ml.optimize()
+print(f"es. 3.4 — max 5 log(1+x) - x: x* = {xl.X:.4f}, f* = {ml.ObjVal:.4f} "
+      f"(analitico: x = 4, f = 5 ln 5 - 4 = {5*np.log(5)-4:.4f})")
+assert abs(xl.X - 4) < 1e-4
 
 print("\nTutti i calcoli delle soluzioni completati.")

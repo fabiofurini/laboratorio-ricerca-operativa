@@ -34,19 +34,15 @@ print(gp.gurobi.version())        # es. (13, 0, 3)
 ## 2. Come si costruisce un modello
 
 Un modello di programmazione matematica in `gurobipy` si costruisce **sempre negli stessi
-cinque passi**. Usiamo come esempio un piccolo problema di produzione:
-
-> Un'azienda produce due prodotti, 1 e 2. Ogni unità del prodotto 1 rende 30 €, ogni unità del prodotto 2 50 €.
-> Il prodotto 1 richiede 1 ora di lavorazione e 2 kg di materia prima; il prodotto 2 richiede 3 ore e 1 kg.
-> Sono disponibili 90 ore e 80 kg. Quanto produrre per massimizzare il ricavo?
-
-Il modello matematico:
+cinque passi**. Usiamo come esempio un piccolo LP generico di massimo, con due
+variabili non negative e due vincoli di risorsa — lo stesso LP 2×2 dei richiami
+(gli esempi con dati reali arrivano nei capitoli applicativi):
 
 ```
-max  30 x_1 + 50 x_2
-s.t.  1 x_1 + 3 x_2 ≤ 90    (ore)
-      2 x_1 + 1 x_2 ≤ 80    (materiale)
-      x_1, x_2 ≥ 0
+max         30 x_1 + 50 x_2
+soggetto a   1 x_1 +  3 x_2 ≤ 90    (risorsa 1)
+             2 x_1 +  1 x_2 ≤ 80    (risorsa 2)
+               x_1,     x_2 ≥ 0
 ```
 
 ### Passo 1 — creare il contenitore del modello
@@ -55,7 +51,7 @@ s.t.  1 x_1 + 3 x_2 ≤ 90    (ore)
 import gurobipy as gp
 from gurobipy import GRB
 
-m = gp.Model("produzione")
+m = gp.Model("lp_2x2")
 ```
 
 `m` è un oggetto vuoto a cui aggiungeremo variabili, vincoli e obiettivo.
@@ -75,9 +71,9 @@ Punti importanti:
 Per **famiglie di variabili indicizzate** (il caso normale nei modelli veri):
 
 ```python
-prodotti = ["1", "2", "3"]
-mesi     = range(6)
-x = m.addVars(prodotti, mesi, name="x")    # crea x["1",0], x["1",1], ...
+I = ["1", "2", "3"]              # indici (es. oggetti numerati)
+T = range(6)                     # indici (es. periodi)
+x = m.addVars(I, T, name="x")    # crea x["1",0], x["1",1], ...
 ```
 
 `addVars` restituisce un dizionario `tupledict`: si accede con `x["1", 3]`.
@@ -85,16 +81,16 @@ x = m.addVars(prodotti, mesi, name="x")    # crea x["1",0], x["1",1], ...
 ### Passo 3 — aggiungere i vincoli
 
 ```python
-v_ore = m.addConstr(1*x1 + 3*x2 <= 90, name="ore")
-v_mat = m.addConstr(2*x1 + 1*x2 <= 80, name="materiale")
+v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="risorsa1")
+v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="risorsa2")
 ```
 
 - si scrive il vincolo **come una disuguaglianza Python** tra espressioni lineari;
-- conservare l'oggetto restituito (`v_ore`) serve dopo, per leggere il **prezzo ombra**;
+- conservare l'oggetto restituito (`v1`) serve dopo, per leggere il **prezzo ombra**;
 - per famiglie di vincoli:
 
 ```python
-m.addConstrs((x.sum(i, "*") <= capacita[i] for i in prodotti), name="cap")
+m.addConstrs((x.sum(i, "*") <= b[i] for i in I), name="cap")
 ```
 
 - le somme si scrivono con `gp.quicksum(...)` oppure con `x.sum(i, "*")`
@@ -117,11 +113,54 @@ m.setObjective(gp.quicksum(q[i,j]*x[i]*x[j] for i in I for j in I), GRB.MINIMIZE
 ### Passo 5 — (facoltativo) controllare quello che abbiamo scritto
 
 ```python
-m.write("produzione.lp")     # scrive il modello in formato leggibile
+m.write("lp_2x2.lp")         # scrive il modello in formato leggibile
 ```
 
 Il file `.lp` mostra esattamente il modello che il solver vede: **è il primo strumento di
 debug** quando l'ottimo "non torna".
+
+
+### L'esempio completo, da cima a fondo
+
+Il ciclo intero — costruzione, risoluzione, lettura di TUTTO quello che il solver
+restituisce — sull'LP 2×2:
+
+```python
+import gurobipy as gp
+from gurobipy import GRB
+
+m = gp.Model("lp_2x2")
+m.Params.OutputFlag = 0
+x1 = m.addVar(name="x1")
+x2 = m.addVar(name="x2")
+v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="risorsa1")
+v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="risorsa2")
+m.setObjective(30*x1 + 50*x2, GRB.MAXIMIZE)
+m.optimize()
+assert m.Status == GRB.OPTIMAL
+
+print(f"Valore ottimo: {m.ObjVal:.1f}")
+for v in m.getVars():
+    print(f"  {v.VarName}: X = {v.X:.1f}   RC = {v.RC:.1f}   "
+          f"SAObj = [{v.SAObjLow:.1f}, {v.SAObjUp:.1f}]")
+for c in m.getConstrs():
+    print(f"  {c.ConstrName}: Slack = {c.Slack:.1f}   Pi = {c.Pi:.1f}   "
+          f"SARHS = [{c.SARHSLow:.1f}, {c.SARHSUp:.1f}]")
+```
+
+Output (verificato):
+
+```
+Valore ottimo: 1900.0
+  x1: X = 30.0   RC = 0.0   SAObj = [16.7, 100.0]
+  x2: X = 20.0   RC = 0.0   SAObj = [15.0, 90.0]
+  risorsa1: Slack = 0.0   Pi = 14.0   SARHS = [40.0, 240.0]
+  risorsa2: Slack = 0.0   Pi = 8.0   SARHS = [30.0, 180.0]
+```
+
+La sezione 5 spiega come leggere ciascuno di questi numeri; l'esempio "tutti i
+casi" (sezione 5.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`.
+
 
 ---
 
@@ -186,8 +225,8 @@ elif m.Status == GRB.UNBOUNDED:
 Per famiglie di variabili:
 
 ```python
-for i in prodotti:
-    for t in mesi:
+for i in I:
+    for t in T:
         if x[i, t].X > 1e-6:              # stampa solo le variabili non nulle
             print(i, t, x[i, t].X)
 ```
@@ -196,8 +235,8 @@ Con **pandas**, per portare la soluzione in un DataFrame:
 
 ```python
 import pandas as pd
-sol = pd.DataFrame([(i, t, x[i, t].X) for i in prodotti for t in mesi],
-                   columns=["prodotto", "mese", "quantita"])
+sol = pd.DataFrame([(i, t, x[i, t].X) for i in I for t in T],
+                   columns=["i", "t", "valore"])
 ```
 
 ---
@@ -218,15 +257,15 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in prodotti for t in mesi],
 
 ### 5.2 Prezzi ombra (`Pi`) — "quanto vale un'unità in più di risorsa?"
 
-Nell'esempio di produzione: all'ottimo `x_1 = 30, x_2 = 20`, ricavo 1900 €, ed entrambi i
-vincoli sono attivi. I duali valgono:
+Nell'LP 2×2: all'ottimo `x_1 = 30, x_2 = 20`, valore 1900, entrambi i vincoli
+attivi. I duali valgono:
 
 ```python
-print(v_ore.Pi)   # 14.0  → un'ora in più di lavorazione vale 14 €
-print(v_mat.Pi)   # 8.0   → un kg in più di materia prima vale 8 €
+print(v1.Pi)   # 14.0  → una unità in più di b_1 vale 14
+print(v2.Pi)   # 8.0   → una unità in più di b_2 vale 8
 ```
 
-Lettura manageriale: se un'ora di straordinario costa meno di 14 €, conviene comprarla.
+Lettura: se procurare una unità in più di b_1 costa meno di 14, conviene.
 **Validità**: solo marginale e solo dentro l'intervallo `SARHSLow ≤ b ≤ SARHSUp`; oltre,
 la base cambia e il prezzo ombra non è più quello.
 
@@ -235,17 +274,19 @@ più non vale nulla.
 
 ### 5.3 Costi ridotti (`RC`) — "perché questa variabile è a zero?"
 
-Le variabili in base (positive all'ottimo) hanno `RC = 0`; per una variabile a zero il
-costo ridotto dice **di quanto deve migliorare il suo coefficiente in obiettivo perché
-convenga attivarla**. Nell'esempio 2×2: un prodotto 3 con margine 20 €/unità che consuma
-1 ora e 1 kg assorbe risorse che ai prezzi ombra valgono 1·14 + 1·8 = 22 € → il solver dà
-`x3.X = 0` e `x3.RC = -2` (e `SAObjUp = 22`): il margine deve salire di almeno 2 €.
-Controprova: con margine 23 € il piano ottimo cambia in (0, 5, 75), valore 1975 €.
+Le variabili in base hanno `RC = 0` (attenzione: può esistere una variabile **in
+base a valore zero** — base *degenere* — quindi `RC = 0` da solo non dice che la
+variabile è usata); per una variabile a zero il costo ridotto dice **di quanto deve
+migliorare il suo coefficiente in obiettivo perché convenga attivarla**.
+Nell'LP 2×2: una terza variabile con coefficiente 20 e consumi 1 e 1 assorbe risorse
+che ai prezzi ombra valgono 1·14 + 1·8 = 22 → il solver dà `x3.X = 0` e
+`x3.RC = -2` (e `SAObjUp = 22`): il coefficiente deve salire di almeno 2.
+Controprova: con coefficiente 23 la soluzione ottima cambia in (0, 5, 75), valore 1975.
 
 Anche il costo ridotto ha il suo range di validità, `SAObjLow/Up`: l'intervallo in cui
 il coefficiente in obiettivo può variare senza che la base ottima cambi (nell'esempio:
-il margine del prodotto 1 può stare in [16,7, 100] € senza spostare la soluzione; per
-una variabile a zero `SAObjUp` è la soglia di convenienza).
+`c_1` può stare in [16,7, 100] senza spostare la soluzione; per una variabile a zero
+`SAObjUp` è la soglia di convenienza).
 
 Il ciclo standard per leggerli (solo LP):
 
@@ -275,6 +316,37 @@ for v in m.getConstrs():
 for v in m.getVars():
     print(v.VarName, v.X, v.RC, v.SAObjLow, v.SAObjUp)
 ```
+
+**L'esempio "tutti i casi"** — tre versi di vincolo e tre segni di variabile nello
+stesso LP, per vedere ogni regola all'opera:
+
+```python
+m = gp.Model("tutti_i_casi")
+x1 = m.addVar(name="x1")                          # x1 >= 0 (default)
+x2 = m.addVar(lb=-GRB.INFINITY, name="x2")        # x2 libera
+x3 = m.addVar(lb=-GRB.INFINITY, ub=0, name="x3")  # x3 <= 0
+v1 = m.addConstr(x1 >= 30,            name="vincolo1")  # verso >=
+v2 = m.addConstr(x1 + x2 - x3 == 100, name="vincolo2")  # verso  =
+v3 = m.addConstr(x1 <= 60,            name="vincolo3")  # verso <=
+m.setObjective(5*x1 + 8*x2 - 9*x3, GRB.MINIMIZE)
+m.optimize()
+```
+
+```
+Status: 2 (OPTIMAL)    ObjVal: 620.0
+x1: X =  60.0  RC =  0.0  SAObj = [-inf, 8.0]
+x2: X =  40.0  RC =  0.0  SAObj = [5.0, 9.0]
+x3: X =   0.0  RC = -1.0  SAObj = [-inf, -8.0]
+vincolo1: Slack = -30.0  Pi =  0.0  SARHS = [-inf, 60.0]
+vincolo2: Slack =   0.0  Pi =  8.0  SARHS = [-inf, inf]
+vincolo3: Slack =   0.0  Pi = -3.0  SARHS = [30.0, inf]
+```
+
+Tutti i casi in un colpo solo: vincolo non attivo → `Pi = 0` (vincolo1);
+uguaglianza → duale libera, qui `+8`; `≤` in un minimo → duale `-3 ≤ 0`; due
+variabili in base con `RC = 0`; la variabile `x3` ferma al suo **bound superiore**
+(zero) con `RC = -1` e soglia `SAObjUp = -8`. Verifiche per perturbazione:
+`b_2 = 101 → 628` (+8), `b_3 = 61 → 617` (−3), `x3` forzata a −1 → `621` (+1).
 
 ### 5.4 Nei modelli non lineari
 
