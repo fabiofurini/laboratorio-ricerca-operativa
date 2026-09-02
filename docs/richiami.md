@@ -69,12 +69,15 @@ capacità ha $y_i \le 0$, un vincolo $\ge$ di domanda ha $y_i \ge 0$.
 
 Per ogni vincolo e variabile il solver fornisce gratis:
 
-- **prezzo ombra** (attributo `Pi`): valore marginale della risorsa;
+- **prezzo ombra** ($y_i$, attributo `Pi`): il valore marginale del termine noto,
+  $y_i = \partial z^* / \partial b_i$;
 - **range di validità** (`SARHSLow/Up`): intervallo del termine noto in cui il prezzo
   ombra resta esatto (nell'esempio 2×2: il prezzo ombra 14 vale finché $b_1$ resta
   in $[40, 240]$);
-- **costo ridotto** (attributo `RC`): per una variabile a zero, quanto deve migliorare il suo
-  coefficiente perché convenga attivarla;
+- **costo ridotto** ($\mathrm{RC}_j$, attributo `RC`): il coefficiente al netto del
+  valore, ai prezzi ombra, delle risorse consumate,
+  $\mathrm{RC}_j = c_j - \sum_{i \in M} a_{ij} y_i$; per una variabile a zero,
+  quanto deve migliorare $c_j$ perché convenga attivarla;
 - **range di validità del coefficiente in obiettivo** (`SAObjLow/Up`): l'intervallo
   in cui il coefficiente può variare senza che la base ottima cambi — il "gemello"
   di `SARHSLow/Up` per i costi ridotti (nell'esempio 2×2: $c_1$ può variare in
