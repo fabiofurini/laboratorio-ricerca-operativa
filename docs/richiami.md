@@ -63,8 +63,28 @@ ogni variabile un vincolo duale:
 | variabile $x_j \le 0$ ($j \in N_{\le 0}$) | vincolo $\le c_j$ |
 
 Le *uguaglianze* del primale danno duali *libere* (e viceversa); per un primale di
-**minimo** la tabella si legge da destra a sinistra. All'ottimo i due valori
-coincidono (**dualità forte**).
+**minimo** la tabella si legge da destra a sinistra.
+
+**Teorema (dualità debole).** Per ogni soluzione ammissibile $(\bar x_1, \dots, \bar x_n)$
+di (P) e ogni soluzione ammissibile $(\bar\pi_1, \dots, \bar\pi_m)$ di (D):
+
+$$
+\sum_{j \in N} c_j \bar x_j \;\le\; \sum_{i \in M} b_i \bar\pi_i .
+$$
+
+**Teorema (dualità forte).** (P) ha una soluzione ottima $(\tilde x_1, \dots, \tilde x_n)$
+**se e solo se** (D) ha una soluzione ottima $(\tilde\pi_1, \dots, \tilde\pi_m)$,
+e in tal caso i valori ottimi coincidono:
+
+$$
+\sum_{j \in N} c_j \tilde x_j \;=\; \sum_{i \in M} b_i \tilde\pi_i .
+$$
+
+La dualità debole dice che ogni soluzione ammissibile del duale è un *limite
+superiore* per il primale di massimo: se due soluzioni ammissibili hanno lo stesso
+valore, sono entrambe ottime. La dualità forte garantisce che all'ottimo il
+divario si chiude sempre (gli ottimi possono essere più d'uno, i valori ottimi
+coincidono).
 
 !!! example "Costruire il duale con le regole: l'LP 2×2"
     L'LP 2×2 è proprio nella forma canonica di massimo (vincoli ≤, variabili non
@@ -131,7 +151,7 @@ coincidono (**dualità forte**).
 
 A ogni vincolo associamo lo *scarto* $\bar s_i$, a ogni variabile il *costo
 ridotto* $\bar c_j$ (lo scarto del vincolo *duale*), valutati in soluzioni
-ammissibili $\bar{\boldsymbol x}$, $\bar{\boldsymbol\pi}$:
+ammissibili $(\bar x_1, \dots, \bar x_n)$, $(\bar\pi_1, \dots, \bar\pi_m)$:
 
 $$
 \bar s_i = \sum_{j \in N} a_{ij} \bar x_j - b_i, \quad \forall i \in M,
@@ -181,9 +201,9 @@ $\le$, la restringe con $\ge$); *una regione più ampia come cambia l'ottimo?*
 Un vincolo **non attivo** ha sempre $\tilde\pi_i = 0$ (complementarietà).
 
 !!! example "Dualità sull'LP 2×2, svolta per intero"
-    **Risolvendo si ottiene**: $\tilde{\boldsymbol x} = (30, 20)$,
-    $\tilde z = 1900$, $\tilde{\boldsymbol\pi} = (14, 8)$,
-    $\bar{\boldsymbol c} = (0, 0)$, con intervalli di validità
+    **Risolvendo si ottiene**: $(\tilde x_1, \tilde x_2) = (30, 20)$,
+    $\tilde z = 1900$, $(\tilde\pi_1, \tilde\pi_2) = (14, 8)$,
+    $(\bar c_1, \bar c_2) = (0, 0)$, con intervalli di validità
     $[b_1^{\min}, b_1^{\max}] = [40, 240]$, $[b_2^{\min}, b_2^{\max}] = [30, 180]$,
     $[c_1^{\min}, c_1^{\max}] = [50/3, 100]$, $[c_2^{\min}, c_2^{\max}] = [15, 90]$;
     entrambi i vincoli attivi.
@@ -197,9 +217,9 @@ Un vincolo **non attivo** ha sempre $\tilde\pi_i = 0$ (complementarietà).
     $$
 
 !!! example "Tutti i casi in un solo LP: verifica delle condizioni"
-    **Risolvendo si ottiene**: $\tilde{\boldsymbol x} = (60, 40, 0)$,
-    $\tilde z = 620$, $\tilde{\boldsymbol\pi} = (0, 6, -1)$,
-    $\bar{\boldsymbol c} = (0, 0, -3)$, con intervalli di validità dei termini
+    **Risolvendo si ottiene**: $(\tilde x_1, \tilde x_2, \tilde x_3) = (60, 40, 0)$,
+    $\tilde z = 620$, $(\tilde\pi_1, \tilde\pi_2, \tilde\pi_3) = (0, 6, -1)$,
+    $(\bar c_1, \bar c_2, \bar c_3) = (0, 0, -3)$, con intervalli di validità dei termini
     noti $(-\infty, 100]$, $[30, +\infty)$, $[-200, +\infty)$ e dei coefficienti
     $(-\infty, 8]$, $[5, 17]$, $(-\infty, -6]$.
 
