@@ -27,7 +27,7 @@ $i \in M = \{1, 2, \dots, m\}$ e $j \in N = \{1, 2, \dots, n\}$. Gli insiemi
 $M_1, M_2, M_3$ ripartiscono $M$ secondo il verso del vincolo ($\ge$, $=$, $\le$);
 gli insiemi $N_1, N_2, N_3$ ripartiscono $N$ secondo il segno della variabile (non
 negative, libere $\gtreqless 0$, non positive). Le *variabili* sono le $x_j$ del primale e, nel duale, una
-$y_i$ per ciascun vincolo del primale.
+$\pi_i$ per ciascun vincolo del primale.
 
 $$
 \begin{aligned}
@@ -38,13 +38,13 @@ $$
 x_j &\ge 0, & \forall j \in N_1, \\
 x_j &\gtreqless 0, & \forall j \in N_2, \\
 x_j &\le 0, & \forall j \in N_3; \\[1ex]
-\text{(D)} \qquad \max ~ \sum_{i \in M} b_i y_i & & \\
-\text{soggetto a} \quad \sum_{i \in M} a_{ij} y_i &\le c_j, & \forall j \in N_1, \\
-\sum_{i \in M} a_{ij} y_i &= c_j, & \forall j \in N_2, \\
-\sum_{i \in M} a_{ij} y_i &\ge c_j, & \forall j \in N_3, \\
-y_i &\ge 0, & \forall i \in M_1, \\
-y_i &\gtreqless 0, & \forall i \in M_2, \\
-y_i &\le 0, & \forall i \in M_3.
+\text{(D)} \qquad \max ~ \sum_{i \in M} b_i \pi_i & & \\
+\text{soggetto a} \quad \sum_{i \in M} a_{ij} \pi_i &\le c_j, & \forall j \in N_1, \\
+\sum_{i \in M} a_{ij} \pi_i &= c_j, & \forall j \in N_2, \\
+\sum_{i \in M} a_{ij} \pi_i &\ge c_j, & \forall j \in N_3, \\
+\pi_i &\ge 0, & \forall i \in M_1, \\
+\pi_i &\gtreqless 0, & \forall i \in M_2, \\
+\pi_i &\le 0, & \forall i \in M_3.
 \end{aligned}
 $$
 
@@ -53,31 +53,31 @@ ogni variabile un vincolo duale:
 
 | Primale (min) | Duale (max) |
 |---|---|
-| vincolo $\ge b_i$ ($i \in M_1$) | variabile $y_i \ge 0$ |
-| vincolo $= b_i$ ($i \in M_2$) | variabile $y_i \gtreqless 0$ |
-| vincolo $\le b_i$ ($i \in M_3$) | variabile $y_i \le 0$ |
+| vincolo $\ge b_i$ ($i \in M_1$) | variabile $\pi_i \ge 0$ |
+| vincolo $= b_i$ ($i \in M_2$) | variabile $\pi_i \gtreqless 0$ |
+| vincolo $\le b_i$ ($i \in M_3$) | variabile $\pi_i \le 0$ |
 | variabile $x_j \ge 0$ ($j \in N_1$) | vincolo $\le c_j$ |
 | variabile $x_j \gtreqless 0$ ($j \in N_2$) | vincolo $= c_j$ |
 | variabile $x_j \le 0$ ($j \in N_3$) | vincolo $\ge c_j$ |
 
-All'ottimo i due valori coincidono (**dualità forte**) e $y_i$ è il **prezzo ombra**
+All'ottimo i due valori coincidono (**dualità forte**) e $\pi_i$ è il **prezzo ombra**
 della risorsa $i$: di quanto migliora l'ottimo se $b_i$ aumenta di una unità. Il
 segno dice il verso in cui la risorsa aiuta: in un minimo, un vincolo $\le$ di
-capacità ha $y_i \le 0$, un vincolo $\ge$ di domanda ha $y_i \ge 0$.
+capacità ha $\pi_i \le 0$, un vincolo $\ge$ di domanda ha $\pi_i \ge 0$.
 
 ## L'analisi di sensitività negli LP
 
 Per ogni vincolo e variabile il solver fornisce gratis:
 
-- **prezzo ombra** $y_i$: il valore marginale del termine noto,
-  $y_i = \partial z^* / \partial b_i$. In Gurobi si legge dall'attributo `Pi`
+- **prezzo ombra** $\pi_i$: il valore marginale del termine noto,
+  $\pi_i = \partial z^* / \partial b_i$. In Gurobi si legge dall'attributo `Pi`
   del vincolo;
 - **range di validità** (`SARHSLow/Up`): intervallo del termine noto in cui il prezzo
   ombra resta esatto (nell'esempio 2×2: il prezzo ombra 14 vale finché $b_1$ resta
   in $[40, 240]$);
-- **costo ridotto** $\mathrm{RC}_j$: il coefficiente al netto del valore, ai
+- **costo ridotto** $\bar c_j$: il coefficiente al netto del valore, ai
   prezzi ombra, delle risorse consumate,
-  $\mathrm{RC}_j = c_j - \sum_{i \in M} a_{ij} y_i$; per una variabile a zero,
+  $\bar c_j = c_j - \sum_{i \in M} a_{ij} \pi_i$; per una variabile a zero,
   quanto deve migliorare $c_j$ perché convenga attivarla. In Gurobi si legge
   dall'attributo `RC` della variabile;
 - **range di validità del coefficiente in obiettivo** (`SAObjLow/Up`): l'intervallo
@@ -90,19 +90,19 @@ Attenzione alla **degenerazione**: può esistere una variabile *in base a valore
 zero*, con `RC = 0` pur non essendo usata; vale solo l'implicazione
 `RC ≠ 0` ⇒ variabile su un suo bound.
 
-**I segni dei prezzi ombra.** Gurobi usa un'unica convenzione:
-$\texttt{Pi}_i = \partial z^* / \partial b_i$, la derivata dell'ottimo rispetto
-al termine noto. Il segno si deduce con due domande: *aumentare $b_i$ allarga o
+**I segni dei prezzi ombra.** Il prezzo ombra è sempre, con un'unica
+convenzione, $\pi_i = \partial z^* / \partial b_i$: la derivata dell'ottimo
+rispetto al termine noto. Il segno si deduce con due domande: *aumentare $b_i$ allarga o
 restringe la regione ammissibile?* (la allarga con $\le$, la restringe con
 $\ge$); *una regione più ampia come cambia l'ottimo?* (non può mai peggiorarlo).
 
 | Verso del vincolo | minimo | massimo |
 |---|---|---|
-| $\le$ ($b_i$ ↑ ⇒ regione più ampia) | `Pi ≤ 0` | `Pi ≥ 0` |
-| $\ge$ ($b_i$ ↑ ⇒ regione più stretta) | `Pi ≥ 0` | `Pi ≤ 0` |
+| $\le$ ($b_i$ ↑ ⇒ regione più ampia) | $\pi_i \le 0$ | $\pi_i \ge 0$ |
+| $\ge$ ($b_i$ ↑ ⇒ regione più stretta) | $\pi_i \ge 0$ | $\pi_i \le 0$ |
 | $=$ | segno qualunque | segno qualunque |
 
-Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
+Un vincolo **non attivo** ha sempre $\pi_i = 0$ (complementarietà).
 
 !!! example "Esempio 2×2, svolto"
     $$
@@ -119,7 +119,7 @@ Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
     $[40, 240]$ e $[30, 180]$, `SAObj` $[50/3, 100]$ e $[15, 90]$; entrambi i
     vincoli attivi.
 
-    **Verifiche delle proprietà**, $\boldsymbol A' \boldsymbol y = \boldsymbol c$
+    **Verifiche delle proprietà**, $\boldsymbol A' \boldsymbol\pi = \boldsymbol c$
     sulle variabili in base e dualità forte:
 
     $$
@@ -127,10 +127,10 @@ Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
     \qquad 90 \cdot 14 + 80 \cdot 8 = 1900 = z^* . \quad ✓
     $$
 
-    **Costi ridotti**: $\mathrm{RC}_j = c_j - \sum_i a_{ij} y_i$, il coefficiente
+    **Costi ridotti**: $\bar c_j = c_j - \sum_i a_{ij} \pi_i$, il coefficiente
     al netto delle risorse consumate valutate ai prezzi ombra. Qui
-    $\mathrm{RC}_1 = 30 - (1 \cdot 14 + 2 \cdot 8) = 0$ e
-    $\mathrm{RC}_2 = 50 - (3 \cdot 14 + 1 \cdot 8) = 0$: nulli, come per ogni
+    $\bar c_1 = 30 - (1 \cdot 14 + 2 \cdot 8) = 0$ e
+    $\bar c_2 = 50 - (3 \cdot 14 + 1 \cdot 8) = 0$: nulli, come per ogni
     variabile positiva all'ottimo («in base»).
 
 !!! example "Costi ridotti, svolti: conviene una terza variabile?"
@@ -171,10 +171,10 @@ Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
     $[30, +\infty)$, $[-200, +\infty)$ e range `SAObj` $(-\infty, 8]$,
     $[5, 17]$, $(-\infty, -6]$.
 
-    **Verifiche a mano, con le regole della dualità**: $y_1 = 0$ per
-    complementarietà (vincolo lasco: $x_1 + x_2 = 100 > 30$); $y_2 = 6$
-    (uguaglianza → duale libera); $y_3 = -1 \le 0$ come da regola per un $\le$
-    in un minimo. Proprietà $\boldsymbol A' \boldsymbol y = \boldsymbol c$
+    **Verifiche a mano, con le regole della dualità**: $\pi_1 = 0$ per
+    complementarietà (vincolo lasco: $x_1 + x_2 = 100 > 30$); $\pi_2 = 6$
+    (uguaglianza → duale libera); $\pi_3 = -1 \le 0$ come da regola per un $\le$
+    in un minimo. Proprietà $\boldsymbol A' \boldsymbol\pi = \boldsymbol c$
     sulle variabili in base ($x_2$ libera → uguaglianza) e dualità forte:
 
     $$
@@ -182,11 +182,11 @@ Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
     \qquad 30 \cdot 0 + 100 \cdot 6 + (-20)(-1) = 620 = z^* . \quad ✓
     $$
 
-    **Costi ridotti**: $\mathrm{RC}_1 = 5 - 5 = 0$, $\mathrm{RC}_2 = 8 - 8 = 0$
+    **Costi ridotti**: $\bar c_1 = 5 - 5 = 0$, $\bar c_2 = 8 - 8 = 0$
     (in base); $x_3$ è ferma al suo **bound superiore** (zero):
 
     $$
-    \mathrm{RC}_3 = -9 - (-1) \cdot 6 = -3 ,
+    \bar c_3 = -9 - (-1) \cdot 6 = -3 ,
     $$
 
     e si attiverebbe solo con coefficiente $\ge -6$ (= `SAObjUp`). Per

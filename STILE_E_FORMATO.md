@@ -27,7 +27,12 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
   ($D$, $L$) con realizzazioni minuscole ($d_s$, $\ell_s$); $F$ = funzione di
   ripartizione; $C$ della SVM.
 - **Indici**: quando possibile $i$ per le righe (vincoli, osservazioni) e $j$ per
-  le colonne (variabili, caratteristiche): $a_{ij}$, $y_i$ duale del vincolo $i$.
+  le colonne (variabili, caratteristiche): $a_{ij}$.
+- **Variabili duali**: si chiamano $\pi_i$, mai $y_i$ (coerente con l'attributo
+  `Pi` di Gurobi); i **costi ridotti** si scrivono $\bar c_j$ (c barrato), mai
+  RC nelle formule. Nelle FORMULE di teoria mai la notazione del solver
+  ($\pi_i = \partial z^*/\partial b_i$, non `Pi` in formula) — gli attributi
+  (`Pi`, `RC`) compaiono solo quando si riporta l'output del solver.
 - **Insiemi per enumerazione**: sempre DUE valori iniziali, i puntini, l'ultimo
   valore: $\{1, 2, \dots, n\}$ — mai $\{1, \dots, n\}$.
 - **Trasposto**: con l'apice, $\vet x'$ (macro `\T`), MAI $^T$ o $^\top$.
