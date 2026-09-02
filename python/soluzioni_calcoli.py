@@ -429,4 +429,44 @@ print(f"es. 3.4 — max 5 log(1+x) - x: x* = {xl.X:.4f}, f* = {ml.ObjVal:.4f} "
       f"(analitico: x = 4, f = 5 ln 5 - 4 = {5*np.log(5)-4:.4f})")
 assert abs(xl.X - 4) < 1e-4
 
+# ======================================================================
+intestazione("Cap. 14 — arbitraggio: es. 14.1-14.3")
+Rarb = 1.04
+s1a = np.array([[Rarb, Rarb, Rarb], [10., 15., 13.], [30., 15., 25.]])
+
+
+def lp_arb(s0, k=1.0):
+    m = gp.Model(); m.Params.OutputFlag = 0; m.Params.DualReductions = 0
+    xx = m.addVars(3, lb=-GRB.INFINITY)
+    cc = m.addConstrs((gp.quicksum(s1a[i, j]*xx[i] for i in range(3)) >= 0
+                       for j in range(3)))
+    m.addConstr(gp.quicksum(s0[i]*xx[i] for i in range(3)) >= -k)
+    m.setObjective(gp.quicksum(s0[i]*xx[i] for i in range(3)), GRB.MINIMIZE)
+    m.optimize(); return m, cc
+
+
+m14, _ = lp_arb([1, 6, 20], k=5)
+print(f"es. 14.1 — normalizzazione a 5: ottimo {m14.ObjVal:.1f}; "
+      f"strategia (-135, 5, 5): costo {-135 + 30 + 100}")
+assert m14.ObjVal == -5.0
+
+m14b, cc = lp_arb([1, 13, 21.538462])
+q14 = [round(Rarb*cc[j].Pi, 2) for j in range(3)]
+m14c, _ = lp_arb([1, 13, 21.60])
+print(f"es. 14.2 — a 21.5385: ottimo {m14b.ObjVal:.4f}, q = {q14}; "
+      f"a 21.60: ottimo {m14c.ObjVal:.1f}")
+assert abs(m14b.ObjVal) < 1e-6 and m14c.ObjVal == -1.0 and q14 == [0.0, 0.26, 0.74]
+
+d14 = gp.Model(); d14.Params.OutputFlag = 0
+pp = d14.addVars(3)
+d14.addConstr(gp.quicksum(Rarb*pp[j] for j in range(3)) == 1)
+d14.addConstr(gp.quicksum(s1a[1, j]*pp[j] for j in range(3)) == 13)
+d14.addConstr(gp.quicksum(s1a[2, j]*pp[j] for j in range(3)) == 18.692308)
+h14 = np.maximum(s1a[2] - 20, 0)
+d14.setObjective(gp.quicksum(h14[j]*pp[j] for j in range(3)), GRB.MINIMIZE)
+d14.optimize()
+print(f"es. 14.3 — call su titolo 2, strike 20: prezzo {d14.ObjVal:.4f} "
+      f"(= 10 q1 / R = {10*0.296/1.04:.4f})")
+assert abs(d14.ObjVal - 2.846154) < 1e-4
+
 print("\nTutti i calcoli delle soluzioni completati.")

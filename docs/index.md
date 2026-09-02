@@ -82,7 +82,8 @@ cambiano del 5%?
     rischio di coda ottimizzato con un LP.
 
     [:octicons-arrow-right-24: Newsvendor](newsvendor.md) ·
-    [VaR e CVaR](var-cvar.md)
+    [VaR e CVaR](var-cvar.md) ·
+    [Arbitraggio](arbitraggio.md)
 
 -   :material-robot: **Dal solver al machine learning**
 
@@ -119,6 +120,7 @@ cambiano del 5%?
 
 11. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
 12. [VaR e CVaR](var-cvar.md) — LP a scenari
+13. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
 
 **Ottimizzazione e machine learning**
 

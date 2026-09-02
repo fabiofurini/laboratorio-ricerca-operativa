@@ -1,4 +1,4 @@
-"""Capitolo 14 — Support Vector Machine come QP convesso (niente sklearn: tutto Gurobi).
+"""Capitolo 15 — Support Vector Machine come QP convesso (niente sklearn: tutto Gurobi).
 
 Caso di studio: rischio di credito. 90 clienti descritti da due indicatori
 standardizzati: x1 = solidità patrimoniale, x2 = puntualità nei pagamenti.

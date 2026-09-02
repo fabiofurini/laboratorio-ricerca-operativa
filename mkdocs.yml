@@ -82,6 +82,7 @@ nav:
   - Decisioni sotto incertezza:
       - Il Newsvendor: newsvendor.md
       - VaR e CVaR: var-cvar.md
+      - Arbitraggio e prezzatura: arbitraggio.md
   - Ottimizzazione e machine learning:
       - Support Vector Machine: svm.md
   - Organizzazione del laboratorio: organizzazione.md

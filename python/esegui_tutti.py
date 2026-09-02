@@ -21,7 +21,8 @@ SCRIPT = [
     "lab11_code.py",
     "lab12_newsvendor.py",
     "lab13_var_cvar.py",
-    "lab14_svm.py",
+    "lab14_arbitraggio.py",
+    "lab15_svm.py",
 ]
 
 base = Path(__file__).resolve().parent
