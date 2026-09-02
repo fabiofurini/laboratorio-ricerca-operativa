@@ -15,8 +15,9 @@ massima risposta totale. *I vincoli*: budget $b$ e tetti $u_i$.
 Risposta concava $r_i(x) = a_i \log(1 + k_i x)$ per ogni canale:
 
 $$
-\max \sum_{i \in I} r_i(x_i)
-\quad\text{s.t.}\quad \sum_{i \in I} x_i \le b, \qquad 0 \le x_i \le u_i .
+\max \sum_{i=1}^{n} r_i(x_i)
+\quad\text{soggetto a}\quad \sum_{i=1}^{n} x_i \le b, \qquad x_i \le u_i,
+\qquad x_i \ge 0 \;\;\forall i \in \{1,\dots,n\}.
 $$
 
 **Condizione KKT all'ottimo:** $r_i'(x_i^*) = \lambda$ per ogni canale interno:
@@ -106,7 +107,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 
 
     def alloca(budget):
-        """max sum a_i log(1+b_i x_i)  s.t.  sum x_i <= budget, 0 <= x_i <= u_i (concavo)."""
+        """max sum a_i log(1+b_i x_i)  soggetto a  sum x_i <= budget, 0 <= x_i <= u_i (concavo)."""
         res = minimize(lambda x: -risposta(x), x0=np.full(4, budget / 4),
                        bounds=[(0, ui) for ui in u],
                        constraints=[{"type": "ineq", "fun": lambda x: budget - x.sum()}],

@@ -16,10 +16,11 @@ Dati: rendimenti attesi $\mu_i$, covarianze $q_{ij}$ (matrice
 $\boldsymbol Q \succeq 0$).
 
 $$
-\min \sum_{i \in I}\sum_{j \in I} q_{ij}\, x_i x_j
-\quad\text{s.t.}\quad
-\sum_{i \in I} \mu_i x_i \ge \bar r,\qquad
-\sum_{i \in I} x_i = 1,\qquad \ell_i \le x_i \le u_i .
+\min \sum_{i=1}^{n}\sum_{j=1}^{n} q_{ij}\, x_i x_j
+\quad\text{soggetto a}\;\quad
+\sum_{i=1}^{n} \mu_i x_i \ge \bar r,\qquad
+\sum_{i=1}^{n} x_i = 1,\qquad x_i \le u_i,\qquad x_i \ge \ell_i
+\;\;\forall i \in \{1,\dots,n\}.
 $$
 
 La varianza contiene le **covarianze**: è lì che nasce la diversificazione. Ogni

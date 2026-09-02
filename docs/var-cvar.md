@@ -33,9 +33,10 @@ $\ell_s(\boldsymbol x)$:
 
 $$
 \min_{\boldsymbol x,\, \eta,\, \boldsymbol\xi}\;
-\eta + \frac{1}{1 - \alpha} \sum_{s \in S} \pi_s\, \xi_s
-\quad\text{s.t.}\;\;
-\xi_s \ge \ell_s(\boldsymbol x) - \eta,\;\; \xi_s \ge 0 \;\;\forall s \in S
+\eta + \frac{1}{1 - \alpha} \sum_{s=1}^{k} \pi_s\, \xi_s
+\quad\text{soggetto a}\;\;\;
+\xi_s \ge \ell_s(\boldsymbol x) - \eta \;\;\forall s \in \{1,\dots,k\},
+\qquad \boldsymbol x \in X,\qquad \eta \text{ libera},\qquad \xi_s \ge 0
 $$
 
 All'ottimo $\eta^*$ è un VaR e il valore obiettivo è il CVaR: **un solo LP, entrambe
@@ -155,7 +156,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 
 
     def porta_cvar(r_min):
-        """min CVaR_alpha della perdita mensile -R x  s.t. rendimento atteso >= r_min."""
+        """min CVaR_alpha della perdita mensile -R x  soggetto a rendimento atteso >= r_min."""
         m = gp.Model("mean_cvar")
         m.Params.OutputFlag = 0
         x = m.addVars(n, name="x")
@@ -322,6 +323,6 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
    indipendenti) e verificare che il CVaR no.
 3. CVaR ottimo per $\alpha \in \{0{,}8;\, 0{,}9;\, 0{,}95;\, 0{,}99\}$: quando
    iniziano le instabilità?
-4. Forma vincolata $\max \sum_i \mu_i x_i$ s.t. $\mathrm{CVaR} \le k$: stessa
+4. Forma vincolata $\max \sum_i \mu_i x_i$ soggetto a $\mathrm{CVaR} \le k$: stessa
    frontiera, duale = rendimento marginale del rischio.
 5. Stress test: scenario estremo con probabilità 1% — come cambia la prenotazione?

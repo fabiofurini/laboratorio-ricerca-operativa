@@ -14,7 +14,7 @@ Dati $n$ punti $\boldsymbol x_i \in \mathbb{R}^p$ con etichette $y_i$:
 
 $$
 \min_{\boldsymbol w, b}\; \tfrac12 \|\boldsymbol w\|^2
-\quad\text{s.t.}\quad
+\quad\text{soggetto a}\;\quad
 y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1 \quad \forall i = 1, \dots, n
 $$
 
@@ -30,7 +30,7 @@ il margine.
 
 $$
 \min\; \tfrac12\|\boldsymbol w\|^2 + C \sum_{i=1}^{n} \xi_i
-\quad\text{s.t.}\;\;
+\quad\text{soggetto a}\;\;\;
 y_i \Bigl( \sum_j w_j x_{ij} + b \Bigr) \ge 1 - \xi_i,\;\; \xi_i \ge 0 .
 $$
 
@@ -50,7 +50,7 @@ $$
 \max_{\boldsymbol\alpha}\; \sum_{i=1}^{n} \alpha_i
 - \tfrac12 \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j\,
 \boldsymbol x_i^{\mathsf T} \boldsymbol x_j
-\quad\text{s.t.}\;\; \sum_{i=1}^{n} \alpha_i y_i = 0,\;\; 0 \le \alpha_i \le C
+\quad\text{soggetto a}\;\;\; \sum_{i=1}^{n} \alpha_i y_i = 0,\;\; 0 \le \alpha_i \le C
 $$
 
 ```text

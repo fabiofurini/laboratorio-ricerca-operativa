@@ -18,9 +18,10 @@ transito $=0$), capacità $u_{ij}$, costi $c_{ij}$ ed emissioni $e_{ij}$:
 
 $$
 \min \sum_{(i,j) \in A} c_{ij}\, x_{ij}
-\quad\text{s.t.}\quad
+\quad\text{soggetto a}\;\quad
 \sum_{j:(i,j) \in A} x_{ij} - \sum_{j:(j,i) \in A} x_{ji} = b_i \;\;\forall i \in N,
-\qquad 0 \le x_{ij} \le u_{ij}
+\qquad x_{ij} \le u_{ij},
+\qquad x_{ij} \ge 0 \;\;\forall (i,j) \in A
 $$
 
 Varianti sull'obiettivo: **congestione** $\sum (c_{ij} x_{ij} + \alpha c_{ij}

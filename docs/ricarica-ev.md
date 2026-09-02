@@ -20,10 +20,10 @@ $\eta$.
 
 $$
 \begin{aligned}
-\min\;& \sum_{v \in V}\sum_{t \in T} \pi_t\, \Delta t\, x_{vt}\\
-\text{s.t.}\;\;& \eta \sum_{t \in T} \Delta t\, x_{vt} \ge e_v && \forall v \in V\\
-& 0 \le x_{vt} \le a_{vt}\, \bar p_v && \forall v, t\\
-& \sum_{v \in V} x_{vt} + b_t \le k && \forall t \in T
+\min\;& \sum_{v=1}^{n}\sum_{t=1}^{m} \pi_t\, \Delta t\, x_{vt}\\
+\text{soggetto a}\;\;\;& \eta \sum_{t=1}^{m} \Delta t\, x_{vt} \ge e_v && \forall v \in \{1,\dots,n\}\\
+& 0 \le x_{vt} \le a_{vt}\, \bar p_v && \forall v \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\}\\
+& \sum_{v=1}^{n} x_{vt} + b_t \le k && \forall t \in \{1,\dots,m\}
 \end{aligned}
 $$
 

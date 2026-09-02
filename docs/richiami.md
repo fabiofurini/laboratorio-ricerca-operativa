@@ -11,26 +11,31 @@ Gli strumenti teorici usati in tutto il laboratorio, in forma compatta.
 Un problema è **convesso** quando ogni minimo locale è anche globale: per gli LP è
 sempre vero; per QP e NLP dipende dalle funzioni.
 
-**Notazione.** Scalari e indici minuscoli ($x_{it}$, $\lambda$); vettori minuscoli in
-grassetto ($\boldsymbol{x}$); matrici maiuscole in grassetto ($\boldsymbol{Q}$);
-insiemi maiuscoli ($I$, $T$, $S$). Eccezioni dichiarate: variabili aleatorie ($D$,
-$L$), la funzione di ripartizione $F$ e il parametro $C$ della SVM.
+**Notazione.** Scalari e indici minuscoli ($x_{it}$, $\lambda$); gli oggetti dei
+modelli (prodotti, canali, titoli, scenari…) sono **numerati** e gli indici corrono
+su insiemi enumerati esplicitamente, $i \in \{1, 2, \dots, n\}$; i conteggi sono
+interi ($n \in \mathbb{Z}_{\ge 1}$) e i dati razionali ($\mathbb{Q}$); vettori
+minuscoli in grassetto ($\boldsymbol{x}$), matrici maiuscole in grassetto
+($\boldsymbol{Q}$). Nei modelli la dicitura è sempre «soggetto a», le variabili
+sono introdotte prima della formulazione e i vincoli che le definiscono chiudono il
+modello. Eccezioni dichiarate: variabili aleatorie ($D$, $L$), la funzione di
+ripartizione $F$ e il parametro $C$ della SVM.
 
 ## Programmazione lineare e dualità
 
 $$
 \text{(P)}\;\; \min \sum_{j=1}^{n} c_j x_j
-\;\;\text{s.t.}\;\; \sum_{j=1}^{n} a_{kj} x_j \ge b_k \;\forall k, \;\; x_j \ge 0
+\;\;\text{soggetto a}\;\;\; \sum_{j=1}^{n} a_{kj} x_j \ge b_k \;\forall k, \;\; x_j \ge 0
 \qquad
 \text{(D)}\;\; \max \sum_{k=1}^{m} b_k y_k
-\;\;\text{s.t.}\;\; \sum_{k=1}^{m} a_{kj} y_k \le c_j \;\forall j, \;\; y_k \ge 0
+\;\;\text{soggetto a}\;\;\; \sum_{k=1}^{m} a_{kj} y_k \le c_j \;\forall j, \;\; y_k \ge 0
 $$
 
 All'ottimo i due valori coincidono (**dualità forte**) e $y_k$ è il **prezzo ombra**
 della risorsa $k$: di quanto migliora l'ottimo se $b_k$ aumenta di una unità.
 
 !!! example "Esempio 2×2, svolto"
-    $\max 30x_A + 50x_B$ s.t. $x_A + 3x_B \le 90$ (ore), $2x_A + x_B \le 80$ (kg).
+    $\max 30x_A + 50x_B$ soggetto a $x_A + 3x_B \le 90$ (ore), $2x_A + x_B \le 80$ (kg).
 
     Entrambi i vincoli attivi all'ottimo: risolvendo il sistema, $x_B = 20$,
     $x_A = 30$, valore $z^* = 1900$ €. I duali risolvono $y_1 + 2y_2 = 30$,
@@ -53,7 +58,7 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
 
 ## Condizioni KKT (da Karush, Kuhn e Tucker)
 
-Per $\min f(\boldsymbol x)$ s.t. $g_i(\boldsymbol x) \le 0$, $h_j(\boldsymbol x) = 0$,
+Per $\min f(\boldsymbol x)$ soggetto a $g_i(\boldsymbol x) \le 0$, $h_j(\boldsymbol x) = 0$,
 in un ottimo regolare esistono $\lambda_i \ge 0$, $\nu_j$ con:
 
 $$
@@ -67,7 +72,7 @@ perturbazione** (aumentare il termine noto di $\varepsilon$, ri-ottimizzare,
 rapporto incrementale).
 
 !!! example "KKT svolte"
-    $\min x^2 + y^2$ s.t. $x + y \ge 4$. Stazionarietà: $x = y = \lambda/2$; il
+    $\min x^2 + y^2$ soggetto a $x + y \ge 4$. Stazionarietà: $x = y = \lambda/2$; il
     vincolo dev'essere attivo (altrimenti $x = y = 0$ lo viola): $x = y = 2$,
     $\lambda = 4$. Lettura: portando il termine noto a $4 + \varepsilon$, l'ottimo
     $f^* = 8$ cresce di $\approx 4\varepsilon$.

@@ -14,7 +14,7 @@ massimo profitto $(p - c)q$. *I vincoli*: $q \le d(p)$ (domanda) e $q \le k$
 
 $$
 \max\; p\,q - c\,q
-\quad\text{s.t.}\quad q \le d(p), \qquad q \le k, \qquad p, q \ge 0
+\quad\text{soggetto a}\quad q \le d(p), \qquad q \le k, \qquad p \ge 0, \qquad q \ge 0
 $$
 
 Domande usate: lineare $d(p) = a - bp$; elasticità costante

@@ -66,7 +66,7 @@ alpha_c = 0.90
 
 
 def porta_cvar(r_min):
-    """min CVaR_alpha della perdita mensile -R x  s.t. rendimento atteso >= r_min."""
+    """min CVaR_alpha della perdita mensile -R x  soggetto a  rendimento atteso >= r_min."""
     m = gp.Model("mean_cvar")
     m.Params.OutputFlag = 0
     x = m.addVars(n, name="x")

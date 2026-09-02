@@ -37,7 +37,7 @@ def marginale(x):
 
 
 def alloca(budget):
-    """max sum a_i log(1+b_i x_i)  s.t.  sum x_i <= budget, 0 <= x_i <= u_i (concavo)."""
+    """max sum a_i log(1+k_i x_i)  soggetto a  sum x_i <= budget, 0 <= x_i <= u_i (concavo)."""
     res = minimize(lambda x: -risposta(x), x0=np.full(4, budget / 4),
                    bounds=[(0, ui) for ui in u],
                    constraints=[{"type": "ineq", "fun": lambda x: budget - x.sum()}],
