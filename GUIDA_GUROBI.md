@@ -35,13 +35,13 @@ print(gp.gurobi.version())        # es. (13, 0, 3)
 
 Un modello di programmazione matematica in `gurobipy` si costruisce **sempre negli stessi
 cinque passi**. Usiamo come esempio un piccolo LP generico di massimo, con due
-variabili non negative e due vincoli di risorsa — lo stesso LP 2×2 dei richiami
+variabili non negative e due vincoli di tipo ≤ — lo stesso LP 2×2 dei richiami
 (gli esempi con dati reali arrivano nei capitoli applicativi):
 
 ```
 max         30 x_1 + 50 x_2
-soggetto a   1 x_1 +  3 x_2 ≤ 90    (risorsa 1)
-             2 x_1 +  1 x_2 ≤ 80    (risorsa 2)
+soggetto a   1 x_1 +  3 x_2 ≤ 90    (vincolo 1)
+             2 x_1 +  1 x_2 ≤ 80    (vincolo 2)
                x_1,     x_2 ≥ 0
 ```
 
@@ -81,8 +81,8 @@ x = m.addVars(I, T, name="x")    # crea x["1",0], x["1",1], ...
 ### Passo 3 — aggiungere i vincoli
 
 ```python
-v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="risorsa1")
-v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="risorsa2")
+v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="vincolo1")
+v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="vincolo2")
 ```
 
 - si scrive il vincolo **come una disuguaglianza Python** tra espressioni lineari;
@@ -133,8 +133,8 @@ m = gp.Model("lp_2x2")
 m.Params.OutputFlag = 0
 x1 = m.addVar(name="x1")
 x2 = m.addVar(name="x2")
-v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="risorsa1")
-v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="risorsa2")
+v1 = m.addConstr(1*x1 + 3*x2 <= 90, name="vincolo1")
+v2 = m.addConstr(2*x1 + 1*x2 <= 80, name="vincolo2")
 m.setObjective(30*x1 + 50*x2, GRB.MAXIMIZE)
 m.optimize()
 assert m.Status == GRB.OPTIMAL
@@ -154,8 +154,8 @@ Output (verificato):
 Valore ottimo: 1900.0
   x1: X = 30.0   RC = 0.0   SAObj = [16.7, 100.0]
   x2: X = 20.0   RC = 0.0   SAObj = [15.0, 90.0]
-  risorsa1: Slack = 0.0   Pi = 14.0   SARHS = [40.0, 240.0]
-  risorsa2: Slack = 0.0   Pi = 8.0   SARHS = [30.0, 180.0]
+  vincolo1: Slack = 0.0   Pi = 14.0   SARHS = [40.0, 240.0]
+  vincolo2: Slack = 0.0   Pi = 8.0   SARHS = [30.0, 180.0]
 ```
 
 La sezione 5 spiega come leggere ciascuno di questi numeri; l'esempio "tutti i

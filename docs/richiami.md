@@ -92,8 +92,8 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \max & 30\,x_1 & + & 50\,x_2 & & & \\
-    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(risorsa 1)}\\
-     & 2\,x_1 & + & x_2 & \le & 80, & \text{(risorsa 2)}\\
+    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90, & \text{(vincolo 1)}\\
+     & 2\,x_1 & + & x_2 & \le & 80, & \text{(vincolo 2)}\\
      & x_1, & & x_2 & \ge & 0. &
     \end{array}
     $$
