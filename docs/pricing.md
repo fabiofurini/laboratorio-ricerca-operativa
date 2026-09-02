@@ -72,14 +72,13 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     Contenuto:
       1. Domanda lineare: soluzione analitica e QP (bilineare) con Gurobi
       2. Valore marginale di un posto in più (per perturbazione)
-      3. Domanda a elasticità costante e logistica (scipy, ottimo locale vs studio funzione)
+      3. Domanda a elasticità costante e logistica (vincoli funzionali Gurobi, globale)
       4. Versione multiprodotto (2 categorie con sostituzione)
     """
     import gurobipy as gp
     import numpy as np
     import pandas as pd
     from gurobipy import GRB
-    from scipy.optimize import minimize_scalar
 
     from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva_dat,
                        salva_dati, salva_figura)
@@ -137,26 +136,57 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     salva_dati(sens, "pricing_sensitivita_capienza")
 
     # ----------------------------------------------------------------------
-    # 3. ALTRE FUNZIONI DI DOMANDA (scipy)
+    # 3. ALTRE FUNZIONI DI DOMANDA (Gurobi, vincoli non lineari globali)
     # ----------------------------------------------------------------------
-    intestazione("Elasticità costante e domanda logistica (scipy)")
+    intestazione("Elasticità costante e domanda logistica (Gurobi)")
     A_el, eps = 6.0e6, 2.2                     # D(p) = A p^-eps
-    M_log, alfa, beta_l = 900.0, 6.0, 0.045    # D(p) = M / (1 + exp(alfa + beta*p... ))
+    M_log, alfa, beta_l = 900.0, 6.0, 0.045    # D(p) = M / (1 + exp(-alfa + beta*p))
 
 
-    def profitto_el(pp):
-        return -(pp - c) * min(A_el * pp ** (-eps), K)
+    def prezzo_elasticita():
+        """max (p-c)·q  soggetto a  q·p^eps <= A, q <= K  (globale, NonConvex=2).
+
+        La forma q·r <= A con r = p^eps è equivalente a q <= A p^(-eps) ma
+        numericamente ben scalata (r ~ 10^4 invece di p^(-eps) ~ 10^-5)."""
+        m = gp.Model("elasticita")
+        m.Params.OutputFlag = 0
+        m.Params.NonConvex = 2
+        m.Params.FuncNonlinear = 1           # p^eps trattato come vincolo NL esatto
+        p = m.addVar(lb=float(c), ub=400.0, name="p")
+        q = m.addVar(ub=float(K), name="q")
+        r = m.addVar(name="r")               # r = p^eps
+        m.addGenConstrPow(p, r, eps)
+        m.addQConstr(q * r <= A_el)          # bilineare
+        m.setObjective((p - c) * q, GRB.MAXIMIZE)
+        m.optimize()
+        assert m.Status == GRB.OPTIMAL
+        return p.X, m.ObjVal
 
 
-    def profitto_log(pp):
-        return -(pp - c) * min(M_log / (1 + np.exp(-alfa + beta_l * pp)), K)
+    def prezzo_logistica():
+        """max (p-c)·q  soggetto a  q(1+e) <= M, e = exp(-alfa + beta p), q <= K."""
+        m = gp.Model("logistica")
+        m.Params.OutputFlag = 0
+        m.Params.NonConvex = 2
+        m.Params.FuncNonlinear = 1
+        p = m.addVar(lb=float(c), ub=400.0, name="p")
+        q = m.addVar(ub=float(K), name="q")
+        t = m.addVar(lb=-GRB.INFINITY, name="t")   # t = -alfa + beta p
+        e = m.addVar(name="e")                     # e = exp(t)
+        m.addConstr(t == -alfa + beta_l * p)
+        m.addGenConstrExp(t, e)
+        m.addConstr(q + q * e <= M_log)            # q (1 + e) <= M  (bilineare)
+        m.setObjective((p - c) * q, GRB.MAXIMIZE)
+        m.optimize()
+        assert m.Status == GRB.OPTIMAL
+        return p.X, m.ObjVal
 
 
-    res_el = minimize_scalar(profitto_el, bounds=(c, 400), method="bounded")
-    res_log = minimize_scalar(profitto_log, bounds=(c, 400), method="bounded")
-    print(f"Elasticità costante (eps = {eps}): p* = {res_el.x:7.2f} €, profitto = {-res_el.fun:9.2f} €")
+    p_el, prof_el = prezzo_elasticita()
+    p_log, prof_log = prezzo_logistica()
+    print(f"Elasticità costante (eps = {eps}): p* = {p_el:7.2f} €, profitto = {prof_el:9.2f} €")
     print(f"  teoria senza capacità: p* = c·eps/(eps-1) = {c * eps / (eps - 1):.2f} €")
-    print(f"Logistica: p* = {res_log.x:7.2f} €, profitto = {-res_log.fun:9.2f} €")
+    print(f"Logistica: p* = {p_log:7.2f} €, profitto = {prof_log:9.2f} €")
 
     # ----------------------------------------------------------------------
     # 4. MULTIPRODOTTO: 2 categorie con sostituzione (QP non convesso)

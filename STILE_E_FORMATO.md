@@ -28,6 +28,16 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
   ripartizione; $C$ della SVM.
 - **Indici**: quando possibile $i$ per le righe (vincoli, osservazioni) e $j$ per
   le colonne (variabili, caratteristiche): $a_{ij}$, $y_i$ duale del vincolo $i$.
+- **Insiemi per enumerazione**: sempre DUE valori iniziali, i puntini, l'ultimo
+  valore: $\{1, 2, \dots, n\}$ — mai $\{1, \dots, n\}$.
+- **Trasposto**: con l'apice, $\vet x'$ (macro `\T`), MAI $^T$ o $^\top$.
+- **Variabile libera**: si scrive con il simbolo $\gtreqless 0$ (es.
+  `y_i &\gtreqless 0,` nel modello), mai la parola "libera" dentro il modello.
+- **Coppia primale-duale canonica**: forma generale con TUTTI i versi dei vincoli
+  ($\ge$, $=$, $\le$, insiemi $M_1, M_2, M_3$ che ripartiscono $M$) e TUTTI i
+  segni delle variabili ($\ge 0$, $\gtreqless 0$, $\le 0$, insiemi $N_1, N_2,
+  N_3$ che ripartiscono $N$); le sommatorie usano gli insiemi ($\sum_{j \in N}$),
+  e dopo il box la tabella delle regole di conversione primale/duale.
 - **Ogni coefficiente e ogni insieme è definito PRIMA di essere usato.**
 
 ## 2. Formato dei modelli (il "formato LP" degli esempi EX_1–EX_5)
@@ -60,7 +70,7 @@ Sequenza obbligatoria:
      "definiscono le variabili");
    - struttura di riga (SENZA `&&` iniziale, altrimenti il lato sinistro finisce
      in una colonna allineata a sinistra e i versi non si incolonnano):
-     `lhs &\le rhs, & \forall i \in \{1,\dots,n\}, \label{...} \\[1ex]`
+     `lhs &\le rhs, & \forall i \in \{1, 2, \dots, n\}, \label{...} \\[1ex]`
      — il lato sinistro è right-aligned, quindi i **versi** (`=`, `\le`, `\ge`)
      cadono tutti nella stessa colonna (verificare con
      `pdftotext -bbox`: gli xMin dei simboli devono coincidere);
@@ -105,6 +115,43 @@ Sequenza obbligatoria:
 7. Analisi di sensitività (protocollo: base → one-at-a-time → prezzi ombra
    verificati per perturbazione → scenari → trade-off → stabilità);
 8. Esercizi (con soluzioni nel fascicolo separato `soluzioni/`).
+
+### Ordine espositivo e analisi
+
+- **Prima le definizioni, poi gli esempi**: un esempio non usa mai un concetto
+  (prezzo ombra, costo ridotto, ...) definito solo più avanti.
+- **I dati prima del modello, sempre**: anche per la coppia primale-duale il
+  paragrafo che definisce dati e variabili PRECEDE il box del modello.
+- **Niente riferimenti in avanti** nel corpo del documento (\ref a capitoli o
+  sezioni successivi): l'unica mappa in avanti è la tabella-indice del capitolo 1.
+- **Eccezioni di notazione dichiarate al primo uso** (es. la variabile aleatoria
+  D maiuscola, il parametro C della SVM), mai elencate in blocco all'inizio.
+- **Range di validità citati SEMPRE**: `SARHSLow/Up` accanto a ogni prezzo ombra
+  e `SAObjLow/Up` accanto a ogni costo ridotto (per una variabile a zero la
+  soglia di convenienza è proprio `SAObjLow` nei problemi di minimo, `SAObjUp`
+  nei problemi di massimo).
+- **L'esempio canonico dei richiami**: LP 2×2 dei due prodotti (dualità, prezzi
+  ombra, costi ridotti col prodotto 3) e QP dei due impianti
+  (min x1²+2x2², x1+x2 ≥ 6) su cui si calcolano anche le KKT.
+
+### Un solver solo: Gurobi
+
+- TUTTA l'ottimizzazione usa Gurobi, MAI `scipy.optimize` o altri solver locali
+  (`scipy.stats` per le funzioni statistiche è ammesso).
+- NLP generali: vincoli funzionali `addGenConstrLog/Exp/Pow` con
+  `FuncNonlinear = 1`; termini bilineari/rapporti con variabile ausiliaria e
+  `NonConvex = 2` (es. `w·(mu - lam) = 1`); distanze euclidee con vincoli conici
+  `dx² + dy² ≤ d²` (Weber, minimax).
+- Per analisi marginali accurate: `MIPGap`, `FeasibilityTol`, `OptimalityTol`
+  a 1e-9; riformulare per la scalatura (es. `q·p^eps ≤ A`, non `q ≤ A·p^-eps`).
+- Ogni riscrittura di solver va verificata confrontando l'output col precedente
+  (diff dei numeri stampati).
+- **Analisi di sensitività degli LP**: oltre ai prezzi ombra (`Pi` + intervallo
+  `SARHSLow/Up`), leggere SEMPRE anche i **costi ridotti** (`v.RC`) delle variabili
+  a zero, con interpretazione manageriale: la soglia di convenienza oltre la quale
+  la variabile entrerebbe in soluzione (es. "la rotta entra solo se il costo scende
+  sotto 7 − 2 = 5 €/unità"). Nell'esempio 2×2 dei richiami: prodotto 3 con RC = −2,
+  soglia 22 €, controprova con margine 23 → piano (0, 5, 75), valore 1975 €.
 
 ## 4. Regole ferree sui numeri
 

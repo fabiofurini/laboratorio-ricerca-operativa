@@ -9,7 +9,9 @@ viene superata?". Sorpresa didattica: il CVaR si ottimizza con un semplice LP.
 
 ## Definizioni
 
-Per una perdita aleatoria $L$ e un livello $\alpha \in (0,1)$:
+Per una perdita aleatoria $L$ (maiuscola per aderenza alla letteratura — eccezione
+alla convenzione che riserva le maiuscole a insiemi e matrici; realizzazioni
+minuscole $\ell_s$) e un livello $\alpha \in (0,1)$:
 
 $$
 \mathrm{VaR}_\alpha(L) = \inf\{\eta : \mathbb{P}(L \le \eta) \ge \alpha\}
@@ -35,7 +37,7 @@ $$
 \min_{\boldsymbol x,\, \eta,\, \boldsymbol\xi}\;
 \eta + \frac{1}{1 - \alpha} \sum_{s=1}^{k} \pi_s\, \xi_s
 \quad\text{soggetto a}\;\;\;
-\xi_s \ge \ell_s(\boldsymbol x) - \eta, \;\;\forall s \in \{1,\dots,k\},
+\xi_s \ge \ell_s(\boldsymbol x) - \eta, \;\;\forall s \in \{1, 2, \dots,k\},
 \qquad \boldsymbol x \in X,\qquad \eta \text{ libera},\qquad \xi_s \ge 0
 $$
 
@@ -156,7 +158,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 
 
     def porta_cvar(r_min):
-        """min CVaR_alpha della perdita mensile -R x  soggetto a rendimento atteso >= r_min."""
+        """min CVaR_alpha della perdita mensile -R x  soggetto a  rendimento atteso >= r_min."""
         m = gp.Model("mean_cvar")
         m.Params.OutputFlag = 0
         x = m.addVars(n, name="x")

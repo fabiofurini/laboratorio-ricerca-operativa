@@ -91,6 +91,13 @@ for a in A:
 print("\nPrezzi ombra della domanda (costo marginale di servire un'unità in più):")
 for k in domanda:
     print(f"  {k}: {v_dom[k].Pi:6.2f} €/unità")
+print("\nCosti ridotti degli archi non usati (di quanto deve scendere il costo unitario"
+      "\ndell'arco perché entri nella soluzione ottima):")
+for a in A:
+    if x[a].X < 1e-6:
+        print(f"  {a[0]:>2} → {a[1]:<2}: costo {c[a]:4.1f} €, RC = {x[a].RC:+5.2f} €, "
+              f"range di validità SAObj = [{x[a].SAObjLow:4.1f}, +inf) "
+              f"→ conveniente sotto {x[a].SAObjLow:4.1f} €/unità")
 salva_dati(pd.DataFrame([(a[0], a[1], x[a].X, x[a].X / U[a]) for a in A],
                         columns=["da", "a", "flusso", "utilizzo"]), "supplychain_flussi_lp")
 

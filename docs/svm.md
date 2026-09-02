@@ -15,7 +15,7 @@ Dati $n$ punti $\boldsymbol x_i \in \mathbb{R}^p$ con etichette $y_i$:
 $$
 \min_{\boldsymbol w, b}\; \tfrac12 \|\boldsymbol w\|^2
 \quad\text{soggetto a}\;\quad
-y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1, \quad \forall i \in \{1, \dots, n\}
+y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1, \quad \forall i \in \{1, 2, \dots, n\}
 $$
 
 Il margine geometrico è $2/\|\boldsymbol w\|$: minimizzare la norma = massimizzare
@@ -49,7 +49,7 @@ C = 20,00: margine 0,36 | errori 0 | nel margine  3   (insegue ogni punto)
 $$
 \max_{\boldsymbol\alpha}\; \sum_{i=1}^{n} \alpha_i
 - \tfrac12 \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j\,
-\boldsymbol x_i^{\mathsf T} \boldsymbol x_j
+\boldsymbol x_i' \boldsymbol x_j
 \quad\text{soggetto a}\;\;\; \sum_{i=1}^{n} \alpha_i y_i = 0,\;\; 0 \le \alpha_i \le C
 $$
 
@@ -65,7 +65,7 @@ E il duale dipende dai dati solo tramite i prodotti scalari: la porta del kernel
 
 ## Kernel RBF
 
-Sostituendo $\boldsymbol x_i^{\mathsf T}\boldsymbol x_j$ con
+Sostituendo $\boldsymbol x_i'\boldsymbol x_j$ con
 $K(\boldsymbol x, \boldsymbol z) = e^{-\gamma\|\boldsymbol x - \boldsymbol z\|^2}$
 si ottengono frontiere curve **restando in un QP convesso**.
 

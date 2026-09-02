@@ -75,12 +75,12 @@ Punti importanti:
 Per **famiglie di variabili indicizzate** (il caso normale nei modelli veri):
 
 ```python
-prodotti = ["A", "B", "C"]
+prodotti = ["1", "2", "3"]
 mesi     = range(6)
-x = m.addVars(prodotti, mesi, name="x")    # crea x["A",0], x["A",1], ...
+x = m.addVars(prodotti, mesi, name="x")    # crea x["1",0], x["1",1], ...
 ```
 
-`addVars` restituisce un dizionario `tupledict`: si accede con `x["A", 3]`.
+`addVars` restituisce un dizionario `tupledict`: si accede con `x["1", 3]`.
 
 ### Passo 3 — aggiungere i vincoli
 
@@ -207,8 +207,8 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in prodotti for t in mesi],
 ### 5.1 L'esito
 
 - **OPTIMAL** — soluzione ottima certificata. Nei modelli convessi di questo laboratorio
-  l'ottimo è **globale**; in un QP dichiarato non convesso (`NonConvex=2`) Gurobi certifica
-  comunque il globale, mentre con un solver locale (scipy) l'ottimo può essere solo locale.
+  l'ottimo è **globale**; anche in un QP dichiarato non convesso (`NonConvex=2`) e nei
+  modelli con vincoli non lineari (`FuncNonlinear=1`) Gurobi certifica il globale.
 - **INFEASIBLE** — i vincoli si contraddicono. Diagnosi:
   `m.computeIIS(); m.write("conflitto.ilp")` — il file elenca un sottoinsieme minimale di
   vincoli in conflitto tra loro. Errore tipico: domanda totale > capacità totale senza
@@ -235,9 +235,46 @@ più non vale nulla.
 
 ### 5.3 Costi ridotti (`RC`) — "perché questa variabile è a zero?"
 
-Se `x_C.X = 0` e `x_C.RC = -4`, il prodotto C è fuori dal piano ottimo e il suo margine
-dovrebbe **migliorare di almeno 4 €** perché entri in soluzione. Variabili in base hanno
-`RC = 0`.
+Le variabili in base (positive all'ottimo) hanno `RC = 0`; per una variabile a zero il
+costo ridotto dice **di quanto deve migliorare il suo coefficiente in obiettivo perché
+convenga attivarla**. Nell'esempio 2×2: un prodotto 3 con margine 20 €/unità che consuma
+1 ora e 1 kg assorbe risorse che ai prezzi ombra valgono 1·14 + 1·8 = 22 € → il solver dà
+`x3.X = 0` e `x3.RC = -2` (e `SAObjUp = 22`): il margine deve salire di almeno 2 €.
+Controprova: con margine 23 € il piano ottimo cambia in (0, 5, 75), valore 1975 €.
+
+Anche il costo ridotto ha il suo range di validità, `SAObjLow/Up`: l'intervallo in cui
+il coefficiente in obiettivo può variare senza che la base ottima cambi (nell'esempio:
+il margine del prodotto 1 può stare in [16,7, 100] € senza spostare la soluzione; per
+una variabile a zero `SAObjUp` è la soglia di convenienza).
+
+Il ciclo standard per leggerli (solo LP):
+
+```python
+for v in m.getVars():
+    if v.X < 1e-6:
+        print(v.VarName, v.RC)
+```
+
+### 5.3 bis — Il caso generale: segni e lettura
+
+**Prezzi ombra** (`Pi`): sempre la "derivata dell'ottimo rispetto al termine noto".
+In un **massimo**: vincolo `≤` di risorsa → `Pi ≥ 0`; vincolo `≥` → `Pi ≤ 0`. In un
+**minimo**: vincolo `≥` di domanda → `Pi ≥ 0`; vincolo `≤` di capacità → `Pi ≤ 0`.
+Uguaglianza → segno qualunque (duale libera); vincolo non attivo → `Pi = 0`;
+validità in `SARHSLow–SARHSUp`.
+
+**Costi ridotti** (`RC`): variabile in base → `RC = 0`; al bound inferiore →
+`RC ≥ 0` in un minimo, `RC ≤ 0` in un massimo (soglia di convenienza, validità in
+`SAObjLow–SAObjUp`); al bound **superiore** → `RC` è il prezzo ombra del bound (un
+arco saturo in un flusso di minimo costo ha `RC < 0`: una unità di capacità in più
+fa risparmiare `|RC|`).
+
+```python
+for v in m.getConstrs():
+    print(v.ConstrName, v.Pi, v.SARHSLow, v.SARHSUp)
+for v in m.getVars():
+    print(v.VarName, v.X, v.RC, v.SAObjLow, v.SAObjUp)
+```
 
 ### 5.4 Nei modelli non lineari
 
@@ -252,8 +289,10 @@ laboratorio: perturbare il termine noto di ε e ricontrollare che
 2. Il valore ottimo ha l'ordine di grandezza atteso?
 3. Quali vincoli sono attivi (`Slack = 0`)? Sono quelli che ci aspettavamo?
 4. Quanto valgono i prezzi ombra? Quale risorsa conviene potenziare per prima?
-5. La soluzione è stabile? (rieseguire con dati perturbati del 5%)
-6. Tradurre tutto in una **raccomandazione manageriale di tre righe**.
+5. Ci sono variabili a zero? Leggere il loro costo ridotto (`RC`): la soglia di
+   convenienza oltre la quale entrerebbero in soluzione.
+6. La soluzione è stabile? (rieseguire con dati perturbati del 5%)
+7. Tradurre tutto in una **raccomandazione manageriale di tre righe**.
 
 ---
 
@@ -299,6 +338,12 @@ assert m.Status == GRB.OPTIMAL, f"stato inatteso: {m.Status}"
 # ciclo su un parametro chiave, ri-ottimizzare, salvare figure
 ```
 
-Per gli NLP generali (Weber, domanda logistica, M/M/1) si usa `scipy.optimize.minimize`:
-stessa logica (dati → funzione obiettivo → risoluzione → lettura), la differenza è che il
-risultato è un ottimo **locale** salvo convessità dimostrata.
+**Un solver solo: anche gli NLP generali si risolvono con Gurobi** (dalla versione 12).
+Funzioni non lineari come vincoli funzionali su variabili ausiliarie — `addGenConstrLog`,
+`addGenConstrExp`, `addGenConstrPow` con `m.Params.FuncNonlinear = 1` — e termini bilineari
+con `m.Params.NonConvex = 2`: l'ottimo resta **globale certificato**. Esempi nel laboratorio:
+budget pubblicitario (`log`), pricing a elasticità costante (`Pow` + bilineare), code M/M/1
+(vincolo bilineare `w·(mu - lam) = 1`), Weber (vincoli conici `dx² + dy² ≤ d²`, un QCP
+convesso). Per le analisi marginali stringere `MIPGap`, `FeasibilityTol` e `OptimalityTol`
+a `1e-9`; riformulare per evitare quantità minuscole (es. `q·p^eps ≤ A` invece di
+`q ≤ A·p^(-eps)`).

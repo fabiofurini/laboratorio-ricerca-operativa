@@ -21,9 +21,9 @@ $\eta$.
 $$
 \begin{aligned}
 \min\;& \sum_{v=1}^{n}\sum_{t=1}^{m} \pi_t\, \Delta t\, x_{vt}\\
-\text{soggetto a}\;\;\;& \eta \sum_{t=1}^{m} \Delta t\, x_{vt} \ge e_v, && \forall v \in \{1,\dots,n\},\\
-& 0 \le x_{vt} \le a_{vt}\, \bar p_v, && \forall v \in \{1,\dots,n\},\ \forall t \in \{1,\dots,m\},\\
-& \sum_{v=1}^{n} x_{vt} + b_t \le k, && \forall t \in \{1,\dots,m\}.
+\text{soggetto a}\;\;\;& \eta \sum_{t=1}^{m} \Delta t\, x_{vt} \ge e_v, && \forall v \in \{1, 2, \dots,n\},\\
+& 0 \le x_{vt} \le a_{vt}\, \bar p_v, && \forall v \in \{1, 2, \dots,n\},\ \forall t \in \{1, 2, \dots,m\},\\
+& \sum_{v=1}^{n} x_{vt} + b_t \le k, && \forall t \in \{1, 2, \dots,m\}.
 \end{aligned}
 $$
 

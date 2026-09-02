@@ -9,9 +9,10 @@ Contenuto:
   3. Curva valore-budget e valore marginale di un euro
   4. Mix ottimo al crescere del budget
 """
+import gurobipy as gp
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
+from gurobipy import GRB
 
 from stile import (ARANCIO, CICLO, GRIGIO, TEAL, intestazione, plt, salva_dat, salva_dati,
                    salva_figura)
@@ -37,13 +38,27 @@ def marginale(x):
 
 
 def alloca(budget):
-    """max sum a_i log(1+k_i x_i)  soggetto a  sum x_i <= budget, 0 <= x_i <= u_i (concavo)."""
-    res = minimize(lambda x: -risposta(x), x0=np.full(4, budget / 4),
-                   bounds=[(0, ui) for ui in u],
-                   constraints=[{"type": "ineq", "fun": lambda x: budget - x.sum()}],
-                   method="SLSQP", options={"ftol": 1e-10, "maxiter": 500})
-    assert res.success, res.message
-    return res.x, -res.fun
+    """max sum a_i log(1+b_i x_i)  soggetto a  sum x_i <= budget, 0 <= x_i <= u_i.
+
+    Problema concavo, risolto GLOBALMENTE da Gurobi con i vincoli non lineari
+    z_i = log(g_i): stesso solver di tutta la dispensa."""
+    m = gp.Model("budget")
+    m.Params.OutputFlag = 0
+    m.Params.FuncNonlinear = 1     # log trattato come vincolo NL esatto (globale)
+    m.Params.MIPGap = 1e-9         # gap strettissimo: servono differenze accurate
+    m.Params.FeasibilityTol = 1e-9
+    m.Params.OptimalityTol = 1e-9
+    x = m.addVars(4, ub=u, name="x")
+    g = m.addVars(4, lb=1.0, name="g")                 # g_i = 1 + b_i x_i
+    z = m.addVars(4, lb=-GRB.INFINITY, name="z")       # z_i = log(g_i)
+    for i in range(4):
+        m.addConstr(g[i] == 1 + b[i] * x[i])
+        m.addGenConstrLog(g[i], z[i])
+    m.addConstr(gp.quicksum(x[i] for i in range(4)) <= budget)
+    m.setObjective(gp.quicksum(a[i] * z[i] for i in range(4)), GRB.MAXIMIZE)
+    m.optimize()
+    assert m.Status == GRB.OPTIMAL
+    return np.array([x[i].X for i in range(4)]), m.ObjVal
 
 
 intestazione(f"Allocazione ottima con budget B = {B:.0f} mila €")

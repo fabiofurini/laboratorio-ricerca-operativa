@@ -20,7 +20,7 @@ $$
 \quad\text{soggetto a}\;\quad
 \sum_{i=1}^{n} \mu_i x_i \ge \bar r,\qquad
 \sum_{i=1}^{n} x_i = 1,\qquad x_i \le u_i,\qquad x_i \ge \ell_i,
-\;\;\forall i \in \{1,\dots,n\}.
+\;\;\forall i \in \{1, 2, \dots,n\}.
 $$
 
 La varianza contiene le **covarianze**: è lì che nasce la diversificazione. Ogni

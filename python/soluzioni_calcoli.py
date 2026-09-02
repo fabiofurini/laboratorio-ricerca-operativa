@@ -8,7 +8,6 @@ import pandas as pd
 import gurobipy as gp
 from gurobipy import GRB
 from scipy import stats
-from scipy.optimize import minimize, minimize_scalar
 
 from stile import intestazione
 
@@ -36,21 +35,23 @@ print(f"SARHSUp del vincolo ore = {c1.SARHSUp:.0f}: il prezzo ombra 14 vale fino
 
 # ======================================================================
 intestazione("Cap. 2, es. 2.2 — KKT con vincoli attivi")
-res = minimize(lambda p: (p[0] - 3) ** 2 + (p[1] - 1) ** 2, [0, 0], method="SLSQP",
-               bounds=[(0, None), (0, None)],
-               constraints=[{"type": "ineq", "fun": lambda p: 2 - p[0] - 2 * p[1]}])
-print(f"ottimo ({res.x[0]:.4f}, {res.x[1]:.4f}), f = {res.fun:.4f} "
+mk = gp.Model(); mk.Params.OutputFlag = 0
+xk = mk.addVar(); yk = mk.addVar()
+mk.addConstr(xk + 2 * yk <= 2)
+mk.setObjective((xk - 3) ** 2 + (yk - 1) ** 2, GRB.MINIMIZE)
+mk.optimize()
+print(f"ottimo ({xk.X:.4f}, {yk.X:.4f}), f = {mk.ObjVal:.4f} "
       f"(atteso: (2, 0), f = 2; attivi x+2y<=2 e y>=0; lambda=2, mu=2)")
 
 # ======================================================================
 intestazione("Cap. 4 — varianti del modello di produzione")
-prodotti = ["A", "B", "C"]; mesi = list(range(1, 7))
-domanda = {("A",1):110,("A",2):130,("A",3):150,("A",4):190,("A",5):210,("A",6):160,
-           ("B",1):70,("B",2):80,("B",3):110,("B",4):140,("B",5):150,("B",6):100,
-           ("C",1):50,("C",2):55,("C",3):60,("C",4):80,("C",5):95,("C",6):70}
-cp = {"A":12.,"B":18.,"C":25.}; hg = {"A":.8,"B":1.2,"C":1.6}
-au = {"A":.9,"B":1.4,"C":2.1}; cap = {1:420,2:420,3:460,4:460,5:460,6:420}
-s0 = {"A":30,"B":20,"C":10}
+prodotti = ["1", "2", "3"]; mesi = list(range(1, 7))
+domanda = {("1",1):110,("1",2):130,("1",3):150,("1",4):190,("1",5):210,("1",6):160,
+           ("2",1):70,("2",2):80,("2",3):110,("2",4):140,("2",5):150,("2",6):100,
+           ("3",1):50,("3",2):55,("3",3):60,("3",4):80,("3",5):95,("3",6):70}
+cp = {"1":12.,"2":18.,"3":25.}; hg = {"1":.8,"2":1.2,"3":1.6}
+au = {"1":.9,"2":1.4,"3":2.1}; cap = {1:420,2:420,3:460,4:460,5:460,6:420}
+s0 = {"1":30,"2":20,"3":10}
 
 
 def produzione(fatt_cap=1.0, pi_short=None, profitto=False, ss=0.0):
@@ -73,7 +74,7 @@ def produzione(fatt_cap=1.0, pi_short=None, profitto=False, ss=0.0):
     m.addConstrs(gp.quicksum(au[i] * x[i, t] for i in prodotti) <= cap[t] * fatt_cap
                  for t in mesi)
     if profitto:
-        p = {"A": 20., "B": 30., "C": 42.}
+        p = {"1": 20., "2": 30., "3": 42.}
         m.setObjective(gp.quicksum(p[i] * y[i, t] - cp[i] * x[i, t] - hg[i] * s[i, t]
                                    for i in prodotti for t in mesi), GRB.MAXIMIZE)
     else:
@@ -237,29 +238,37 @@ coord9 = np.array([[1,8.5],[2.5,6],[4,9],[5.5,7.5],[7,8],[9,9.5],
 peso9 = np.array([12,18,9,22,15,6,14,8,25,10,16,5], float)
 
 
-def weber(pesi, x0):
-    return minimize(lambda p: float(pesi @ np.sqrt(((coord9 - p) ** 2).sum(1))),
-                    x0, method="Nelder-Mead", options={"xatol": 1e-8}).x
+def localizza9(pesi=None, cabina=None, raggio=None):
+    """Weber/minimax con Gurobi: cono dx^2 + dy^2 <= d^2 (come in lab09)."""
+    m = gp.Model(); m.Params.OutputFlag = 0
+    px = m.addVar(lb=-GRB.INFINITY); py = m.addVar(lb=-GRB.INFINITY)
+    n = len(coord9); d = m.addVars(n)
+    for k in range(n):
+        dx = m.addVar(lb=-GRB.INFINITY); dy = m.addVar(lb=-GRB.INFINITY)
+        m.addConstr(dx == px - coord9[k, 0]); m.addConstr(dy == py - coord9[k, 1])
+        m.addQConstr(dx * dx + dy * dy <= d[k] * d[k])
+    if cabina is not None:
+        m.addQConstr((px - cabina[0]) ** 2 + (py - cabina[1]) ** 2 <= raggio ** 2)
+    if pesi is not None:
+        m.setObjective(gp.quicksum(pesi[k] * d[k] for k in range(n)), GRB.MINIMIZE)
+    else:
+        z = m.addVar(); m.addConstrs((d[k] <= z for k in range(n)))
+        m.setObjective(z, GRB.MINIMIZE)
+    m.optimize(); assert m.Status == GRB.OPTIMAL
+    return np.array([px.X, py.X]), m.ObjVal
 
 
-def fmax9(p):
-    return float(np.sqrt(((coord9 - p) ** 2).sum(1)).max())
-
-
-w0 = weber(peso9, [5, 5])
+w0, _ = localizza9(peso9)
 p2 = peso9.copy(); p2[11] = 40
-w1 = weber(p2, [5, 5])
-mm0 = minimize(fmax9, [5, 5], method="Nelder-Mead").x
+w1, _ = localizza9(p2)
+mm0, _ = localizza9()
 print(f"es. 9.2 — Weber: da ({w0[0]:.2f},{w0[1]:.2f}) a ({w1[0]:.2f},{w1[1]:.2f}) "
       f"(spostamento {np.linalg.norm(w1 - w0):.2f} km); minimax invariato "
       f"({mm0[0]:.2f},{mm0[1]:.2f}) perche' ignora i pesi")
 cab = np.array([7., 6.])
 for R in [2.0, 2.1]:
-    r = minimize(lambda p: float(peso9 @ np.sqrt(((coord9 - p) ** 2).sum(1))), cab,
-                 method="SLSQP",
-                 constraints=[{"type": "ineq",
-                               "fun": lambda p, R=R: R**2 - ((p - cab) ** 2).sum()}])
-    print(f"es. 9.5 — R = {R}: costo {r.fun:.2f}")
+    _, costo_R = localizza9(peso9, cabina=cab, raggio=R)
+    print(f"es. 9.5 — R = {R}: costo {costo_R:.2f}")
 
 # ======================================================================
 intestazione("Cap. 10 — E1=47 e capacita' minima")
@@ -304,10 +313,19 @@ print(f"es. 10.5 — capacita' minima ammissibile: C* in [{lo:.2f}, {hi:.2f}] kW
 intestazione("Cap. 11 — costo d'attesa quadratico")
 lam11, c11, h11 = 42., 3., 1.5
 mu_q = lam11 + (2 * h11 / c11) ** (1 / 3)
-res_q = minimize_scalar(lambda mu: c11 * mu + h11 / (mu - lam11) ** 2,
-                        bounds=(lam11 + 1e-3, 4 * lam11), method="bounded")
+mq11 = gp.Model(); mq11.Params.OutputFlag = 0
+mq11.Params.NonConvex = 2; mq11.Params.MIPGap = 1e-9
+mu11 = mq11.addVar(lb=lam11 + 1e-3, ub=4 * lam11)
+v11 = mq11.addVar(lb=1e-3, ub=4 * lam11)      # v = mu - lam
+s11 = mq11.addVar(lb=1e-6, ub=1e5)            # s = v^2
+w11 = mq11.addVar(lb=1e-6, ub=1e6)            # w = 1/v^2
+mq11.addConstr(v11 == mu11 - lam11)
+mq11.addQConstr(s11 == v11 * v11)
+mq11.addQConstr(w11 * s11 == 1)
+mq11.setObjective(c11 * mu11 + h11 * w11, GRB.MINIMIZE)
+mq11.optimize()
 print(f"es. 11.2 — analitico mu* = lam + (2h/c)^(1/3) = {mu_q:.4f}; "
-      f"numerico {res_q.x:.4f}; rho = {lam11 / mu_q:.1%} "
+      f"Gurobi {mu11.X:.4f}; rho = {lam11 / mu_q:.1%} "
       f"(caso lineare: 90,2%)")
 
 # ======================================================================
@@ -355,5 +373,36 @@ m13.setObjective(eta + gp.quicksum(xi[s] for s in range(6)) / (6 * 0.10), GRB.MI
 m13.optimize()
 print(f"VaR90 = 20 (cumulata 5/6 = 0,833 < 0,90); CVaR90 (LP) = {m13.ObjVal:.4f} "
       f"(la coda di massa 0,10 sta tutta sul punto 20)")
+
+# ======================================================================
+intestazione("Cap. 2 — costi ridotti sull'esempio 2x2 esteso (prodotto 3)")
+m2 = gp.Model(); m2.Params.OutputFlag = 0
+x1 = m2.addVar(); x2 = m2.addVar(); x3 = m2.addVar()
+m2.addConstr(x1 + 3*x2 + x3 <= 90); m2.addConstr(2*x1 + x2 + x3 <= 80)
+m2.setObjective(30*x1 + 50*x2 + 20*x3, GRB.MAXIMIZE)
+m2.optimize()
+print(f"z* = {m2.ObjVal:.0f}, x = ({x1.X:.0f}, {x2.X:.0f}, {x3.X:.0f}); "
+      f"RC = ({x1.RC:.0f}, {x2.RC:.0f}, {x3.RC:.0f}); SAObjUp(x3) = {x3.SAObjUp:.0f}")
+assert (m2.ObjVal, x3.RC, x3.SAObjUp) == (1900.0, -2.0, 22.0)
+m2b = gp.Model(); m2b.Params.OutputFlag = 0
+z1 = m2b.addVar(); z2 = m2b.addVar(); z3 = m2b.addVar()
+m2b.addConstr(z1 + 3*z2 + z3 <= 90); m2b.addConstr(2*z1 + z2 + z3 <= 80)
+m2b.setObjective(30*z1 + 50*z2 + 23*z3, GRB.MAXIMIZE)
+m2b.optimize()
+print(f"controprova margine 23: z* = {m2b.ObjVal:.0f}, "
+      f"x = ({z1.X:.0f}, {z2.X:.0f}, {z3.X:.0f})")
+assert (m2b.ObjVal, z1.X, z2.X, z3.X) == (1975.0, 0.0, 5.0, 75.0)
+
+# ======================================================================
+intestazione("Cap. 2 — QP dei due impianti (esempio svolto e KKT)")
+for D_qp in [6.0, 7.0]:
+    mqp = gp.Model(); mqp.Params.OutputFlag = 0
+    q1 = mqp.addVar(); q2 = mqp.addVar()
+    vq = mqp.addConstr(q1 + q2 >= D_qp)
+    mqp.setObjective(q1 * q1 + 2 * q2 * q2, GRB.MINIMIZE)
+    mqp.optimize()
+    print(f"domanda {D_qp:.0f}: x = ({q1.X:.4f}, {q2.X:.4f}), f* = {mqp.ObjVal:.4f}, "
+          f"lambda = {vq.Pi:.4f}")
+assert abs(mqp.ObjVal - 98 / 3) < 1e-6   # f*(7) = 2/3 * 49
 
 print("\nTutti i calcoli delle soluzioni completati.")

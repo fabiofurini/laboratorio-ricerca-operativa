@@ -43,6 +43,9 @@ $\sum (c_{ij} + \tau e_{ij}) x_{ij}$; **minimax** dell'utilizzo.
 LP costo minimo : costo 3.385 €   emissioni 2.730 kg   3 archi saturi
 Congestione a=1 : costo 3.703 €   emissioni 2.530 kg   utilizzo max 90%
 Prezzi ombra domanda: M1 8,00  M2 9,50  M3 10,00  M4 10,50 €/unità
+Costi ridotti archi a zero (con soglia = SAObjLow):
+  S2→H1 +2,00 (soglia 5,00)  H1→M4 +0,50 (soglia 5,50)
+  H2→M1 +4,50 (soglia 1,50)  H2→M2 +1,00 (soglia 3,00) €/unità
 Minimax         : utilizzo massimo minimo possibile 58,4%
 ```
 
@@ -50,6 +53,13 @@ Minimax         : utilizzo massimo minimo possibile 58,4%
 
 I prezzi ombra della domanda sono i **costi marginali di servizio** dei mercati: la
 base per accettare ordini e per i prezzi di trasferimento interni.
+
+I **costi ridotti** degli archi non usati (`x[a].RC`) sono le loro *soglie di
+convenienza*: S2→H1 (costo 7 €, RC +2) entrerebbe in soluzione solo sotto
+7 − 2 = 5 €/unità — il numero da portare in una trattativa con il vettore; H1→M4 è
+a un passo dall'uso (RC +0,50). Come sempre citiamo anche il range di validità
+`SAObjLow/Up`: per una variabile a zero è $[\text{soglia}, +\infty)$ e la soglia è
+proprio `SAObjLow`. Le variabili positive hanno costo ridotto nullo.
 
 ## Sensitività: il prezzo della CO₂
 
@@ -173,6 +183,12 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     print("\nPrezzi ombra della domanda (costo marginale di servire un'unità in più):")
     for k in domanda:
         print(f"  {k}: {v_dom[k].Pi:6.2f} €/unità")
+    print("\nCosti ridotti degli archi non usati (di quanto deve scendere il costo unitario"
+          "\ndell'arco perché entri nella soluzione ottima):")
+    for a in A:
+        if x[a].X < 1e-6:
+            print(f"  {a[0]:>2} → {a[1]:<2}: costo {c[a]:4.1f} €, RC = {x[a].RC:+5.2f} € "
+                  f"→ conveniente sotto {c[a] - x[a].RC:4.1f} €/unità")
     salva_dati(pd.DataFrame([(a[0], a[1], x[a].X, x[a].X / U[a]) for a in A],
                             columns=["da", "a", "flusso", "utilizzo"]), "supplychain_flussi_lp")
 

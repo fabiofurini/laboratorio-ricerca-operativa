@@ -5,14 +5,15 @@ Arrivi lambda = 42 richieste/ora; ogni "unità di capacità" mu costa c = 3 €/
 un'ora di permanenza nel sistema di un cliente vale h = 1,5 €.
 
 Contenuto:
-  1. Costo totale c·mu + h·lambda/(mu-lambda): soluzione analitica vs numerica
+  1. Costo totale c·mu + h·lambda/(mu-lambda): analitica vs Gurobi (globale)
   2. Il muro dell'utilizzazione: rho → 1 fa esplodere l'attesa
   3. Vincolo di service level W <= W_max e suo prezzo ombra
   4. Robustezza: lambda incerto nell'intervallo [36, 48]
 """
+import gurobipy as gp
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize_scalar
+from gurobipy import GRB
 
 from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva_dat,
                    salva_dati, salva_figura)
@@ -29,10 +30,35 @@ def costo(mu):
     return c * mu + h * lam / (mu - lam)
 
 
+def mu_ottimo(lams):
+    """min c·mu + max_l h·l/(mu - l) con Gurobi (globale, NonConvex=2).
+
+    Il termine 1/(mu - l) si linearizza con la variabile w_l e il vincolo
+    bilineare w_l·(mu - l) = 1; con un solo l è il modello M/M/1 base, con
+    più valori di l è la versione robusta (minimizza il caso peggiore)."""
+    m = gp.Model("mm1")
+    m.Params.OutputFlag = 0
+    m.Params.NonConvex = 2
+    m.Params.MIPGap = 1e-9
+    lam_max = max(lams)
+    mu = m.addVar(lb=lam_max + 1e-3, ub=4 * lam_max, name="mu")
+    t = m.addVar(name="t")                       # t = costo d'attesa peggiore
+    for l in lams:
+        w = m.addVar(lb=1e-6, ub=1e5)            # w = 1/(mu - l)
+        v = m.addVar(lb=1e-3, ub=4 * lam_max)    # v = mu - l
+        m.addConstr(v == mu - l)
+        m.addQConstr(w * v == 1)                 # bilineare: risolto globalmente
+        m.addConstr(t >= h * l * w)
+    m.setObjective(c * mu + t, GRB.MINIMIZE)
+    m.optimize()
+    assert m.Status == GRB.OPTIMAL
+    return mu.X, m.ObjVal
+
+
 mu_star = lam + np.sqrt(h * lam / c)               # dall'annullare la derivata
-res = minimize_scalar(costo, bounds=(lam + 1e-3, 4 * lam), method="bounded")
+mu_num, costo_num = mu_ottimo([lam])
 print(f"Analitico : mu* = lambda + sqrt(h·lambda/c) = {mu_star:.3f}  → costo {costo(mu_star):.3f} €/h")
-print(f"Numerico  : mu* = {res.x:.3f}  → costo {res.fun:.3f} €/h")
+print(f"Gurobi    : mu* = {mu_num:.3f}  → costo {costo_num:.3f} €/h")
 rho = lam / mu_star
 W = 1 / (mu_star - lam)
 print(f"All'ottimo: utilizzazione rho = {rho:.1%}, tempo medio nel sistema w = {W * 60:.1f} minuti")
@@ -65,15 +91,9 @@ intestazione("Robustezza: domanda incerta lambda in [36, 48]")
 lam_lo, lam_hi = 36.0, 48.0
 
 
-def costo_robusto(mu):
-    if mu <= lam_hi:
-        return np.inf
-    return c * mu + max(h * ll / (mu - ll) for ll in (lam_lo, lam_hi))
-
-
-res_rob = minimize_scalar(costo_robusto, bounds=(lam_hi + 1e-3, 4 * lam_hi), method="bounded")
-print(f"mu robusto = {res_rob.x:.3f} (vs {mu_star:.3f} nominale)")
-print(f"Costo nel caso peggiore: {res_rob.fun:.3f} €/h")
+mu_rob, costo_rob = mu_ottimo([lam_lo, lam_hi])
+print(f"mu robusto = {mu_rob:.3f} (vs {mu_star:.3f} nominale)")
+print(f"Costo nel caso peggiore: {costo_rob:.3f} €/h")
 print(f"Il piano nominale con lambda = 48 costerebbe: "
       f"{c * mu_star + h * 48 / (mu_star - 48) if mu_star > 48 else float('inf'):.3f} €/h → "
       + ("ok" if mu_star > 48 else "INSTABILE (mu* < lambda massimo!)"))

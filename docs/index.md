@@ -132,7 +132,7 @@ cambiano del 5%?
 ## Avvio rapido
 
 ```bash
-python3 -m pip install gurobipy matplotlib pandas scipy
+python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni statistiche
 python3 python/esegui_tutti.py        # rigenera dati, risultati e figure
 ```
 

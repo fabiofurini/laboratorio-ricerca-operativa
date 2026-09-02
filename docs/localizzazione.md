@@ -18,7 +18,7 @@ Quartieri $i \in I$ in $(a_i, b_i) \in \mathbb{R}^2$ con pesi $w_i \ge 0$:
 $$
 \text{Weber:}\ \min \sum_{i=1}^{n} w_i \sqrt{(x - a_i)^2 + (y - b_i)^2}
 \qquad
-\text{Minimax:}\ \min z \ \text{ soggetto a } \ \sqrt{(x - a_i)^2 + (y - b_i)^2} \le z, \ \forall i \in \{1,\dots,n\}
+\text{Minimax:}\ \min z \ \text{ soggetto a } \ \sqrt{(x - a_i)^2 + (y - b_i)^2} \le z, \ \forall i \in \{1, 2, \dots,n\}
 $$
 
 $$
@@ -78,13 +78,14 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 
     Contenuto:
       1. Baricentro pesato (distanza quadratica): soluzione in forma chiusa
-      2. Punto di Weber (distanza euclidea): scipy
+      2. Punto di Weber (distanza euclidea): Gurobi (riformulazione conica)
       3. Minimax (protegge il quartiere più lontano): riformulazione con variabile z
       4. Compromesso alpha·media + (1-alpha)·massimo: curva efficienza-equità
     """
+    import gurobipy as gp
     import numpy as np
     import pandas as pd
-    from scipy.optimize import minimize
+    from gurobipy import GRB
 
     from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva_dat,
                        salva_dati, salva_figura, salva_tikz)
@@ -115,6 +116,40 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
         return float(dist(p).max())
 
 
+    def localizza(pesi=None, tetto=None, cabina=None, raggio=None):
+        """Localizzazione con Gurobi (SOCP convesso, ottimo globale certificato).
+
+        Il trucco: una variabile d_k >= distanza euclidea dal quartiere k, imposta
+        con il vincolo conico dx_k^2 + dy_k^2 <= d_k^2 (d_k >= 0). Con pesi minimizza
+        la distanza media pesata (Weber); senza pesi minimizza la massima (minimax).
+        `tetto` impone d_k <= tetto; `cabina`/`raggio` il vincolo geografico."""
+        m = gp.Model("localizzazione")
+        m.Params.OutputFlag = 0
+        px = m.addVar(lb=-GRB.INFINITY, name="px")
+        py = m.addVar(lb=-GRB.INFINITY, name="py")
+        n = len(coord)
+        d = m.addVars(n, name="d")
+        for k in range(n):
+            dx = m.addVar(lb=-GRB.INFINITY)
+            dy = m.addVar(lb=-GRB.INFINITY)
+            m.addConstr(dx == px - coord[k, 0])
+            m.addConstr(dy == py - coord[k, 1])
+            m.addQConstr(dx * dx + dy * dy <= d[k] * d[k])   # cono: d_k >= distanza
+        if tetto is not None:
+            m.addConstrs((d[k] <= tetto for k in range(n)))
+        if cabina is not None:
+            m.addQConstr((px - cabina[0]) ** 2 + (py - cabina[1]) ** 2 <= raggio ** 2)
+        if pesi is not None:                     # Weber: media pesata
+            m.setObjective(gp.quicksum(pesi[k] * d[k] for k in range(n)), GRB.MINIMIZE)
+        else:                                    # minimax: distanza massima
+            z = m.addVar(name="z")
+            m.addConstrs((d[k] <= z for k in range(n)))
+            m.setObjective(z, GRB.MINIMIZE)
+        m.optimize()
+        assert m.Status == GRB.OPTIMAL
+        return np.array([px.X, py.X]), m.ObjVal
+
+
     # ----------------------------------------------------------------------
     # 2. TRE OBIETTIVI CLASSICI
     # ----------------------------------------------------------------------
@@ -122,17 +157,13 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     baricentro = (peso[:, None] * coord).sum(axis=0) / peso.sum()   # forma chiusa
     print(f"Baricentro pesato (dist. quadratica): ({baricentro[0]:.3f}, {baricentro[1]:.3f}) km")
 
-    res_w = minimize(f_weber, x0=baricentro, method="Nelder-Mead",
-                     options={"xatol": 1e-8, "fatol": 1e-10})
-    weber = res_w.x
+    weber, costo_weber = localizza(pesi=peso)
     print(f"Punto di Weber (dist. media pesata) : ({weber[0]:.3f}, {weber[1]:.3f}) km, "
-          f"costo {res_w.fun:,.1f} (migliaia ab · km)")
+          f"costo {costo_weber:,.1f} (migliaia ab · km)")
 
-    res_m = minimize(f_max, x0=baricentro, method="Nelder-Mead",
-                     options={"xatol": 1e-8, "fatol": 1e-10})
-    minimax = res_m.x
+    minimax, dist_minimax = localizza()
     print(f"Minimax (quartiere più lontano)     : ({minimax[0]:.3f}, {minimax[1]:.3f}) km, "
-          f"distanza massima {res_m.fun:.3f} km")
+          f"distanza massima {dist_minimax:.3f} km")
 
     print(f"\nCon il punto di Weber: distanza media pesata {f_weber(weber) / peso.sum():.3f} km, "
           f"massima {f_max(weber):.3f} km")
@@ -148,10 +179,8 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     D_grid = np.linspace(f_max(minimax) + 1e-4, f_max(weber), 21)
     punti = []
     for D in D_grid:
-        res = minimize(lambda p: f_weber(p) / media_pesi, x0=minimax, method="SLSQP",
-                       constraints=[{"type": "ineq", "fun": lambda p, D=D: D - f_max(p)}],
-                       options={"ftol": 1e-10, "maxiter": 400})
-        punti.append((D, res.x[0], res.x[1], f_weber(res.x) / media_pesi, f_max(res.x)))
+        pos, _ = localizza(pesi=peso, tetto=D)
+        punti.append((D, pos[0], pos[1], f_weber(pos) / media_pesi, f_max(pos)))
     comp = pd.DataFrame(punti, columns=["D_max", "x", "y", "dist_media", "dist_max"])
     salva_dati(comp, "localizzazione_frontiera")
     for _, r in comp.iloc[::5].iterrows():
@@ -163,13 +192,11 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     # ----------------------------------------------------------------------
     intestazione("Weber con vincolo: entro R = 2 km dalla cabina in (7, 6)")
     cabina, R = np.array([7.0, 6.0]), 2.0
-    res_v = minimize(f_weber, x0=cabina, method="SLSQP",
-                     constraints=[{"type": "ineq",
-                                   "fun": lambda p: R**2 - ((p - cabina) ** 2).sum()}])
-    print(f"Ottimo vincolato: ({res_v.x[0]:.3f}, {res_v.x[1]:.3f}), costo {res_v.fun:,.1f}")
-    print(f"Costo del vincolo: +{res_v.fun - res_w.fun:,.1f} rispetto al Weber libero "
-          f"({(res_v.fun / res_w.fun - 1) * 100:.1f}%)")
-    attivo = np.isclose(((res_v.x - cabina) ** 2).sum(), R**2, rtol=1e-3)
+    pos_v, costo_v = localizza(pesi=peso, cabina=cabina, raggio=R)
+    print(f"Ottimo vincolato: ({pos_v[0]:.3f}, {pos_v[1]:.3f}), costo {costo_v:,.1f}")
+    print(f"Costo del vincolo: +{costo_v - costo_weber:,.1f} rispetto al Weber libero "
+          f"({(costo_v / costo_weber - 1) * 100:.1f}%)")
+    attivo = np.isclose(((pos_v - cabina) ** 2).sum(), R**2, rtol=1e-3)
     print(f"Il vincolo è {'attivo (ottimo sul bordo del cerchio)' if attivo else 'non attivo'}")
 
     # ----------------------------------------------------------------------
@@ -199,7 +226,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     punti_not = [(weber, "rossomattone", 190, "Weber"),
                  (minimax, "arancio", -55, "minimax"),
                  (baricentro, "verde", 120, "baricentro"),
-                 (res_v.x, "viola", 35, "Weber vincolato")]
+                 (pos_v, "viola", 35, "Weber vincolato")]
     for pt, colore, angolo, etich in punti_not:
         r.append(f"  \\node[star, star points=5, fill={colore}, minimum size=3.2mm, inner sep=0pt,"
                  f" label={{[font=\\scriptsize, text={colore}, label distance=2.5mm]"
@@ -220,7 +247,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
     cerchio = plt.Circle(cabina, R, fill=False, color="#8E44AD", ls="--")
     ax.add_patch(cerchio)
     ax.scatter(*cabina, marker="s", s=70, color="#8E44AD", label="cabina + raggio 2 km")
-    ax.scatter(*res_v.x, marker="*", s=200, color="#8E44AD", zorder=5)
+    ax.scatter(*pos_v, marker="*", s=200, color="#8E44AD", zorder=5)
     ax.set_xlabel("km est"); ax.set_ylabel("km nord")
     ax.set_title("Dove mettere la stazione? Dipende dall'obiettivo")
     ax.legend(fontsize=8, loc="lower right")
