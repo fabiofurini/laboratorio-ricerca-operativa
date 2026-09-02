@@ -142,6 +142,12 @@ Sequenza obbligatoria:
 - **Niente commenti tra parentesi accanto ai vincoli** nei modelli dei richiami;
   i vincoli su singola variabile che sembrano bound si evitano: meglio vincoli
   generici a più variabili.
+- **Nei valori dal solver scrivere `Pi = (...)`, mai `y = Pi = (...)`**: i
+  simboli matematici (y, lambda) si usano nelle verifiche a mano, gli attributi
+  (`Pi`, `RC`) quando si riporta l'output del solver.
+- **I segni dei prezzi ombra si spiegano col ragionamento in due domande**
+  (aumentare b allarga/restringe la regione? una regione più ampia non peggiora
+  mai l'ottimo) e con la tabella verso × min/max.
 - **I calcoli e i valori si mostrano come formule centrate** (\[...\]), mai
   incorporati nel testo; il Passo 1 di ogni esempio elenca TUTTI i valori dati
   dal solver (x, z*, Pi, RC, range), i passi successivi li verificano.

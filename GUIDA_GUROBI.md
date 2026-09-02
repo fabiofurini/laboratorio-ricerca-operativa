@@ -298,11 +298,19 @@ for v in m.getVars():
 
 ### 5.3 bis — Il caso generale: segni e lettura
 
-**Prezzi ombra** (`Pi`): sempre la "derivata dell'ottimo rispetto al termine noto".
-In un **massimo**: vincolo `≤` di risorsa → `Pi ≥ 0`; vincolo `≥` → `Pi ≤ 0`. In un
-**minimo**: vincolo `≥` di domanda → `Pi ≥ 0`; vincolo `≤` di capacità → `Pi ≤ 0`.
-Uguaglianza → segno qualunque (duale libera); vincolo non attivo → `Pi = 0`;
-validità in `SARHSLow–SARHSUp`.
+**Prezzi ombra** (`Pi`): sempre la "derivata dell'ottimo rispetto al termine noto",
+`Pi = ∂z*/∂b`. Il segno si deduce con due domande: *aumentare `b` allarga o
+restringe la regione ammissibile?* (la allarga con `≤`, la restringe con `≥`);
+*una regione più ampia come cambia l'ottimo?* (non può mai peggiorarlo: un minimo
+scende o resta uguale, un massimo sale o resta uguale).
+
+| Verso del vincolo | minimo | massimo |
+|---|---|---|
+| `≤` (`b` ↑ ⇒ regione più ampia) | `Pi ≤ 0` | `Pi ≥ 0` |
+| `≥` (`b` ↑ ⇒ regione più stretta) | `Pi ≥ 0` | `Pi ≤ 0` |
+| `=` | segno qualunque | segno qualunque |
+
+Vincolo non attivo → `Pi = 0` (complementarietà); validità in `SARHSLow–SARHSUp`.
 
 **Costi ridotti** (`RC`): variabile in base → `RC = 0`; al bound inferiore →
 `RC ≥ 0` in un minimo, `RC ≤ 0` in un massimo (soglia di convenienza, validità in

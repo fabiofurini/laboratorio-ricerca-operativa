@@ -85,8 +85,19 @@ Attenzione alla **degenerazione**: può esistere una variabile *in base a valore
 zero*, con `RC = 0` pur non essendo usata; vale solo l'implicazione
 `RC ≠ 0` ⇒ variabile su un suo bound.
 
-Un vincolo **non attivo** ha sempre prezzo ombra nullo. Nei problemi di *minimo* un
-vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
+**I segni dei prezzi ombra.** Gurobi usa un'unica convenzione:
+$\texttt{Pi}_i = \partial z^* / \partial b_i$, la derivata dell'ottimo rispetto
+al termine noto. Il segno si deduce con due domande: *aumentare $b_i$ allarga o
+restringe la regione ammissibile?* (la allarga con $\le$, la restringe con
+$\ge$); *una regione più ampia come cambia l'ottimo?* (non può mai peggiorarlo).
+
+| Verso del vincolo | minimo | massimo |
+|---|---|---|
+| $\le$ ($b_i$ ↑ ⇒ regione più ampia) | `Pi ≤ 0` | `Pi ≥ 0` |
+| $\ge$ ($b_i$ ↑ ⇒ regione più stretta) | `Pi ≥ 0` | `Pi ≤ 0` |
+| $=$ | segno qualunque | segno qualunque |
+
+Un vincolo **non attivo** ha sempre `Pi = 0` (complementarietà).
 
 !!! example "Esempio 2×2, svolto"
     $$
@@ -99,7 +110,7 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
     $$
 
     **I valori li dà il solver**: $\boldsymbol x = (30, 20)$, $z^* = 1900$,
-    $\boldsymbol y =$ `Pi` $= (14, 8)$, `RC` $= (0, 0)$, con range `SARHS`
+    `Pi` $= (14, 8)$, `RC` $= (0, 0)$, con range `SARHS`
     $[40, 240]$ e $[30, 180]$, `SAObj` $[50/3, 100]$ e $[15, 90]$; entrambi i
     vincoli attivi.
 
@@ -151,8 +162,9 @@ vincolo $\le$ ha `Pi` $\le 0$ (convenzione di Gurobi).
     $$
 
     **I valori li dà il solver**: $\boldsymbol x = (60, 40, 0)$, $z^* = 620$,
-    `Pi = (0, 6, -1)`, `RC = (0, 0, -3)`, `SAObjUp(x3) = -6`, con range `SARHS`
-    $(-\infty, 100]$, $[30, +\infty)$ e $[-200, +\infty)$.
+    `Pi = (0, 6, -1)`, `RC = (0, 0, -3)`, con range `SARHS` $(-\infty, 100]$,
+    $[30, +\infty)$, $[-200, +\infty)$ e range `SAObj` $(-\infty, 8]$,
+    $[5, 17]$, $(-\infty, -6]$.
 
     **Verifiche a mano, con le regole della dualità**: $y_1 = 0$ per
     complementarietà (vincolo lasco: $x_1 + x_2 = 100 > 30$); $y_2 = 6$
@@ -183,7 +195,7 @@ Un **QP** ha obiettivo $\tfrac12 \boldsymbol x' \boldsymbol Q\, \boldsymbol x +
 $\boldsymbol Q \succeq 0$. In un problema convesso ogni minimo locale è globale:
 il solver può *certificare* l'ottimalità.
 
-!!! example "Un QP svolto per intero"
+!!! example "Un QP 2×2, svolto per intero"
     Obiettivo quadratico separabile e un vincolo di soglia sulla somma:
 
     $$
@@ -195,11 +207,18 @@ il solver può *certificare* l'ottimalità.
     $$
 
     $\boldsymbol Q = \mathrm{diag}(2, 4) \succ 0$: convesso, ottimo globale.
-    **Dal solver**: $x_1 = 4$, $x_2 = 2$, $f^* = 24$, $\lambda = 8$.
-    **Verifica delle proprietà**: vincolo attivo ($4 + 2 = 6$) e derivate parziali
-    coincidenti, $2x_1 = 8 = 4x_2$ (se fossero diverse converrebbe spostare
-    quantità): la derivata comune è proprio $\lambda$. Con termine noto 7 il
-    solver dà $f^* = 32{,}67 \approx 24 + 8$ (più il termine di curvatura).
+
+    **I valori li dà il solver**: $x_1 = 4$, $x_2 = 2$, $f^* = 24$, $\lambda = 8$.
+
+    **Verifica del prezzo ombra**: vincolo attivo ($4 + 2 = 6$) e derivate
+    parziali coincidenti:
+
+    $$
+    2x_1 = 8 = 4x_2 = \lambda . \quad ✓
+    $$
+
+    **Verifica per perturbazione**: con termine noto 7 il solver dà
+    $f^* = 32{,}67 \approx 24 + 8$ (più il termine di curvatura).
 
 ## Condizioni KKT (da Karush, Kuhn e Tucker)
 
