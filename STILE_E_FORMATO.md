@@ -144,7 +144,9 @@ Sequenza obbligatoria:
   generici a più variabili.
 - **Nei valori dal solver scrivere `Pi = (...)`, mai `y = Pi = (...)`**: i
   simboli matematici (y, lambda) si usano nelle verifiche a mano, gli attributi
-  (`Pi`, `RC`) quando si riporta l'output del solver.
+  (`Pi`, `RC`) quando si riporta l'output del solver; e i valori del solver si
+  riportano SENZA calcoli (z* = 1900, non z* = 30·30 + 50·20 = 1900): i conti
+  stanno solo nei passi di verifica.
 - **I segni dei prezzi ombra si spiegano col ragionamento in due domande**
   (aumentare b allarga/restringe la regione? una regione più ampia non peggiora
   mai l'ottimo) e con la tabella verso × min/max.
