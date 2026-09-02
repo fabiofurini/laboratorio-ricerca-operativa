@@ -31,9 +31,10 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
 - **Notazione allineata alle dispense LP di Fabio (cartella 3_LINEAR_PROGRAMMING)**:
   coppia canonica con PRIMALE = MAX (vincoli ≤, x ≥ 0) e duale = min; forma
   generale con insiemi DESCRITTIVI M_≤, M_=, M_≥ e N_{≥0}, N_{≷0}, N_{≤0};
-  variabili duali π_i (mai y); costi ridotti c̄_j; scarti s̄_i; BARRA = quantità
-  valutate in una soluzione ammissibile, TILDE = soluzione ottima (x̃, z̃, π̃),
-  MAI l'asterisco; intervalli di validità formali [b_i^min, b_i^max] (termine
+  variabili duali π_i (mai y); costi ridotti c̄_j (la barra è parte del nome);
+  scarti s_i; le variabili INCOGNITE si scrivono lisce (x_j, π_i): BARRA solo sui
+  valori di una soluzione ammissibile (x̄_j, s̄_i), TILDE solo su quelli di una
+  soluzione ottima (x̃, z̃, π̃), MAI l'asterisco; intervalli di validità formali [b_i^min, b_i^max] (termine
   noto) e [c_j^min, c_j^max] (coefficiente).
 - **Capitolo 2 (richiami) = solo teoria**: NIENTE notazione del solver (Pi, RC,
   SARHS, SAObj, Gurobi); si scrive «risolvendo si ottiene». Il ponte
