@@ -36,12 +36,24 @@ l'ottimalità si può *certificare*.
 
 ## Le condizioni di ottimalità non lineari: le KKT
 
-Per $\min f(\boldsymbol x)$ soggetto a $g_i(\boldsymbol x) \le 0$, $h_j(\boldsymbol x) = 0$,
-in un ottimo regolare $\tilde{\boldsymbol x}$ esistono $\lambda_i \ge 0$, $\nu_j$ con:
+Per $\min f(x_1, \dots, x_n)$ soggetto a $g_i(x_1, \dots, x_n) \le 0$ e
+$h_j(x_1, \dots, x_n) = 0$, la Lagrangiana è
 
 $$
-\nabla f + \sum_i \lambda_i \nabla g_i + \sum_j \nu_j \nabla h_j = \boldsymbol 0,
-\qquad \lambda_i\, g_i(\tilde{\boldsymbol x}) = 0, \;\; \forall i \in \{1, 2, \dots,m\} .
+L(x_1, \dots, x_n) = f(x_1, \dots, x_n)
++ \sum_{i=1}^{m} \lambda_i g_i(x_1, \dots, x_n)
++ \sum_{j=1}^{q} \nu_j h_j(x_1, \dots, x_n),
+\qquad \lambda_i \ge 0 ;
+$$
+
+in un ottimo regolare $(\tilde x_1, \dots, \tilde x_n)$ esistono
+$\lambda_i \ge 0$, $\nu_j$ con:
+
+$$
+\frac{\partial L}{\partial x_k}(\tilde x_1, \dots, \tilde x_n) = 0 \;\;
+\forall k \in \{1, 2, \dots, n\},
+\qquad \lambda_i\, g_i(\tilde x_1, \dots, \tilde x_n) = 0 \;\;
+\forall i \in \{1, 2, \dots, m\} .
 $$
 
 Se il problema è convesso le KKT sono anche sufficienti. **Nel caso lineare le

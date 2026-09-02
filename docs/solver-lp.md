@@ -159,8 +159,9 @@ Valore ottimo: 1900.0
   vincolo2: Slack = 0.0   Pi = 8.0   SARHS = [30.0, 180.0]
 ```
 
-La sezione 5 spiega come leggere ciascuno di questi numeri; l'esempio "tutti i
-casi" (sezione 5.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`.
+La sezione 5 spiega come leggere ciascuno di questi numeri; l'esempio «tutti i
+casi» (sezione 5.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`;
+per i modelli non lineari c'è la [pagina gemella](solver-non-lineare.md).
 
 
 ---

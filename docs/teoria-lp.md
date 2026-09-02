@@ -1,6 +1,8 @@
 # Teoria: programmazione lineare
 
-Il primo sottocapitolo dei richiami: dualità, condizioni di ottimalità e analisi di sensitività degli LP.
+Il primo sottocapitolo dei richiami: dualità, condizioni di ottimalità e analisi
+di sensitività degli LP. L'estensione non lineare (convessità, QP, KKT) è nella
+[pagina gemella](teoria-non-lineare.md).
 
 ## Le tre classi di modelli
 

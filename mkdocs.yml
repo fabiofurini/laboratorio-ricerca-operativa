@@ -36,6 +36,13 @@ theme:
     - content.code.copy
     - search.suggest
 
+plugins:
+  - search
+  - redirects:
+      redirect_maps:
+        richiami.md: teoria-lp.md
+        guida-gurobi.md: solver-lp.md
+
 extra_css:
   - stylesheets/extra.css
 
