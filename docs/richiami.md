@@ -26,16 +26,16 @@ ripartizione $F$ e il parametro $C$ della SVM.
 $$
 \begin{aligned}
 \text{(P)} \qquad \min ~ \sum_{j=1}^{n} c_j x_j & & \\
-\text{soggetto a} \quad \sum_{j=1}^{n} a_{kj} x_j &\ge b_k, & \forall k \in \{1,\dots,m\}, \\
+\text{soggetto a} \quad \sum_{j=1}^{n} a_{ij} x_j &\ge b_i, & \forall i \in \{1,\dots,m\}, \\
 x_j &\ge 0, & \forall j \in \{1,\dots,n\}; \\[1ex]
-\text{(D)} \qquad \max ~ \sum_{k=1}^{m} b_k y_k & & \\
-\text{soggetto a} \quad \sum_{k=1}^{m} a_{kj} y_k &\le c_j, & \forall j \in \{1,\dots,n\}, \\
-y_k &\ge 0, & \forall k \in \{1,\dots,m\}.
+\text{(D)} \qquad \max ~ \sum_{i=1}^{m} b_i y_i & & \\
+\text{soggetto a} \quad \sum_{i=1}^{m} a_{ij} y_i &\le c_j, & \forall j \in \{1,\dots,n\}, \\
+y_i &\ge 0, & \forall i \in \{1,\dots,m\}.
 \end{aligned}
 $$
 
-All'ottimo i due valori coincidono (**dualità forte**) e $y_k$ è il **prezzo ombra**
-della risorsa $k$: di quanto migliora l'ottimo se $b_k$ aumenta di una unità.
+All'ottimo i due valori coincidono (**dualità forte**) e $y_i$ è il **prezzo ombra**
+della risorsa $i$: di quanto migliora l'ottimo se $b_i$ aumenta di una unità.
 
 !!! example "Esempio 2×2, svolto"
     $$

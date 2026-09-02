@@ -26,6 +26,8 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
 - Eccezioni dichiarate (aderenza alla letteratura): variabili aleatorie maiuscole
   ($D$, $L$) con realizzazioni minuscole ($d_s$, $\ell_s$); $F$ = funzione di
   ripartizione; $C$ della SVM.
+- **Indici**: quando possibile $i$ per le righe (vincoli, osservazioni) e $j$ per
+  le colonne (variabili, caratteristiche): $a_{ij}$, $y_i$ duale del vincolo $i$.
 - **Ogni coefficiente e ogni insieme è definito PRIMA di essere usato.**
 
 ## 2. Formato dei modelli (il "formato LP" degli esempi EX_1–EX_5)
@@ -45,6 +47,11 @@ Sequenza obbligatoria:
    y_i = \dots
    \end{cases} \qquad \forall i \in \{1, 2, \dots, n\}.$$
    ```
+3bis. **Colori dei box** (devono restare ben distinti): modello = VERDE
+   (green!7/green!55!black); esempio svolto = AZZURRO (teal!6/teal); spiegazione =
+   grigio; insight = blu notte chiaro con barra a sinistra; attenzione = giallo;
+   esercizio = bianco con cornice blu notte.
+
 4. **Il modello**, in un box tcolorbox **verde**
    (`colback=green!7!white, colframe=green!55!black` — ambiente `modello` del
    preambolo), con `subequations` + `align`:
@@ -90,7 +97,8 @@ Sequenza obbligatoria:
    capitolo impareremo a: (1)… (4)»;
 2. «Il problema a parole» (decisione/obiettivo/vincoli) e costruzione guidata
    (dati → variabili → modello → descrizione, come in §2);
-3. Esempio numerico **svolto a mano** con tutti i passaggi;
+3. Esempio numerico **svolto a mano** con tutti i passaggi — i passi («Passo 1»,
+   «Passo 2», …) sempre come voci di un `itemize`, MAI come paragrafi sciolti;
 4. Caso di studio con dati CSV;
 5. Implementazione (codice mostrato e spiegato);
 6. Risultati (output trascritto FEDELMENTE dagli script) e figure;
@@ -107,6 +115,16 @@ Sequenza obbligatoria:
   aggiornare i numeri trascritti in .tex/.md, ricompilare.
 - Gli acronimi si introducono al primo uso; il documento è self-contained (nessun
   riferimento a materiali esterni o "documenti originali").
+
+### Slide (beamer)
+
+- Mai comprimere: **dare spazio** a formule e testo, un vincolo per riga anche nei
+  modelli delle slide; se un frame è troppo pieno (Overfull \vbox), DIVIDERLO in
+  due frame, non rimpicciolire.
+- Elenchi puntati al posto dei paragrafi lunghi.
+- Controllare `Overfull` (hbox E vbox) nel log a ogni modifica; attenzione ai
+  grafici pgfplots dentro le colonne (le etichette dell'asse y sporgono: usare
+  width=0.92\textwidth della colonna).
 
 ## 5. Figure
 
