@@ -149,15 +149,19 @@ coincidono).
 
 ## Le condizioni di ottimalità dell'LP: gli scarti complementari
 
-A ogni vincolo associamo lo *scarto* $\bar s_i$, a ogni variabile il *costo
-ridotto* $\bar c_j$ (lo scarto del vincolo *duale*), valutati in soluzioni
-ammissibili $(\bar x_1, \dots, \bar x_n)$, $(\bar\pi_1, \dots, \bar\pi_m)$:
+Le variabili incognite si scrivono lisce; barra = valori di una soluzione
+ammissibile, tilde = valori di una soluzione ottima. A ogni vincolo associamo lo
+*scarto* $s_i$, a ogni variabile il *costo ridotto* $\bar c_j$ (la barra fa
+parte del nome, da tradizione), cioè lo scarto del vincolo *duale*:
 
 $$
-\bar s_i = \sum_{j \in N} a_{ij} \bar x_j - b_i, \quad \forall i \in M,
+s_i = \sum_{j \in N} a_{ij} x_j - b_i, \quad \forall i \in M,
 \qquad
-\bar c_j = c_j - \sum_{i \in M} a_{ij} \bar\pi_i, \quad \forall j \in N.
+\bar c_j = c_j - \sum_{i \in M} a_{ij} \pi_i, \quad \forall j \in N.
 $$
+
+Sono funzioni delle variabili; barra e tilde ne indicano la valutazione in una
+soluzione ($\bar s_i$, $\tilde s_i$, …).
 
 Una coppia di soluzioni ammissibili è ottima per entrambi i problemi **se e solo
 se** valgono gli **scarti complementari**:
