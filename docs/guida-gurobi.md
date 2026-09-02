@@ -36,17 +36,17 @@ print(gp.gurobi.version())        # es. (13, 0, 3)
 Un modello di programmazione matematica in `gurobipy` si costruisce **sempre negli stessi
 cinque passi**. Usiamo come esempio un piccolo problema di produzione:
 
-> Un'azienda produce due prodotti A e B. Ogni unità di A rende 30 €, ogni unità di B 50 €.
-> A richiede 1 ora di lavorazione e 2 kg di materia prima; B richiede 3 ore e 1 kg.
+> Un'azienda produce due prodotti, 1 e 2. Ogni unità del prodotto 1 rende 30 €, ogni unità del prodotto 2 50 €.
+> Il prodotto 1 richiede 1 ora di lavorazione e 2 kg di materia prima; il prodotto 2 richiede 3 ore e 1 kg.
 > Sono disponibili 90 ore e 80 kg. Quanto produrre per massimizzare il ricavo?
 
 Il modello matematico:
 
 ```
-max  30 x_A + 50 x_B
-s.t.  1 x_A + 3 x_B ≤ 90    (ore)
-      2 x_A + 1 x_B ≤ 80    (materiale)
-      x_A, x_B ≥ 0
+max  30 x_1 + 50 x_2
+s.t.  1 x_1 + 3 x_2 ≤ 90    (ore)
+      2 x_1 + 1 x_2 ≤ 80    (materiale)
+      x_1, x_2 ≥ 0
 ```
 
 ### Passo 1 — creare il contenitore del modello
@@ -63,8 +63,8 @@ m = gp.Model("produzione")
 ### Passo 2 — aggiungere le variabili decisionali
 
 ```python
-xA = m.addVar(lb=0, name="xA")        # lb = lower bound (default 0)
-xB = m.addVar(lb=0, name="xB")
+x1 = m.addVar(lb=0, name="x1")        # lb = lower bound (default 0)
+x2 = m.addVar(lb=0, name="x2")
 ```
 
 Punti importanti:
@@ -85,8 +85,8 @@ x = m.addVars(prodotti, mesi, name="x")    # crea x["A",0], x["A",1], ...
 ### Passo 3 — aggiungere i vincoli
 
 ```python
-v_ore = m.addConstr(1*xA + 3*xB <= 90, name="ore")
-v_mat = m.addConstr(2*xA + 1*xB <= 80, name="materiale")
+v_ore = m.addConstr(1*x1 + 3*x2 <= 90, name="ore")
+v_mat = m.addConstr(2*x1 + 1*x2 <= 80, name="materiale")
 ```
 
 - si scrive il vincolo **come una disuguaglianza Python** tra espressioni lineari;
@@ -103,7 +103,7 @@ m.addConstrs((x.sum(i, "*") <= capacita[i] for i in prodotti), name="cap")
 ### Passo 4 — impostare la funzione obiettivo
 
 ```python
-m.setObjective(30*xA + 50*xB, GRB.MAXIMIZE)
+m.setObjective(30*x1 + 50*x2, GRB.MAXIMIZE)
 ```
 
 Il secondo argomento è `GRB.MAXIMIZE` o `GRB.MINIMIZE`. Obiettivi **quadratici** (Markowitz,
@@ -165,7 +165,7 @@ i *range* dei coefficienti (dati scalati bene?) e l'ultima riga (esito).
 ```python
 if m.Status == GRB.OPTIMAL:
     print("Valore ottimo:", m.ObjVal)
-    print("xA =", xA.X, " xB =", xB.X)      # .X = valore della variabile all'ottimo
+    print("x1 =", x1.X, " x2 =", x2.X)      # .X = valore della variabile all'ottimo
 elif m.Status == GRB.INFEASIBLE:
     print("Modello inammissibile")
 elif m.Status == GRB.UNBOUNDED:
@@ -218,7 +218,7 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in prodotti for t in mesi],
 
 ### 5.2 Prezzi ombra (`Pi`) — "quanto vale un'unità in più di risorsa?"
 
-Nell'esempio di produzione: all'ottimo `x_A = 30, x_B = 20`, ricavo 1900 €, ed entrambi i
+Nell'esempio di produzione: all'ottimo `x_1 = 30, x_2 = 20`, ricavo 1900 €, ed entrambi i
 vincoli sono attivi. I duali valgono:
 
 ```python

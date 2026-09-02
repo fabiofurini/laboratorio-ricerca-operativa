@@ -35,10 +35,10 @@ All'ottimo i due valori coincidono (**dualità forte**) e $y_k$ è il **prezzo o
 della risorsa $k$: di quanto migliora l'ottimo se $b_k$ aumenta di una unità.
 
 !!! example "Esempio 2×2, svolto"
-    $\max 30x_A + 50x_B$ soggetto a $x_A + 3x_B \le 90$ (ore), $2x_A + x_B \le 80$ (kg).
+    $\max 30x_1 + 50x_2$ soggetto a $x_1 + 3x_2 \le 90$ (ore), $2x_1 + x_2 \le 80$ (kg).
 
-    Entrambi i vincoli attivi all'ottimo: risolvendo il sistema, $x_B = 20$,
-    $x_A = 30$, valore $z^* = 1900$ €. I duali risolvono $y_1 + 2y_2 = 30$,
+    Entrambi i vincoli attivi all'ottimo: risolvendo il sistema, $x_2 = 20$,
+    $x_1 = 30$, valore $z^* = 1900$ €. I duali risolvono $y_1 + 2y_2 = 30$,
     $3y_1 + y_2 = 50$: $y_1 = 14$ (€/ora), $y_2 = 8$ (€/kg). Verifica:
     $90 \cdot 14 + 80 \cdot 8 = 1900 = z^*$. ✓
 

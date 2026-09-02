@@ -19,10 +19,10 @@ rng = np.random.default_rng(42)
 intestazione("Cap. 2, es. 2.1 — ore extra a 12 EUR/ora")
 def lp22(ore=90):
     m = gp.Model(); m.Params.OutputFlag = 0
-    xA = m.addVar(); xB = m.addVar()
-    c1 = m.addConstr(xA + 3 * xB <= ore)
-    m.addConstr(2 * xA + xB <= 80)
-    m.setObjective(30 * xA + 50 * xB, GRB.MAXIMIZE)
+    x1 = m.addVar(); x2 = m.addVar()
+    c1 = m.addConstr(x1 + 3 * x2 <= ore)
+    m.addConstr(2 * x1 + x2 <= 80)
+    m.setObjective(30 * x1 + 50 * x2, GRB.MAXIMIZE)
     m.optimize()
     return m, m.ObjVal, c1
 
