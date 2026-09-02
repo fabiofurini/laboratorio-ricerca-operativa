@@ -15,7 +15,7 @@ Dati $n$ punti $\boldsymbol x_i \in \mathbb{R}^p$ con etichette $y_i$:
 $$
 \min_{\boldsymbol w, b}\; \tfrac12 \|\boldsymbol w\|^2
 \quad\text{soggetto a}\;\quad
-y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1 \quad \forall i = 1, \dots, n
+y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1 \quad \forall i \in \{1, \dots, n\}
 $$
 
 Il margine geometrico è $2/\|\boldsymbol w\|$: minimizzare la norma = massimizzare
