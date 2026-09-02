@@ -6,7 +6,7 @@ riproducibili.
 
 Ogni capitolo parte da un problema gestionale concreto — quanto produrre, dove
 localizzare un servizio, quale prezzo fissare, quanto rischio accettare — lo
-trasforma in un modello di ottimizzazione, lo risolve in Python e, soprattutto, lo
+trasforma in un modello di ottimizzazione, lo risolve con Gurobi chiamato da Python e, soprattutto, lo
 *interroga*: quanto vale un'ora di capacità in più? La soluzione resiste se i dati
 cambiano del 5%?
 
@@ -24,8 +24,10 @@ cambiano del 5%?
     Come si costruisce un modello, come si fa girare, come si leggono soluzione,
     prezzi ombra e costi ridotti.
 
-    [:octicons-arrow-right-24: Solver, modelli lineari](solver-lp.md) ·
-    [Teoria LP](teoria-lp.md)
+    [:octicons-arrow-right-24: Teoria LP](teoria-lp.md) ·
+    [Teoria non lineare](teoria-non-lineare.md) ·
+    [Solver, modelli lineari](solver-lp.md) ·
+    [Solver, non lineari](solver-non-lineare.md)
 
 -   :material-factory: **Pianificare la produzione**
 
