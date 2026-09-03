@@ -21,6 +21,7 @@ site/
 .DS_Store
 
 # materiale interno, non pubblicato
+STILE_E_FORMATO.md
 pdf_originali/
 PIANO_DI_LAVORO.md
 soluzioni/
