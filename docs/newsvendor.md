@@ -12,20 +12,58 @@ per vendita persa).
 
 ## Modello base e regola del quantile
 
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $D$ | variabile aleatoria $\ge 0$ | domanda, con funzione di ripartizione $F$; eccezione alla convenzione sulle maiuscole, per aderenza alla letteratura: variabile aleatoria maiuscola, realizzazioni minuscole ($d_s$) |
+| $c_u$ | $\in \mathbb{Q}_{> 0}$ | costo unitario di *underage* (domanda non servita): margine perso più eventuale penalità (€) |
+| $c_o$ | $\in \mathbb{Q}_{> 0}$ | costo unitario di *overage* (unità invenduta): costo meno valore di recupero (€) |
+
+Con prezzo di vendita $p$, costo d'acquisto $c$ e valore di recupero $v \le c$ (tutti
+in $\mathbb{Q}_{>0}$): $c_u = p - c$ e $c_o = c - v$.
+
+**Variabile decisionale.** Introduciamo una variabile non negativa:
+
 $$
-\min_{q \ge 0}\; c_o\, \mathbb{E}[(q - D)^+] + c_u\, \mathbb{E}[(D - q)^+]
-\qquad\Longrightarrow\qquad
-F(q^*) = \alpha^* = \frac{c_u}{c_u + c_o}
+q = \text{quantità ordinata prima di osservare la domanda } D.
 $$
 
-Ragionamento marginale: l'unità in più rende $c_u$ con probabilità $1 - F(q)$ e
-costa $c_o$ con probabilità $F(q)$; conviene finché $F(q) \le \alpha^*$.
+Usando questa variabile, il modello per il problema è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ c_o\, \mathbb{E}\bigl[(q - D)^+\bigr] + c_u\, \mathbb{E}\bigl[(D - q)^+\bigr] & & \\
+\text{soggetto a} \quad q &\ge 0. &
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e del vincolo:
+
+- la funzione obiettivo convessa minimizza il costo atteso dell'errore: eccedenza
+  $(q - D)^+$ pagata $c_o$ e carenza $(D - q)^+$ pagata $c_u$ (il simbolo
+  $(x)^+ = \max\{x, 0\}$ indica la parte positiva);
+- il vincolo di non negatività definisce la variabile del modello.
+
+Se $F$ è continua, l'ottimo soddisfa la **regola del quantile**:
+
+$$
+F(\tilde q) = \alpha = \frac{c_u}{c_u + c_o}
+\qquad\Longrightarrow\qquad
+\tilde q = F^{-1}(\alpha).
+$$
+
+Ragionamento marginale: la $q$-esima unità in più rende $c_u$ se la domanda la
+assorbe (probabilità $1 - F(q)$) e costa $c_o$ se resta invenduta (probabilità
+$F(q)$); conviene finché $c_u\,(1 - F(q)) \ge c_o\,F(q)$, cioè finché
+$F(q) \le c_u/(c_u + c_o)$.
 
 !!! example "Esempio a mano (domanda discreta)"
-    $D \in \{80, 100, 120\}$ equiprobabili, $c_u = 9$, $c_o = 4$:
-    $C(80) = 180$, $C(100) = 86{,}7$, $C(120) = \mathbf{80}$. Si ordina il
-    **massimo**: con $c_u \gg c_o$ restare corti costa più del doppio che restare
-    lunghi. (Regola discreta: il più piccolo $q$ con $F(q) \ge 0{,}6923$.)
+    $D \in \{80, 100, 120\}$ equiprobabili, $c_u = 9$, $c_o = 4$ (quindi
+    $\alpha = 9/13 = 0{,}6923$): $C(80) = 180$, $C(100) = 86{,}7$,
+    $C(120) = \mathbf{80}$. Si ordina il **massimo**: con $c_u \gg c_o$ restare corti
+    costa più del doppio che restare lunghi. (Regola discreta: il più piccolo $q$ con
+    $F(q) \ge 0{,}6923$, cioè $\tilde q = 120$.)
 
 ## Caso di studio
 
@@ -33,49 +71,120 @@ Panetteria: $p = 15$, $c = 6$, $v = 2$ € → $c_u = 9$, $c_o = 4$; $D$ normale
 $(100, 20)$.
 
 ```text
-alpha* = 9/13 = 0,6923      q* = 110,05  (media = 100)
-costo atteso in q*: 91,43 €   |   ordinando la media: 103,72 €
+alpha* = 9/13 = 0,6923
+q* = F^-1(0,6923) = 110,05 unita'   (media = 100)
+costo atteso in q*: 91,43 EUR    in q = media: 103,72 EUR
 ```
 
 ![Costo atteso e stabilità](img/cap12_quantile_stabilita.png)
 
 ## La formulazione lineare a scenari
 
+Quando $F$ non è nota in forma chiusa — il caso normale in azienda — si usano gli
+scenari. Nuovi dati del modello: il numero di scenari $k \in \mathbb{Z}_{\ge 1}$,
+indicizzati da $s \in \{1, 2, \dots, k\}$; per ogni scenario, la domanda
+$d_s \in \mathbb{Q}_{\ge 0}$ e la probabilità $\pi_s \in \mathbb{Q}_{\ge 0}$, con
+$\sum_{s=1}^{k} \pi_s = 1$. Oltre a $q$, introduciamo le seguenti $2\,k$ variabili
+non negative:
+
 $$
-\min\; c_o \sum_{s=1}^{k} \pi_s o_s + c_u \sum_{s=1}^{k} \pi_s u_s
-\quad\text{soggetto a}\;\; o_s \ge q - d_s,\;\; u_s \ge d_s - q,
-\;\;\forall s \in \{1, 2, \dots,k\};\;\; q \ge 0;\;\; o_s, u_s \ge 0
+\begin{cases}
+o_s = \text{eccedenza (unità invendute) nello scenario } s\\[1ex]
+u_s = \text{carenza (domanda non servita) nello scenario } s
+\end{cases}
+\qquad \forall s \in \{1, 2, \dots, k\}.
 $$
+
+Usando queste variabili, un modello LP per il problema è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ \sum_{s=1}^{k} \pi_s \bigl( c_o\, o_s + c_u\, u_s \bigr) & & \\
+\text{soggetto a} \quad o_s &\ge q - d_s, & \forall s \in \{1, 2, \dots, k\}, \\
+u_s &\ge d_s - q, & \forall s \in \{1, 2, \dots, k\}, \\
+q &\ge 0, & \\
+o_s,\ u_s &\ge 0, & \forall s \in \{1, 2, \dots, k\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo lineare è la media pesata, sugli scenari, dei costi di
+  eccedenza e di carenza: la versione "a scenari" del costo atteso del modello base;
+- i vincoli lineari di **eccedenza** e di **carenza** definiscono $o_s$ e $u_s$ a
+  partire dall'unica vera decisione $q$; insieme alle non negatività realizzano le
+  parti positive ($2\,k$ vincoli lineari);
+- i vincoli su $q$, $o_s$ e $u_s$ definiscono le variabili del modello.
 
 Il **trucco delle parti positive**: l'obiettivo schiaccia $o_s$ e $u_s$ sui valori
 $\max\{q - d_s, 0\}$ e $\max\{d_s - q, 0\}$ senza variabili binarie — lo stesso
 meccanismo tornerà nel CVaR e nella SVM.
 
 ```text
-LP con 600 scenari: q = 108,61 = quantile empirico al 69,23% (è un teorema)
-VSS = 11,17 €/ciclo (-11%): il valore di modellare l'incertezza
-Stabilità: con 30 scenari q balla di ±3,5 unità tra repliche
+LP con k = 600 scenari: q = 108,61
+quantile empirico al 69,23%: 108,60   (coincidono: e' un teorema)
+VSS: decisione q = E[D] = 100 costa 99,50; q stocastica costa 88,33
+     valore della soluzione stocastica = 11,17 EUR per ciclo
 ```
+
+Il *valore della soluzione stocastica* (VSS) vale qui 11,17 € a ciclo, l'11% del
+costo: è il guadagno di **modellare** l'incertezza invece di sostituirla con la
+media. Sotto i 100 scenari, però, la $q$ ottima balla di ±3 unità tra una stima e
+l'altra: gli scenari sono anch'essi un campione, e la decisione eredita la loro
+varianza.
 
 ## Livelli di servizio e rischio
 
 ```text
-Cycle service level 95%: q = 132,9 (costo +45,59 €)   Fill rate in q*: già 96%!
-Media-CVaR (alpha=0,9): lambda 0 -> 1: q da 108,6 a 116,2
-  costo medio +6,5 €  |  CVaR90 da 245,9 a 224,6 (-21,4 €)
+cycle service level 90%: q = 125,63  (costo +23,41 EUR sull'ottimo economico)
+cycle service level 95%: q = 132,90  (costo +45,59)
+cycle service level 99%: q = 146,53  (costo +95,56)
+fill rate in q*: 96,06%   probabilita' di non-stockout in q*: 69,23%
+```
+
+!!! warning "Non confondere i livelli di servizio"
+    In $\tilde q = 110$ la probabilità di evitare lo stock-out è solo il 69%, ma il
+    *fill rate* (quota di domanda servita in media) è il 96%: misure diverse che i
+    contratti spesso confondono. Promettere "95% di probabilità di copertura totale"
+    costa +45,59 € a ciclo rispetto all'ottimo economico; promettere "95% di fill
+    rate" è quasi gratis. Leggere bene lo SLA prima di firmarlo.
+
+Con la formulazione lineare del CVaR minimizziamo
+$(1-\lambda)\,\mathbb{E}[\text{costo}] + \lambda\, \mathrm{CVaR}_{0,90}(\text{costo})$:
+
+```text
+lambda = 0,00: q = 108,61  costo medio 88,33  CVaR90 245,93
+lambda = 0,25: q = 112,45  costo medio 90,37  CVaR90 229,29
+lambda = 0,50: q = 114,48  costo medio 92,52  CVaR90 225,49
+lambda = 1,00: q = 116,17  costo medio 94,87  CVaR90 224,56
 ```
 
 ![Frontiera costo-CVaR](img/cap12_frontiera.png)
 
-!!! warning "Non confondere i livelli di servizio"
-    In $q^*$ la probabilità di *non* avere stock-out è il 69%, ma il *fill rate*
-    (domanda servita in media) è il 96%: promesse molto diverse a costi molto
-    diversi. Leggere bene lo SLA.
+Il decisore avverso al rischio ordina di più (da 108,6 a 116,2 unità): paga 6,5 € in
+più in media per tagliare di 21,4 € il costo medio dei peggiori 10% degli scenari. La
+gran parte della protezione si ottiene già con $\lambda = 0{,}25$: la frontiera è
+ripida all'inizio e piatta poi.
 
-**Multiprodotto** (3 prodotti, budget 1200 €, domande correlate $\rho = 0{,}7$): il
-budget comprime le quantità sotto i quantili ottimi; duale del budget $-0{,}55$
-(un euro in più rende 55 centesimi per ciclo). Con $\rho = 0$ il costo atteso scende
-del 18%: **la correlazione è un costo**, e il modello lo quantifica.
+## Multiprodotto con budget condiviso
+
+Tre dolci con domande *correlate* ($\rho = 0{,}7$: le feste vanno bene o male per
+tutti insieme) e un budget di produzione di 1200 €:
+
+```text
+  prodotto  | q senza budget | q con budget
+ panettone  |          111,1 |         99,3
+ pandoro    |           91,5 |         75,4
+ torrone    |           65,9 |         56,8
+Spesa: 1200/1200   prezzo ombra del budget: -0,553
+```
+
+Il budget vincolante comprime le tre quantità sotto i rispettivi quantili ottimi, ma
+non proporzionalmente: il taglio dipende dal rapporto $c_u/c_o$ e dal costo unitario
+di ciascun prodotto. Il duale dice che un euro di budget in più ridurrebbe il costo
+atteso di 0,55 €: un rendimento del 55% che giustificherebbe quasi qualunque
+finanziamento. La correlazione alta, inoltre, toglie il beneficio di
+diversificazione: i tre prodotti falliscono insieme.
 
 
 ## Codice
@@ -306,9 +415,9 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 
 ## Esercizi
 
-1. Penalità $b = 3$ €: $\alpha^* = 0{,}75$, $q^* = 113{,}5$.
+1. Penalità $b = 3$ €: $\alpha = 0{,}75$, $\tilde q = 113{,}5$.
 2. Scenari da 24 osservazioni storiche vs distribuzione stimata: quale consigliare?
-3. Deperibili ($v = -1$): $\alpha^* = 0{,}5625$, $q^* = 103{,}2$.
+3. Deperibili ($v = -1$): $\alpha = 0{,}5625$, $\tilde q = 103{,}2$.
 4. EVPI: quanto vale al massimo una previsione perfetta? (88,33 €/ciclo.)
 5. Vincolo di fill rate al 98% vs cycle service level al 98%: confrontare.
 6. Multiprodotto con $\rho = 0$: perché il costo scende?

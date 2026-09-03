@@ -12,20 +12,60 @@ minimo $\bar r$, limiti $\ell_i \le x_i \le u_i$.
 
 ## Modello
 
-Dati: rendimenti attesi $\mu_i$, covarianze $q_{ij}$ (matrice
-$\boldsymbol Q \succeq 0$).
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di titoli; i titoli sono indicizzati da $i \in \{1, 2, \dots, n\}$ |
+| $\mu_i$ | $\in \mathbb{Q}$ | rendimento atteso del titolo $i$ (per anno) |
+| $q_{ij}$ | $\in \mathbb{Q}$ | covarianza tra i rendimenti dei titoli $i$ e $j$; la matrice $\boldsymbol Q = (q_{ij})$ è semidefinita positiva ($\boldsymbol Q \succeq 0$) |
+| $\bar r$ | $\in \mathbb{Q}$ | rendimento atteso minimo richiesto |
+| $\ell_i,\, u_i$ | $\in \mathbb{Q},\ 0 \le \ell_i \le u_i \le 1$ | quota minima e massima investibile nel titolo $i$ |
+
+**Variabili decisionali.** Introduciamo le seguenti $n$ variabili non negative:
 
 $$
-\min \sum_{i=1}^{n}\sum_{j=1}^{n} q_{ij}\, x_i x_j
-\quad\text{soggetto a}\;\quad
-\sum_{i=1}^{n} \mu_i x_i \ge \bar r,\qquad
-\sum_{i=1}^{n} x_i = 1,\qquad x_i \le u_i,\qquad x_i \ge \ell_i,
-\;\;\forall i \in \{1, 2, \dots,n\}.
+x_i = \text{quota di capitale investita nel titolo } i,
+\qquad \forall i \in \{1, 2, \dots, n\}.
 $$
 
-La varianza contiene le **covarianze**: è lì che nasce la diversificazione. Ogni
-matrice di covarianza è semidefinita positiva → QP convesso, ottimo globale
-certificato.
+Usando queste variabili, un modello QP per il problema è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ \sum_{i=1}^{n} \sum_{j=1}^{n} q_{ij}\, x_i\, x_j & & \\
+\text{soggetto a} \quad \sum_{i=1}^{n} \mu_i\, x_i &\ge \bar r, & \\
+\sum_{i=1}^{n} x_i &= 1, & \\
+x_i &\le u_i, & \forall i \in \{1, 2, \dots, n\}, \\
+x_i &\ge \ell_i, & \forall i \in \{1, 2, \dots, n\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo quadratica minimizza la varianza del rendimento del
+  portafoglio; contiene le covarianze $q_{ij}$, ed è qui che nasce la
+  diversificazione: combinare titoli poco correlati abbassa il rischio complessivo
+  sotto quello dei singoli componenti;
+- il vincolo lineare di **rendimento** impone che il rendimento atteso del
+  portafoglio raggiunga la soglia $\bar r$: è la "manopola" con cui si percorre la
+  frontiera efficiente, e il suo moltiplicatore dice quanta varianza costa ogni punto
+  di rendimento in più (un vincolo lineare);
+- il vincolo lineare di **budget** impone di investire tutto il capitale (un vincolo
+  lineare);
+- i vincoli lineari di **tetto** $x_i \le u_i$ sono i limiti per titolo, tipici
+  vincoli regolamentari o di mandato ($n$ vincoli lineari);
+- i vincoli $x_i \ge \ell_i$ definiscono le variabili del modello (con $\ell_i = 0$:
+  divieto di vendita allo scoperto).
+
+Formulazioni equivalenti:
+$\max\, \sum_{i=1}^{n} \mu_i x_i - \lambda \sum_{i=1}^{n}\sum_{j=1}^{n} q_{ij} x_i x_j$
+(media-varianza) e $\max\, \sum_{i=1}^{n} \mu_i x_i$ con varianza $\le \bar\sigma^2$
+(massimo rendimento a rischio limitato). Variando $\bar r$ (o $\lambda$, o
+$\bar\sigma$) si percorre la stessa frontiera.
+
+Ogni matrice di covarianza è semidefinita positiva, quindi il QP è convesso e
+l'ottimo trovato è **globale certificato**.
 
 !!! example "Esempio a mano (2 titoli non correlati)"
     $\sigma_1 = 20\%$, $\sigma_2 = 30\%$: minimizzando
@@ -34,37 +74,54 @@ certificato.
 
 ## Caso di studio
 
-Otto ETF settoriali, $\mu$ e $\boldsymbol Q$ **stimati** da 60 rendimenti mensili
-simulati (`dati/markowitz_rendimenti.csv`).
+Otto ETF settoriali, $\boldsymbol\mu$ e $\boldsymbol Q$ **stimati** da 60 rendimenti
+mensili simulati (`dati/markowitz_rendimenti.csv`). Statistiche annualizzate:
 
 ```text
-Minima varianza globale : rendimento 11,06%, volatilità  6,03%
-Equipesato (1/n)        : rendimento 10,74%, volatilità 10,13%   (dominato!)
-Composizione min varianza: ENE 5%  IND 2%  SAN 12%  CON 22%  UTL 58%
+ENE: mu = 19,12%  vol = 18,65%      SAN: mu =  2,80%  vol = 11,93%
+FIN: mu =  8,27%  vol = 19,59%      CON: mu = 11,25%  vol = 11,67%
+TEC: mu =  1,58%  vol = 29,27%      UTL: mu = 11,99%  vol =  7,53%
+IND: mu =  9,97%  vol = 16,60%      MAT: mu = 20,93%  vol = 23,93%
+```
+
+```text
+Minima varianza globale : rendimento 11,06%, volatilita'  6,03%
+Equipesato (1/n)        : rendimento 10,74%, volatilita' 10,13%
+Composizione min varianza: ENE 5,2%  IND 1,9%  SAN 11,5%  CON 22,3%  UTL 58,3%
 ```
 
 ![Frontiera efficiente](img/cap06_frontiera.png)
 
 ![Composizione lungo la frontiera](img/cap06_composizione.png)
 
-Tre messaggi: (1) la minima varianza è meno rischiosa del miglior titolo singolo;
-(2) l'equipesato $1/n$ è dominato; (3) il tetto $u_i = 30\%$ taglia la parte alta
-della frontiera — il costo dei vincoli di mandato *si vede*.
+Tre messaggi: (1) il portafoglio di minima varianza (volatilità 6%) è molto meno
+rischioso del miglior titolo singolo (UTL, 7,5%) pur rendendo l'11%; (2) l'equipesato
+$1/n$ — la strategia "non so nulla" — è nettamente dominato: stessa area di
+rendimento ma quasi il doppio della volatilità; (3) il tetto $u_i = 30\%$ taglia la
+parte alta della frontiera — il costo dei vincoli di mandato *si vede* come distanza
+tra le due curve.
 
 ## Sensitività
 
 ```text
-r_min =  6…10%: vol 6,03%  (vincolo NON attivo: coincide col min varianza)
-r_min = 12%   : vol 6,10%  d(varianza)/d(r_min) ≈ 0,022
+r_min =  6%: vol 6,03%   (vincolo NON attivo: coincide col min varianza)
+r_min =  8%: vol 6,03%   (idem)
+r_min = 10%: vol 6,03%   (idem)
+r_min = 12%: vol 6,10%   d(varianza)/d(r_min) ~ 0,0221
 ```
 
-Fino all'11,06% (rendimento della minima varianza) il vincolo di rendimento è
-inattivo e non costa nulla; oltre, ogni punto di rendimento si paga in varianza.
+Fino a $\bar r = 11\%$ il vincolo di rendimento è *inattivo*: il portafoglio di
+minima varianza rende già l'11,06%, quindi chiedere "almeno l'8%" non costa nulla e
+il moltiplicatore è zero. Solo oltre l'11,06% il vincolo morde e ogni punto di
+rendimento in più si paga in varianza (moltiplicatore $\approx 0{,}022$ a
+$\bar r = 12\%$).
 
 !!! warning "La fragilità delle stime"
-    Su 60 mesi l'errore standard del rendimento stimato è ≈2,6% annuo per titolo: i
-    portafogli ottimizzati inseguono gli errori di stima. Rimedi: vincoli $u_i$,
-    shrinkage, o ottimizzare solo il rischio.
+    Nei dati simulati il titolo TEC ha $\alpha$ vero dell'11% annuo, ma su 60 mesi il
+    rendimento *stimato* è 1,6%: il rumore domina. Le stime dei rendimenti attesi
+    sono molto più instabili di quelle delle covarianze, e i portafogli ottimizzati
+    inseguono gli errori di stima. Rimedi: vincoli $u_i$, shrinkage delle stime,
+    oppure ottimizzare solo il rischio (minima varianza).
 
 
 ## Codice

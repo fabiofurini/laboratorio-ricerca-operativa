@@ -13,20 +13,59 @@ ogni nodo e capacità delle tratte.
 
 ## Modello
 
-Su un grafo diretto $G = (N, A)$ con saldi $b_i$ (offerta $>0$, domanda $<0$,
-transito $=0$), capacità $u_{ij}$, costi $c_{ij}$ ed emissioni $e_{ij}$:
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $G = (N, A)$ | grafo diretto | nodi $N$ e archi $A \subseteq N \times N$; scriviamo $\lvert N \rvert$ e $\lvert A \rvert$ per il numero di nodi e di archi |
+| $b_i$ | $\in \mathbb{Q}$ | saldo del nodo $i \in N$: offerta se $> 0$, domanda se $< 0$, transito se $= 0$ |
+| $u_{ij}$ | $\in \mathbb{Q}_{> 0}$ | capacità dell'arco $(i,j) \in A$ (unità) |
+| $c_{ij}$ | $\in \mathbb{Q}_{\ge 0}$ | costo di trasporto di un'unità sull'arco $(i,j)$ (€) |
+| $e_{ij}$ | $\in \mathbb{Q}_{\ge 0}$ | emissioni per unità trasportata su $(i,j)$ (kg CO₂) |
+
+**Variabili decisionali.** Introduciamo una variabile non negativa per ciascuno degli
+$|A|$ archi:
 
 $$
-\min \sum_{(i,j) \in A} c_{ij}\, x_{ij}
-\quad\text{soggetto a}\;\quad
-\sum_{j:(i,j) \in A} x_{ij} - \sum_{j:(j,i) \in A} x_{ji} = b_i, \;\;\forall i \in N,
-\qquad x_{ij} \le u_{ij},
-\qquad x_{ij} \ge 0, \;\;\forall (i,j) \in A
+x_{ij} = \text{unità di prodotto inviate sull'arco } (i,j),
+\qquad \forall (i,j) \in A.
 $$
 
-Varianti sull'obiettivo: **congestione** $\sum (c_{ij} x_{ij} + \alpha c_{ij}
-x_{ij}^2/u_{ij})$ (convessa); **prezzo interno della CO₂**
-$\sum (c_{ij} + \tau e_{ij}) x_{ij}$; **minimax** dell'utilizzo.
+Usando queste variabili, un modello LP per il problema è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ \sum_{(i,j) \in A} c_{ij}\, x_{ij} & & \\
+\text{soggetto a} \quad \sum_{j :\, (i,j) \in A} x_{ij} - \sum_{j :\, (j,i) \in A} x_{ji} &= b_i, & \forall i \in N, \\
+x_{ij} &\le u_{ij}, & \forall (i,j) \in A, \\
+x_{ij} &\ge 0, & \forall (i,j) \in A.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo lineare minimizza il costo totale di trasporto: ogni unità
+  che attraversa l'arco $(i,j)$ paga il costo unitario $c_{ij}$;
+- i vincoli lineari di **conservazione del flusso** impongono che in ogni nodo ciò
+  che esce meno ciò che entra sia pari al saldo $b_i$ — positivo negli stabilimenti,
+  negativo nei mercati, nullo negli hub ($|N|$ vincoli lineari); la somma dei saldi
+  su tutti i nodi deve essere $\ge 0$, altrimenti il modello è inammissibile;
+- i vincoli lineari di **capacità** assicurano che nessuna tratta trasporti più della
+  propria capacità ($|A|$ vincoli lineari);
+- i vincoli di non negatività su $x_{ij}$ definiscono le variabili del modello.
+
+Varianti sull'obiettivo (i vincoli non cambiano):
+
+$$
+\underbrace{\sum_{(i,j) \in A} \bigl(c_{ij}\, x_{ij} + \alpha\, c_{ij}\, x_{ij}^2 / u_{ij}\bigr)}_{\text{congestione (convessa)}}
+\qquad
+\underbrace{\sum_{(i,j) \in A} (c_{ij} + \tau\, e_{ij})\, x_{ij}}_{\text{prezzo interno CO}_2}
+\qquad
+\underbrace{\min z \;:\; x_{ij}/u_{ij} \le z, \;\; \forall (i,j) \in A}_{\text{minimax utilizzo}}
+$$
+
+dove $\alpha \in \mathbb{Q}_{\ge 0}$ pesa la congestione e
+$\tau \in \mathbb{Q}_{\ge 0}$ (€/kg) è il prezzo interno della CO₂.
 
 !!! example "Esempio a mano (due rotte)"
     100 unità; rotta 1: $c_1 = 2$, $u_1 = 80$; rotta 2: $c_2 = 5$. L'LP riempie la
@@ -40,13 +79,14 @@ $\sum (c_{ij} + \tau e_{ij}) x_{ij}$; **minimax** dell'utilizzo.
 (inquinanti), quelle care "su ferro" (pulite). Dati in `dati/supplychain_archi.csv`.
 
 ```text
-LP costo minimo : costo 3.385 €   emissioni 2.730 kg   3 archi saturi
-Congestione a=1 : costo 3.703 €   emissioni 2.530 kg   utilizzo max 90%
-Prezzi ombra domanda: M1 8,00  M2 9,50  M3 10,00  M4 10,50 €/unità
-Costi ridotti archi a zero (con soglia = SAObjLow):
-  S2→H1 +2,00 (soglia 5,00)  H1→M4 +0,50 (soglia 5,50)
-  H2→M1 +4,50 (soglia 1,50)  H2→M2 +1,00 (soglia 3,00) €/unità
-Minimax         : utilizzo massimo minimo possibile 58,4%
+LP costo minimo : costo 3.385,00 EUR  emissioni 2.730 kg  utilizzo max 100%
+  archi saturi: S1->H1, S2->H2, H2->M3
+  prezzi ombra della domanda: M1 8,00  M2 9,50  M3 10,00  M4 10,50 EUR/unita'
+  costi ridotti archi a zero (soglia = SAObjLow):
+    S2->H1 +2,00 (soglia 5,00)   H1->M4 +0,50 (soglia 5,50)
+    H2->M1 +4,50 (soglia 1,50)   H2->M2 +1,00 (soglia 3,00)  EUR/unita'
+Congestione a=1: costo 3.702,81 EUR  emissioni 2.530 kg  utilizzo max  90%
+Minimax        : utilizzo massimo minimo possibile 58,4%
 ```
 
 ![Reti a confronto](img/cap05_reti.png)
@@ -66,19 +106,24 @@ proprio `SAObjLow`. Le variabili positive hanno costo ridotto nullo.
 ![Frontiera costo-emissioni](img/cap05_frontiera_co2.png)
 
 ```text
-tau = 0 … 1,0 : costo 3.385  emissioni 2.730   (assetto "strada")
-tau = 1,24    : costo 4.025  emissioni 2.173   (vertice intermedio)
-tau = 1,5     : costo 4.705  emissioni 1.661   (assetto "ferro")
-tau ≥ 4       : costo 4.745  emissioni 1.645   (stabile)
+tau = 0.0 ... 1.0 : costo 3385  emissioni 2730   (rotte su strada)
+tau = 1.24        : costo 4025  emissioni 2173   (vertice intermedio)
+tau = 1.26        : costo 4265  emissioni 1981
+tau = 1.5         : costo 4705  emissioni 1661   (assetto "ferro")
+tau = 4.0 e oltre : costo 4745  emissioni 1645   (stabile)
 ```
 
-Le soluzioni degli LP stanno nei **vertici**: al crescere di $\tau$ l'ottimo salta
-tra assetti; la soglia principale (verificata per bisezione) è $\tau^* = 1{,}25$
-€/kg: sotto, il prezzo della CO₂ non cambia nulla; sopra, ristruttura la rete.
+Le soluzioni degli LP stanno nei **vertici**: al crescere di $\tau$ l'ottimo resta
+fermo su un vertice, poi salta al successivo. Fino a $\tau = 1$ non cambia nulla, tra
+$\tau = 1{,}0$ e $\tau = 1{,}5$ la rete attraversa vertici intermedi (a
+$\tau = 1{,}24$: 2173 kg) e il salto principale avviene esattamente a
+$\tau = 1{,}25$ €/kg: sotto la soglia il prezzo interno della CO₂ non cambia le
+rotte, appena sopra ristruttura la rete in blocco. Il modello con congestione,
+strettamente convesso, si sposterebbe invece con continuità.
 
 !!! warning "Minimax degenere"
     Il minimax "puro" ($\min z$) accetta qualunque instradamento con utilizzo
-    $\le z^*$, anche costosissimo: combinare sempre con il costo.
+    $\le \tilde z$, anche costosissimo: combinare sempre con il costo.
 
 
 ## Codice
@@ -313,7 +358,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 1. Verificare per perturbazione i prezzi ombra di M4 e dell'arco H2→M3 (quest'ultimo
    è saturo ma degenere: duale nullo).
 2. Hub H2 al 50%: quanto costa il guasto? (+542,50 €) Quali mercati soffrono?
-3. Riprodurre la soglia $\tau^* = 1{,}25$ e identificare gli archi che cambiano.
+3. Riprodurre la soglia $\tau = 1{,}25$ e identificare gli archi che cambiano.
 4. Vincolo $\sum e_{ij} x_{ij} \le 2000$ kg: verificare che il duale coincide con il
    $\tau$ di soglia.
 5. Barriera $\alpha x/(u - x)$ al posto della congestione quadratica: confrontare.

@@ -30,3 +30,9 @@ ESEMPI_FORMATO_MODELLI/
 3_LINEAR_PROGRAMMING/
 30_OPTIMIZATION_IN_FINANCE/
 pdf_originali/
+# materiale interno EN (i sorgenti restano locali come per l'italiano)
+dispensa_en/
+soluzioni_en/
+docs_en/
+site_en/
+mkdocs_en.yml

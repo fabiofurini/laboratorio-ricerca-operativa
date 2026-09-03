@@ -13,21 +13,73 @@ l'area ammissibile.
 
 ## Modello
 
-Quartieri $i \in I$ in $(a_i, b_i) \in \mathbb{R}^2$ con pesi $w_i \ge 0$:
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di punti di domanda (quartieri), indicizzati da $i \in \{1, 2, \dots, n\}$ |
+| $(a_i, b_i)$ | $\in \mathbb{Q}^2$ | coordinate del quartiere $i$ (km) |
+| $w_i$ | $\in \mathbb{Q}_{\ge 0}$ | peso del quartiere $i$: popolazione, domanda o priorità |
+| $(a_0, b_0)$, $r$ | $\in \mathbb{Q}^2$, $\in \mathbb{Q}_{>0}$ | centro e raggio dell'eventuale vincolo geografico (distanza massima da un'infrastruttura) |
+
+**Variabili decisionali.** Introduciamo le seguenti $2$ variabili libere (possono
+assumere qualunque valore reale) e, per la versione minimax, una variabile ausiliaria
+non negativa:
 
 $$
-\text{Weber:}\ \min \sum_{i=1}^{n} w_i \sqrt{(x - a_i)^2 + (y - b_i)^2}
-\qquad
-\text{Minimax:}\ \min z \ \text{ soggetto a } \ \sqrt{(x - a_i)^2 + (y - b_i)^2} \le z, \ \forall i \in \{1, 2, \dots,n\}
+\begin{cases}
+x = \text{coordinata est della nuova struttura (km)}\\[1ex]
+y = \text{coordinata nord della nuova struttura (km)}\\[1ex]
+z = \text{distanza massima dal quartiere più lontano (solo minimax)}
+\end{cases}
 $$
 
+Usando queste variabili, i modelli per i tre obiettivi classici sono i seguenti.
+Modello di **Weber** (distanza media pesata):
+
 $$
-\text{Quadratico:}\ \min \sum_{i=1}^{n} w_i \left[ (x - a_i)^2 + (y - b_i)^2 \right]
-\ \Rightarrow\ \text{baricentro pesato (forma chiusa)}
+\begin{aligned}
+\min ~~ \sum_{i=1}^{n} w_i \sqrt{(x - a_i)^2 + (y - b_i)^2} & & \\
+\text{soggetto a} \quad x &\gtreqless 0, & \\
+y &\gtreqless 0. &
+\end{aligned}
 $$
 
-Tutti convessi. Vincolo geografico tipico (convesso): entro raggio $r$ da
-un'infrastruttura.
+Modello **minimax** (distanza massima):
+
+$$
+\begin{aligned}
+\min ~~ z & & \\
+\text{soggetto a} \quad \sqrt{(x - a_i)^2 + (y - b_i)^2} &\le z, & \forall i \in \{1, 2, \dots, n\}, \\
+x &\gtreqless 0, & \\
+y &\gtreqless 0, & \\
+z &\ge 0. &
+\end{aligned}
+$$
+
+Descrizione delle funzioni obiettivo e dei vincoli dei due modelli:
+
+- la funzione obiettivo convessa del modello di Weber minimizza la distanza totale
+  pesata dai quartieri (efficienza); i vincoli su $x$ e $y$ definiscono le variabili,
+  libere;
+- la funzione obiettivo del modello minimax minimizza la distanza del quartiere più
+  lontano (equità); i vincoli convessi di **copertura** impongono che ogni quartiere
+  disti al più $z$ dalla struttura ($n$ vincoli); i vincoli su $x$, $y$ e $z$
+  definiscono le variabili;
+- terza variante, **quadratica**: minimizzare
+  $\sum_{i=1}^{n} w_i \bigl[ (x - a_i)^2 + (y - b_i)^2 \bigr]$, che ha soluzione in
+  forma chiusa (il baricentro pesato $\tilde x = \sum_{i=1}^{n} w_i\, a_i \big/ \sum_{i=1}^{n} w_i$,
+  e analogamente per $y$).
+
+Vincoli geografici convessi tipici, da aggiungere a qualunque variante: zona
+rettangolare $x^{L} \le x \le x^{U}$, $y^{L} \le y \le y^{U}$; distanza massima da
+un'infrastruttura $(x - a_0)^2 + (y - b_0)^2 \le r^2$.
+
+Il modello di Weber non ha forma chiusa e la sua funzione obiettivo non è
+differenziabile nei punti $(a_i, b_i)$: all'ottimo i "tiri" unitari pesati dei
+quartieri si annullano. L'ottimo del minimax è invece il centro del *cerchio minimo*
+che racchiude tutti i punti: dipende solo dai quartieri estremi e ignora i pesi — per
+questo protegge le periferie.
 
 !!! example "Esempio a mano (1D)"
     Clienti nei km 0, 4, 10 con pesi 1, 1, 3. Weber = **mediana pesata** = 10;
@@ -39,18 +91,23 @@ un'infrastruttura.
 12 quartieri (pesi 5–25 mila abitanti), vincolo: entro 2 km dalla cabina elettrica
 in (7, 6). Dati in `dati/localizzazione_quartieri.csv`.
 
+Il trucco di modellazione: una variabile $d_k \ge$ distanza euclidea dal quartiere
+$k$, imposta con il vincolo conico (convesso) $d_x^2 + d_y^2 \le d_k^2$; Weber
+minimizza $\sum_k w_k d_k$, il minimax una $z$ con $d_k \le z$.
+
 ```text
-Baricentro : (4,90, 5,40)
-Weber      : (4,89, 5,31)  dist. media 3,344 km   max 6,314 km
-Minimax    : (5,50, 5,03)  dist. media 3,391 km   max 5,680 km
-Weber vincolato: (5,08, 5,43)  costo +0,2% (vincolo attivo, ottimo sul bordo)
+Baricentro pesato : (4,897, 5,397)
+Weber             : (4,886, 5,310)  dist. media 3,344 km  max 6,314 km
+Minimax           : (5,496, 5,029)  dist. media 3,391 km  max 5,680 km
+Weber vincolato   : (5,083, 5,429)  costo +0,2% (vincolo attivo, ottimo sul bordo)
 ```
 
 ![Mappa delle localizzazioni](img/cap09_mappa.png)
 
-Il minimax si sposta di oltre mezzo km per proteggere le periferie; il vincolo della
-cabina costa quasi nulla (+0,2%): scoprire che un vincolo temuto è quasi gratis è un
-risultato manageriale importante quanto l'ottimo.
+Weber e baricentro quasi coincidono (i pesi sono distribuiti in modo bilanciato), ma
+il minimax si sposta di oltre mezzo km verso sud-est per proteggere i quartieri
+periferici; il vincolo della cabina costa pochissimo (+0,2%): scoprire che un vincolo
+temuto è quasi gratis è un risultato manageriale importante quanto l'ottimo.
 
 ## Sensitività: frontiera efficienza-equità
 
@@ -58,8 +115,16 @@ Metodo ε-constraint: minima distanza media con tetto $D$ sulla massima.
 
 ![Frontiera efficienza-equità](img/cap09_frontiera.png)
 
-La frontiera è quasi piatta: garantire 0,63 km in meno al quartiere più lontano
-costa solo 47 metri di distanza media — l'equità qui è "quasi gratis".
+```text
+tetto D = 5,680 km: media 3,391   (soluzione minimax)
+tetto D = 5,997 km: media 3,351
+tetto D = 6,314 km: media 3,344   (soluzione Weber)
+```
+
+La frontiera è quasi piatta: garantire al quartiere più lontano 0,63 km in meno
+costa solo 47 metri di distanza media — l'equità qui è "quasi gratis", un argomento
+fortissimo in una discussione pubblica. Il caso opposto (frontiera ripida)
+segnalerebbe un vero conflitto efficienza-equità.
 
 
 ## Codice

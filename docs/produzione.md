@@ -13,20 +13,56 @@ ore macchina disponibili.
 
 ## Modello
 
-Dati: domanda $d_{it} \ge 0$, costi unitari $c_{it}, h_{it} \ge 0$, ore per unità
-$a_i > 0$, ore disponibili $b_t \ge 0$, scorta iniziale $s_{i0}$.
-Variabili continue: $x_{it} \ge 0$ (produzione), $s_{it} \ge 0$ (scorta di fine mese).
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di prodotti; i prodotti sono indicizzati da $i \in \{1, 2, \dots, n\}$ |
+| $m$ | $\in \mathbb{Z}_{\ge 1}$ | numero di mesi dell'orizzonte; i mesi sono indicizzati da $t \in \{1, 2, \dots, m\}$ |
+| $d_{it}$ | $\in \mathbb{Q}_{\ge 0}$ | domanda del prodotto $i$ nel mese $t$ (unità) |
+| $c_{it}$ | $\in \mathbb{Q}_{> 0}$ | costo di produzione di un'unità di $i$ nel mese $t$ (€) |
+| $h_{it}$ | $\in \mathbb{Q}_{> 0}$ | costo di giacenza di un'unità di $i$ per il mese $t$ (€) |
+| $a_i$ | $\in \mathbb{Q}_{> 0}$ | ore macchina per produrre un'unità del prodotto $i$ |
+| $b_t$ | $\in \mathbb{Q}_{\ge 0}$ | ore macchina disponibili nel mese $t$ |
+| $s_{i0}$ | $\in \mathbb{Q}_{\ge 0}$ | scorta iniziale del prodotto $i$ (unità) |
+
+**Variabili decisionali.** Introduciamo le seguenti $2\,n\,m$ variabili non negative:
+
+$$
+\begin{cases}
+x_{it} = \text{unità del prodotto } i \text{ prodotte nel mese } t\\[1ex]
+s_{it} = \text{unità del prodotto } i \text{ a scorta alla fine del mese } t
+\end{cases}
+\qquad \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
+$$
+
+Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min\;& \sum_{i=1}^{n}\sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr)\\
-\text{soggetto a}\;\;\;& s_{i,t-1} + x_{it} = d_{it} + s_{it}, && \forall i \in \{1, 2, \dots,n\},\ \forall t \in \{1, 2, \dots,m\},\\
-& \sum_{i=1}^{n} a_i\, x_{it} \le b_t, && \forall t \in \{1, 2, \dots,m\},\\
-& x_{it} \ge 0,\quad s_{it} \ge 0, && \forall i \in \{1, 2, \dots,n\},\ \forall t \in \{1, 2, \dots,m\}.
+\min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr) & & \\
+\text{soggetto a} \quad s_{i,t-1} + x_{it} &= d_{it} + s_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
+\sum_{i=1}^{n} a_i\, x_{it} &\le b_t, & \forall t \in \{1, 2, \dots, m\}, \\
+x_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
+s_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
 \end{aligned}
 $$
 
-Il **bilancio** è la contabilità di magazzino e lega i mesi tra loro; la **capacità**
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo lineare minimizza il costo totale del piano, somma dei costi
+  di produzione $c_{it}\, x_{it}$ e di giacenza $h_{it}\, s_{it}$ su tutti i prodotti
+  e i mesi;
+- i vincoli lineari di **bilancio** delle scorte impongono che, per ogni prodotto e
+  ogni mese, ciò che entra (scorta precedente più produzione) sia uguale a ciò che
+  esce (domanda servita più scorta successiva); per $t = 1$ si usa la scorta iniziale
+  $s_{i0}$ ($n\,m$ vincoli lineari);
+- i vincoli lineari di **capacità** assicurano che, in ogni mese, le ore macchina
+  usate da tutti i prodotti non superino quelle disponibili ($m$ vincoli lineari);
+- i vincoli di non negatività su $x_{it}$ e $s_{it}$ definiscono le variabili del
+  modello.
+
+Il bilancio è la contabilità di magazzino e lega i mesi tra loro; la capacità
 è la risorsa scarsa condivisa, e il suo prezzo ombra dirà quanto vale un'ora in più.
 
 !!! example "Esempio a mano (1 prodotto, 2 mesi)"
@@ -57,10 +93,14 @@ tornano a zero nel mese finale.
 ## Sensitività
 
 ```text
-mese 1: uso 330/420 | Pi =  0,000 €/ora
-mese 2: uso 420/420 | Pi = -0,762     mese 5: uso 460/460 | Pi = -3,048
-mese 3: uso 460/460 | Pi = -1,524     mese 6: uso 420/420 | Pi = -3,810
-Verifica: +1 ora nel mese 6 -> costo -3,810 (esatto)
+mese 1: uso 330.0/420  | Pi =  0.000 EUR/ora | valido per b_t in [330.0, +inf]
+mese 2: uso 420.0/420  | Pi = -0.762 EUR/ora | valido per b_t in [330.0, 524.0]
+mese 3: uso 460.0/460  | Pi = -1.524 EUR/ora | valido per b_t in [370.0, 564.0]
+mese 4: uso 460.0/460  | Pi = -2.286 EUR/ora | valido per b_t in [370.0, 564.0]
+mese 5: uso 460.0/460  | Pi = -3.048 EUR/ora | valido per b_t in [399.0, 564.0]
+mese 6: uso 420.0/420  | Pi = -3.810 EUR/ora | valido per b_t in [330.0, 431.0]
+
+Verifica: +1 ora nel mese 6 -> costo da 32889.33 a 32885.52 (delta -3.810)
 ```
 
 I duali crescono di $0{,}762 = h_3/a_3$ al mese: un'ora in più nel mese $t$ permette
@@ -70,8 +110,10 @@ della capacità attuale il problema diventa **inammissibile**.
 
 ![Effetto dello smoothing](img/cap04_smoothing.png)
 
-La variante QP con $\gamma \sum_{t>1} (X_t - X_{t-1})^2$ appiattisce il profilo
-produttivo (variazione mensile massima da 81 a 1 unità) per soli +114 € (+0,35%).
+La variante QP aggiunge in obiettivo $\gamma \sum_{t=2}^{m} (X_t - X_{t-1})^2$ con
+$X_t = \sum_{i=1}^{n} x_{it}$: con $\gamma = 0{,}5$ il profilo produttivo diventa quasi
+piatto (variazione mensile massima da 81 a 1 unità) al costo di appena
+$33.003 - 32.889 = 114$ € (+0,35%).
 
 !!! tip "Take-away manageriale"
     Conviene comprare ore straordinarie nei mesi 5–6 fino a 3–3,8 €/ora sotto il

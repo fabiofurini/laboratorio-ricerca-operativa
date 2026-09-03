@@ -1,6 +1,6 @@
 # Support Vector Machine: ottimizzazione per il machine learning
 
-**Classe:** QP convesso · **Script:** `python/lab14_svm.py`
+**Classe:** QP convesso · **Script:** `python/lab15_svm.py`
 
 La SVM collega l'ottimizzazione convessa al machine learning: il classificatore si
 ottiene risolvendo un QP. Qui **niente librerie di ML**: ogni modello è un QP
@@ -10,95 +10,211 @@ intercetta, scarti, moltiplicatori) tutte continue.
 
 ## Hard margin
 
-Dati $n$ punti $\boldsymbol x_i \in \mathbb{R}^p$ con etichette $y_i$:
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di osservazioni del training set, indicizzate da $i \in \{1, 2, \dots, n\}$ |
+| $p$ | $\in \mathbb{Z}_{\ge 1}$ | numero di caratteristiche, indicizzate da $j \in \{1, 2, \dots, p\}$ |
+| $x_{ij}$ | $\in \mathbb{Q}$ | valore della caratteristica $j$ per l'osservazione $i$; $\boldsymbol x_i \in \mathbb{Q}^p$ è il vettore dell'osservazione $i$ |
+| $y_i$ | $\in \{-1, +1\}$ | etichetta *osservata* della classe di $i$ (un dato, non una variabile) |
+| $C$ | $\in \mathbb{Q}_{> 0}$ | peso delle violazioni del margine (solo soft margin); maiuscolo per aderenza alla letteratura di machine learning, eccezione alla convenzione che riserva le maiuscole a insiemi e matrici |
+
+**Variabili decisionali.** Introduciamo le seguenti $p + 1$ variabili libere:
 
 $$
-\min_{\boldsymbol w, b}\; \tfrac12 \|\boldsymbol w\|^2
-\quad\text{soggetto a}\;\quad
-y_i \Bigl( \sum_{j=1}^{p} w_j x_{ij} + b \Bigr) \ge 1, \quad \forall i \in \{1, 2, \dots, n\}
+\begin{cases}
+w_j = \text{coefficiente } j \text{ dell'iperpiano separatore}\\[1ex]
+b = \text{intercetta dell'iperpiano}
+\end{cases}
+\qquad \forall j \in \{1, 2, \dots, p\},
 $$
 
-Il margine geometrico è $2/\|\boldsymbol w\|$: minimizzare la norma = massimizzare
-il margine.
+che definiscono l'iperpiano $\sum_{j=1}^{p} w_j\, x_j + b = 0$. Usando queste
+variabili, il modello QP hard margin è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ \frac12 \sum_{j=1}^{p} w_j^2 & & \\
+\text{soggetto a} \quad y_i \Bigl( \sum_{j=1}^{p} w_j\, x_{ij} + b \Bigr) &\ge 1, & \forall i \in \{1, 2, \dots, n\}, \\
+w_j &\gtreqless 0, & \forall j \in \{1, 2, \dots, p\}, \\
+b &\gtreqless 0. &
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo quadratica convessa minimizza $\tfrac12\|\boldsymbol w\|^2$;
+  poiché il margine geometrico tra gli iperpiani di supporto è
+  $2/\|\boldsymbol w\|$, minimizzarla equivale a **massimizzare il margine**;
+- i vincoli lineari di **classificazione** impongono che ogni osservazione stia dal
+  lato giusto dell'iperpiano, a distanza almeno unitaria in scala $\boldsymbol w$
+  ($n$ vincoli lineari);
+- i vincoli su $w_j$ e $b$ definiscono le variabili del modello, tutte libere.
 
 !!! example "Esempio a mano (2 punti)"
     $\boldsymbol x_1 = (0,0)$, $y_1 = -1$; $\boldsymbol x_2 = (2,2)$, $y_2 = +1$:
-    $\boldsymbol w = (0{,}5;\, 0{,}5)$, $b = -1$, margine $2\sqrt2$ = distanza tra i
-    punti; entrambi support vector.
+    $\boldsymbol w = (0{,}5;\, 0{,}5)$, $b = -1$, margine
+    $2/\|\boldsymbol w\| = 2\sqrt2 = 2{,}83$ = distanza tra i punti; entrambi i
+    vincoli sono attivi, quindi entrambi i punti sono support vector.
 
 ## Soft margin e il ruolo di C
 
+Con dati reali sovrapposti l'hard margin è inammissibile: si aggiungono $n$ variabili
+non negative di scarto,
+
 $$
-\min\; \tfrac12\|\boldsymbol w\|^2 + C \sum_{i=1}^{n} \xi_i
-\quad\text{soggetto a}\;\;\;
-y_i \Bigl( \sum_j w_j x_{ij} + b \Bigr) \ge 1 - \xi_i,\;\; \xi_i \ge 0 .
+\xi_i = \text{violazione del margine dell'osservazione } i,
+\qquad \forall i \in \{1, 2, \dots, n\},
 $$
 
-Caso di studio (90 clienti, rischio di credito):
+con $\xi_i > 1$ che corrisponde a una classificazione errata.
+
+$$
+\begin{aligned}
+\min ~~ \frac12 \sum_{j=1}^{p} w_j^2 + C \sum_{i=1}^{n} \xi_i & & \\
+\text{soggetto a} \quad y_i \Bigl( \sum_{j=1}^{p} w_j\, x_{ij} + b \Bigr) &\ge 1 - \xi_i, & \forall i \in \{1, 2, \dots, n\}, \\
+w_j &\gtreqless 0, & \forall j \in \{1, 2, \dots, p\}, \\
+b &\gtreqless 0, & \\
+\xi_i &\ge 0, & \forall i \in \{1, 2, \dots, n\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo quadratica convessa bilancia due termini: la semplicità del
+  modello ($\tfrac12\|\boldsymbol w\|^2$, margine ampio) e il costo delle violazioni
+  sul training set ($C \sum_{i=1}^{n} \xi_i$); $C$ è il prezzo assegnato alle
+  violazioni;
+- i vincoli lineari di **classificazione** richiedono la classificazione corretta *a
+  meno dello scarto* $\xi_i$, pagato in obiettivo ($n$ vincoli lineari);
+- i vincoli su $w_j$, $b$ e $\xi_i$ definiscono le variabili del modello: $w_j$ e $b$
+  libere, $\xi_i$ non negative.
+
+Caso di studio: 90 clienti descritti da due indicatori standardizzati (solidità
+patrimoniale, puntualità nei pagamenti), 55 affidabili e 35 insolventi, parzialmente
+sovrapposti (`dati/svm_clienti.csv`).
 
 ```text
-C =  0,05: margine 2,42 | errori 2 | nel margine 22   (regolarizzato)
-C =  1,00: margine 1,28 | errori 2 | nel margine  7
-C = 20,00: margine 0,36 | errori 0 | nel margine  3   (insegue ogni punto)
+C =  0,05: w = (0,678, 0,474)  b = -0,148 | margine 2,418 | errori 2 | nel margine 22
+C =  1,00: w = (1,433, 0,611)  b = -0,236 | margine 1,284 | errori 2 | nel margine  7
+C = 20,00: w = (5,058, 2,338)  b = -2,936 | margine 0,359 | errori 0 | nel margine  3
 ```
 
 ![Soft margin e support vector](img/cap14_svm.png)
 
+$C$ piccolo compra un margine ampio accettando 22 punti dentro il margine; $C$ grande
+insegue ogni punto del training set (zero errori, margine strettissimo): è il
+compromesso **regolarizzazione–aderenza**, e va scelto con dati di validazione, mai
+guardando il test set.
+
 ## Il duale e i support vector
 
+Associando un moltiplicatore $\alpha_i$ a ciascun vincolo di classificazione del soft
+margin si ottengono $n$ nuove variabili:
+
 $$
-\max_{\boldsymbol\alpha}\; \sum_{i=1}^{n} \alpha_i
-- \tfrac12 \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j\,
-\boldsymbol x_i' \boldsymbol x_j
-\quad\text{soggetto a}\;\;\; \sum_{i=1}^{n} \alpha_i y_i = 0,\;\; 0 \le \alpha_i \le C
+\alpha_i = \text{moltiplicatore del vincolo di classificazione dell'osservazione } i,
+\qquad \forall i \in \{1, 2, \dots, n\}.
 $$
+
+$$
+\begin{aligned}
+\max ~~ \sum_{i=1}^{n} \alpha_i - \frac12 \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i\, \alpha_j\, y_i\, y_j\, \boldsymbol x_i' \boldsymbol x_j & & \\
+\text{soggetto a} \quad \sum_{i=1}^{n} \alpha_i\, y_i &= 0, & \\
+\alpha_i &\le C, & \forall i \in \{1, 2, \dots, n\}, \\
+\alpha_i &\ge 0, & \forall i \in \{1, 2, \dots, n\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo quadratica concava dipende dai dati *solo* tramite i prodotti
+  scalari $\boldsymbol x_i' \boldsymbol x_j$: è l'osservazione che apre la porta al
+  kernel;
+- il vincolo lineare di **stazionarietà** deriva dalla derivata rispetto
+  all'intercetta $b$ (un vincolo lineare);
+- i vincoli $\alpha_i \le C$ limitano ogni moltiplicatore al prezzo $C$ delle
+  violazioni ($n$ vincoli lineari);
+- i vincoli di non negatività su $\alpha_i$ definiscono le variabili del modello.
+
+Relazione primale-duale: $\boldsymbol w = \sum_{i=1}^{n} \alpha_i\, y_i\, \boldsymbol x_i$
+e $f(\boldsymbol x) = \mathrm{sign}(\boldsymbol w' \boldsymbol x + b)$.
 
 ```text
-w e b dal duale = identici al primale; valore 4,7868 (dualità forte)
-alpha = 0     : 83 punti -> irrilevanti per la frontiera
-0 < alpha < C :  2 punti -> ESATTAMENTE sul margine (da loro si ricava b)
-alpha = C     :  5 punti -> dentro il margine (xi > 0)
+w dal duale = (1,433, 0,611)   b = -0,236     (identici al primale)
+valore duale 4,7868 = valore primale (dualita' forte)
+alpha = 0        : 83 punti  -> NON influenzano la frontiera
+0 < alpha < C    :  2 punti  -> support vector esattamente sul margine
+alpha = C        :  5 punti  -> dentro il margine o mal classificati
 ```
 
-La soluzione dipende solo dai punti con $\alpha_i > 0$: i **support vector**.
-E il duale dipende dai dati solo tramite i prodotti scalari: la porta del kernel.
+La soluzione dipende **solo** dai 7 punti con $\alpha_i > 0$: sono loro a "sostenere"
+l'iperpiano, gli altri 83 potrebbero sparire senza cambiare nulla. La
+complementarietà KKT organizza tutto: $\alpha_i = 0 \Rightarrow$ punto oltre il
+margine; $0 < \alpha_i < C \Rightarrow$ esattamente sul margine (da questi si ricava
+$b$); $\alpha_i = C \Rightarrow$ il vincolo "paga" scarto $\xi_i > 0$. E il duale
+dipende dai dati solo tramite i prodotti scalari: la porta del kernel.
 
 ## Kernel RBF
 
-Sostituendo $\boldsymbol x_i'\boldsymbol x_j$ con
-$K(\boldsymbol x, \boldsymbol z) = e^{-\gamma\|\boldsymbol x - \boldsymbol z\|^2}$
-si ottengono frontiere curve **restando in un QP convesso**.
+Sostituendo $\boldsymbol x_i'\boldsymbol x_j$ con un kernel
+$K(\boldsymbol x_i, \boldsymbol x_j)$ — per esempio il kernel RBF (*Radial Basis
+Function*) gaussiano
+$K(\boldsymbol x, \boldsymbol z) = e^{-\gamma\|\boldsymbol x - \boldsymbol z\|^2}$ —
+si classifica in uno spazio trasformato senza mai costruirlo:
+$f(\boldsymbol x) = \mathrm{sign}\bigl(\sum_{i=1}^{n} \alpha_i y_i K(\boldsymbol x_i, \boldsymbol x) + b\bigr)$.
+La frontiera può essere arbitrariamente curva, ma il problema di training **resta un
+QP convesso** se il kernel è valido (matrice semidefinita positiva). Caso di studio:
+90 osservazioni di processo, funzionamento normale al centro e anomalie disposte ad
+anello — nessuna retta può separarle.
 
 ```text
-gamma = 0,1: errori 1, support vector 20   (frontiera regolare)
-gamma = 0,7: errori 0, support vector 15
-gamma = 5,0: errori 0, support vector 61   <- "memorizza" i punti (overfitting)
+gamma = 0,1: errori di training  1   support vector 20
+gamma = 0,7: errori di training  0   support vector 15
+gamma = 5,0: errori di training  0   support vector 61  <- "memorizza" i punti
 ```
 
-Convessità del *training* ≠ capacità di *generalizzare*: $C$ e $\gamma$ vanno scelti
-per cross-validation.
+Con $\gamma = 5$ la frontiera si frammenta in isole intorno ai singoli punti e i
+support vector salgono a 61 su 90: il modello sta memorizzando il training set
+(overfitting), pur restando un QP convesso. Convessità del *training* e capacità di
+*generalizzare* sono proprietà diverse: $C$ e $\gamma$ vanno scelti insieme per
+cross-validation.
 
 ## Classi sbilanciate e SVR
 
+Nelle applicazioni gestionali la classe importante è rara e l'errore sui rari costa
+di più. Basta pesare gli scarti:
+$C_-\sum_{i:\, y_i = -1}\xi_i + C_+\sum_{i:\, y_i = +1}\xi_i$.
+
 ```text
-costi uguali            : precision 1,00   recall insolventi 0,94
-costo 10x su insolventi : precision 0,97   recall insolventi 1,00
+costi uguali (C=1)          : precision 1,00   recall insolventi 0,94
+costo 10x sugli insolventi  : precision 0,97   recall insolventi 1,00
 ```
 
-I pesi devono riflettere i **costi decisionali**, non le frequenze delle classi.
+Con il costo 10× la frontiera arretra verso la classe "sana": nessun insolvente
+sfugge (recall 100%) al prezzo di qualche falso allarme in più (precision dal 100% al
+97%). I pesi devono riflettere i **costi decisionali**, non le frequenze delle classi.
 
 ![Support Vector Regression](img/cap14_svr.png)
 
-**SVR**: tubo di tolleranza $\pm\varepsilon$ senza penalità; sui dati
-prezzo→domanda recupera $-10{,}86\,p + 220{,}3$ (vera: $-11p + 220$) usando solo i
-14 punti fuori dal tubo.
+**SVR**: la Support Vector Regression stima una funzione continua ignorando gli
+errori entro un tubo di ampiezza $\varepsilon$, cioè
+$\min \tfrac12\|\boldsymbol w\|^2 + C\sum_{i=1}^{n} (\xi_i + \xi_i^*)$ con
+$|y_i - (\boldsymbol w' \boldsymbol x_i + b)| \le \varepsilon + \xi_i^{(*)}$ per ogni
+$i \in \{1, 2, \dots, n\}$.
+
+```text
+Retta SVR: domanda = -10,86 * prezzo + 220,32    (vera: -11p + 220)
+Tubo eps = 8: 14 punti su 40 fuori dal tubo -> solo loro determinano la retta
+```
 
 
 ## Codice
 
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
-è [`python/lab14_svm.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab14_svm.py)
-(riproducibile con `python3 python/lab14_svm.py` dalla cartella `python/`).
+è [`python/lab15_svm.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab15_svm.py)
+(riproducibile con `python3 python/lab15_svm.py` dalla cartella `python/`).
 
 ??? example "Mostra lo script completo — `lab14_svm.py`"
 

@@ -12,36 +12,86 @@ massima risposta totale. *I vincoli*: budget $b$ e tetti $u_i$.
 
 ## Modello
 
-Risposta concava $r_i(x) = a_i \log(1 + k_i x)$ per ogni canale:
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di canali pubblicitari; i canali sono indicizzati da $i \in \{1, 2, \dots, n\}$ |
+| $b$ | $\in \mathbb{Q}_{> 0}$ | budget totale (migliaia di €) |
+| $r_i(\cdot)$ | funzione concava crescente | risposta attesa del canale $i$ in funzione della spesa; nel caso di studio $r_i(x) = a_i \log(1 + k_i\, x)$ con $a_i, k_i \in \mathbb{Q}_{> 0}$ dati |
+| $u_i$ | $\in \mathbb{Q}_{> 0}$ | massimo investimento utile o consentito nel canale $i$ |
+
+**Variabili decisionali.** Introduciamo le seguenti $n$ variabili non negative:
 
 $$
-\max \sum_{i=1}^{n} r_i(x_i)
-\quad\text{soggetto a}\quad \sum_{i=1}^{n} x_i \le b, \qquad x_i \le u_i,
-\qquad x_i \ge 0, \;\;\forall i \in \{1, 2, \dots,n\}.
+x_i = \text{spesa nel canale } i \text{ (migliaia di €)},
+\qquad \forall i \in \{1, 2, \dots, n\}.
 $$
 
-**Condizione KKT all'ottimo:** $r_i'(x_i^*) = \lambda$ per ogni canale interno:
-l'ultimo euro rende lo stesso ovunque; i canali al tetto hanno marginale
-$> \lambda$, quelli a zero marginale iniziale $< \lambda$.
+Usando queste variabili, un modello NLP convesso per il problema è il seguente:
+
+$$
+\begin{aligned}
+\max ~~ \sum_{i=1}^{n} r_i(x_i) & & \\
+\text{soggetto a} \quad \sum_{i=1}^{n} x_i &\le b, & \\
+x_i &\le u_i, & \forall i \in \{1, 2, \dots, n\}, \\
+x_i &\ge 0, & \forall i \in \{1, 2, \dots, n\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo concava massimizza la risposta totale della campagna; è
+  separabile per canale e somma di funzioni concave, quindi il problema ha ottimo
+  globale certificabile;
+- il vincolo lineare di **budget** impone che la spesa complessiva non superi $b$: è
+  l'unico vincolo che lega i canali tra loro — senza di esso ogni canale andrebbe al
+  proprio tetto (un vincolo lineare);
+- i vincoli lineari di **tetto** $x_i \le u_i$ sono il limite oltre cui il canale non
+  assorbe altra spesa utile ($n$ vincoli lineari);
+- i vincoli di non negatività su $x_i$ definiscono le variabili del modello.
+
+**Condizione economica all'ottimo (KKT).** Esiste $\lambda \ge 0$ (prezzo ombra del
+budget) tale che, per ogni canale non bloccato ai limiti $0$ o $u_i$,
+
+$$
+r_i'(\tilde x_i) = \lambda .
+$$
+
+In parole: **l'ultimo euro investito rende lo stesso in tutti i canali attivi**. Se
+così non fosse, spostare un euro dal canale con marginale basso a quello con
+marginale alto migliorerebbe la risposta. I canali al tetto $u_i$ possono avere
+marginale $> \lambda$ (vorremmo investirci di più ma non si può); quelli a zero hanno
+marginale iniziale $< \lambda$ (non valgono nemmeno il primo euro).
 
 !!! example "Esempio a mano (2 canali, b = 50)"
-    $r_1 = 100\log(1 + 0{,}2x)$, $r_2 = 60\log(1 + 0{,}1x)$. Eguagliando i marginali
-    con $x_2 = 50 - x_1$: $x_1 = 35{,}6$, $x_2 = 14{,}4$, $\lambda = 2{,}46$.
+    $r_1(x) = 100\log(1 + 0{,}2x)$, $r_2(x) = 60\log(1 + 0{,}1x)$, senza tetti.
+    Eguagliando i marginali,
+    $\frac{20}{1 + 0{,}2x_1} = \frac{6}{1 + 0{,}1x_2}$, e sostituendo
+    $x_2 = 50 - x_1$ si ottiene $x_1 = 114/3{,}2 = 35{,}6$, $x_2 = 14{,}4$ e
+    $\lambda = 20/(1 + 0{,}2 \cdot 35{,}6) = 2{,}46$: un euro di budget in più rende
+    $\approx 2{,}46$ unità di risposta, da qualunque canale lo si faccia entrare.
 
 ## Risultati e verifica delle KKT
 
+Quattro canali, $r_i(x) = a_i\log(1 + k_i x)$, budget $b = 100$ (migliaia di €),
+dati in `dati/budget_canali.csv`.
+
 ```text
-     canale |  spesa | tetto | marginale
-     social |   24,3 |    60 |  8,2693
-     search |   34,8 |    80 |  8,2693
-         TV |   22,9 |   120 |  8,2693
- influencer |   18,0 |    35 |  8,2693
-Verifica: +1000 € di budget -> risposta +8,244 ≈ lambda
+Risposta totale: 1.449,8 (migliaia di contatti utili)
+     canale |  spesa | tetto | risposta | marginale
+     social |   24,3 |    60 |    385,3 |   8,2693
+     search |   34,8 |    80 |    539,5 |   8,2693
+         TV |   22,9 |   120 |    235,2 |   8,2693
+ influencer |   18,0 |    35 |    289,8 |   8,2693
+
+Verifica: +1000 EUR di budget -> risposta +8,244 ~ lambda
 ```
 
-I quattro marginali coincidono alla quarta cifra. Nota manageriale: la TV riceve
-*meno* dei social nonostante il tetto più alto — non conta la dimensione del canale
-ma la velocità con cui satura ($k_i$).
+I quattro marginali coincidono alla quarta cifra ($\lambda = 8{,}2693$) e l'aumento
+reale di risposta con mille euro in più (8,244) conferma la lettura del
+moltiplicatore. Nota manageriale: la TV riceve *meno* dei social nonostante il tetto
+più alto — non conta la dimensione del canale ma la velocità con cui satura ($k_i$).
 
 ![Curve di risposta e valore del budget](img/cap08_curve.png)
 
@@ -50,13 +100,19 @@ ma la velocità con cui satura ($k_i$).
 ## Sensitività
 
 ```text
-b =  20: lambda = 18,97      b = 180: lambda = 5,54
-b = 100: lambda =  8,24      b = 300: lambda = 0,00  (tutti ai tetti)
+b =  20: risposta   515,9   lambda = 18,971
+b =  60: risposta 1.070,4   lambda = 10,909
+b = 100: risposta 1.449,8   lambda =  8,244
+b = 180: risposta 1.988,2   lambda =  5,538
+b = 260: risposta 2.370,2   lambda =  4,049
+b = 300: risposta 2.498,1   lambda =  0,000  (tutti i canali ai tetti)
 ```
 
-La curva di $\lambda$ è l'argomento quantitativo per negoziare il budget: si
-finanzia il marketing finché $\lambda$ supera il rendimento di un euro investito
-altrove.
+La curva valore-budget è concava: $\lambda$ scende da 19 a 4 man mano che il budget
+cresce. A $b = 300$ tutti i canali sono ai tetti ($60 + 80 + 120 + 35 = 295$): il
+budget smette di essere la risorsa scarsa e $\lambda$ crolla a zero. La curva di
+$\lambda$ è l'argomento quantitativo per negoziare il budget: si finanzia il
+marketing finché $\lambda$ supera il rendimento di un euro investito altrove.
 
 
 ## Codice

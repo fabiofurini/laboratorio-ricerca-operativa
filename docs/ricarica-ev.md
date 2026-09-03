@@ -14,54 +14,107 @@ prelievo totale sotto la potenza del contatore.
 
 ## Modello
 
-Dati: prezzi orari $\pi_t$, disponibilità $a_{vt} \in \{0,1\}$, energia $e_v$,
-potenza massima $\bar p_v$, carico di base $b_t$, limite contatore $k$, rendimento
-$\eta$.
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di veicoli, indicizzati da $v \in \{1, 2, \dots, n\}$ |
+| $m$ | $\in \mathbb{Z}_{\ge 1}$ | numero di intervalli orari, indicizzati da $t \in \{1, 2, \dots, m\}$, di durata $\Delta t$ (qui $\Delta t = 1$ h) |
+| $\pi_t$ | $\in \mathbb{Q}_{\ge 0}$ | prezzo dell'energia nell'ora $t$ (€/kWh) |
+| $a_{vt}$ | $\in \{0, 1\}$ | *dato* osservato: $1$ se il veicolo $v$ è collegato nell'ora $t$, $0$ altrimenti |
+| $e_v$ | $\in \mathbb{Q}_{> 0}$ | energia richiesta dal veicolo $v$ entro la partenza (kWh) |
+| $\bar p_v$ | $\in \mathbb{Q}_{> 0}$ | potenza massima di ricarica del veicolo $v$ (kW) |
+| $b_t$ | $\in \mathbb{Q}_{\ge 0}$ | carico di base dell'edificio nell'ora $t$ (kW) |
+| $k$ | $\in \mathbb{Q}_{> 0}$ | potenza massima prelevabile dal contatore (kW) |
+| $\eta$ | $\in \mathbb{Q},\ 0 < \eta \le 1$ | rendimento di carica |
+
+**Variabili decisionali.** Introduciamo le seguenti $n\,m$ variabili non negative:
+
+$$
+x_{vt} = \text{potenza assegnata al veicolo } v \text{ nell'ora } t \text{ (kW)},
+\qquad \forall v \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
+$$
+
+Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min\;& \sum_{v=1}^{n}\sum_{t=1}^{m} \pi_t\, \Delta t\, x_{vt}\\
-\text{soggetto a}\;\;\;& \eta \sum_{t=1}^{m} \Delta t\, x_{vt} \ge e_v, && \forall v \in \{1, 2, \dots,n\},\\
-& 0 \le x_{vt} \le a_{vt}\, \bar p_v, && \forall v \in \{1, 2, \dots,n\},\ \forall t \in \{1, 2, \dots,m\},\\
-& \sum_{v=1}^{n} x_{vt} + b_t \le k, && \forall t \in \{1, 2, \dots,m\}.
+\min ~~ \sum_{v=1}^{n} \sum_{t=1}^{m} \pi_t\, \Delta t\, x_{vt} & & \\
+\text{soggetto a} \quad \eta \sum_{t=1}^{m} \Delta t\, x_{vt} &\ge e_v, & \forall v \in \{1, 2, \dots, n\}, \\
+\sum_{v=1}^{n} x_{vt} + b_t &\le k, & \forall t \in \{1, 2, \dots, m\}, \\
+x_{vt} &\le a_{vt}\, \bar p_v, & \forall v \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
+x_{vt} &\ge 0, & \forall v \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
 \end{aligned}
 $$
 
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo lineare minimizza la spesa energetica della notte: la potenza
+  $x_{vt}$ erogata per la durata $\Delta t$ costa $\pi_t\, \Delta t\, x_{vt}$ euro;
+- i vincoli lineari di **energia** assicurano che ogni veicolo riceva tutta l'energia
+  richiesta entro la partenza; il rendimento $\eta$ sta a sinistra: dell'energia
+  prelevata solo la frazione $\eta$ finisce in batteria ($n$ vincoli lineari);
+- i vincoli lineari di **rete** impongono che il prelievo complessivo (ricarica più
+  carico di base) non superi mai la potenza del contatore: sono i vincoli che
+  accoppiano i veicoli tra loro ($m$ vincoli lineari);
+- i vincoli lineari di **potenza** limitano la potenza di ogni veicolo al suo
+  caricatore e la azzerano nelle ore in cui il veicolo è assente ($a_{vt} = 0$): la
+  disponibilità è un *dato*, non una decisione, ed è per questo che non servono
+  variabili binarie ($n\,m$ vincoli lineari);
+- i vincoli di non negatività su $x_{vt}$ definiscono le variabili del modello.
+
+Varianti: peak shaving ($\min z$ con $\sum_{v=1}^{n} x_{vt} + b_t \le z$ per ogni
+$t \in \{1, 2, \dots, m\}$); profilo regolare (QP con
+$\gamma \sum_{t=2}^{m} (z_t - z_{t-1})^2$); multiobiettivo costo $+\,\rho\,z$.
+Il vincolo di energia è scritto come $\ge$ perché caricare più del necessario è
+ammesso ma mai conveniente (il prezzo è positivo): all'ottimo vale con uguaglianza.
+
 !!! example "Esempio a mano (1 veicolo, 2 ore)"
-    $e = 10$ kWh, prezzi $(0{,}10;\, 0{,}20)$, $\bar p = 8$ kW: si carica 8 nell'ora
-    economica e 2 in quella cara (costo 1,20 €). Duale del fabbisogno = 0,20 €/kWh
-    (il prezzo dell'*ora marginale*); duale della potenza = 0,10 €/kW. Con
-    $\bar p = 12$: tutto nell'ora economica, duale 0,10.
+    $e = 10$ kWh ($\eta = 1$), prezzi $\pi_1 = 0{,}10$ e $\pi_2 = 0{,}20$ €/kWh,
+    $\bar p = 8$ kW: si carica 8 kWh nell'ora economica e 2 in quella cara (costo
+    $8 \cdot 0{,}10 + 2 \cdot 0{,}20 = 1{,}20$ €). Prezzo ombra del fabbisogno
+    = 0,20 €/kWh (il prezzo dell'*ora marginale*); prezzo ombra del limite di potenza
+    nell'ora 1 = 0,10 €/kW. Con $\bar p = 12$: tutto nell'ora economica, costo 1,00 €,
+    duale del fabbisogno 0,10 e duale della potenza 0 (vincolo non attivo).
 
 ## Caso di studio
 
 Sei furgoni con finestre notturne diverse, contatore $k = 120$ kW, $\eta = 0{,}95$.
 
 ```text
-Costo minimo : 20,36 €/notte   picco 103,4 kW
-Peak shaving : picco minimo possibile 68,0 kW
-Duali fabbisogno: 0,0842 = 0,08/η  oppure  0,0947 = 0,09/η  a seconda del veicolo
+Costo minimo   : 20,36 EUR/notte   picco di prelievo 103,4 kW (limite 120)
+Peak shaving   : picco minimo possibile 68,0 kW
+Prezzi ombra del fabbisogno (EUR/kWh):
+  V1 0,0947   V2 0,0842   V3 0,0842   V4 0,0947   V5 0,0947   V6 0,0842
 ```
 
 ![Profili di prelievo](img/cap10_profili.png)
 
-I duali sono i prezzi delle **ore marginali** di ciascun veicolo, corretti per il
-rendimento: la finestra di disponibilità determina quale prezzo orario "vede"
-l'ultimo kWh.
+I prezzi ombra del fabbisogno valgono $0{,}0842 = 0{,}08/\eta$ oppure
+$0{,}0947 = 0{,}09/\eta$: sono i prezzi delle **ore marginali** di ciascun veicolo
+(l'ora più economica ancora libera nella sua finestra), corretti per il rendimento.
+V2, V3 e V6 hanno finestre che coprono le ore a $0{,}08$; V1, V4 e V5 arrivano tardi
+o partono presto e la loro ora marginale costa $0{,}09$. Un kWh di fabbisogno in più
+costa quindi 8,4–9,5 centesimi a seconda del veicolo.
 
 ## Sensitività
 
 ![Frontiera costo-picco](img/cap10_frontiera.png)
 
 ```text
-rho = 0    : costo 20,36  picco 103,4      k = 60–65 kW : INAMMISSIBILE
-rho = 0,10 : costo 21,39  picco  74,9      k = 70 kW    : 21,93 €
-rho = 0,20 : costo 22,15  picco  68,0      k* minimo    : 68 kW
+Compromesso costo + rho*picco:
+  rho = 0,00: costo 20,36  picco 103,4     rho = 0,20: costo 22,15  picco 68,0
+  rho = 0,05: costo 20,69  picco  86,5     rho = 0,50: costo 22,15  picco 68,0
+  rho = 0,10: costo 21,39  picco  74,9
+Capacita' del contatore:
+  k = 60, 65 kW: INAMMISSIBILE     k = 80: 21,09     k = 120: 20,36
+  k = 70 kW    : 21,93             k = 90: 20,63
 ```
 
-Tagliare il picco del 28% costa un euro a notte. Il minimax puro spenderebbe
-27,79 €: il compromesso costo + $\rho\,\cdot$ picco ottiene lo stesso picco a
-22,15 € — mai ottimizzare un solo obiettivo quando ce ne sono due.
+Tagliare il picco da 103 a 75 kW (−28%) costa solo un euro a notte; arrivare a 68 kW
+ne costa meno di due. Il minimax puro (picco 68) senza termine di costo spenderebbe
+27,79 €: il compromesso con $\rho = 0{,}2$ ottiene lo *stesso* picco a 22,15 € — mai
+ottimizzare un solo obiettivo quando ce ne sono due.
 
 !!! warning "Un bug istruttivo (capitato davvero)"
     Nel vincolo `quicksum(x) + base[t] <= C` Gurobi sposta la costante nel termine
@@ -250,4 +303,4 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 2. V3 arriva alle 23: come cambiano costo e picco?
 3. Profilo regolare QP con $\gamma \sum_t (z_t - z_{t-1})^2$.
 4. Frontiera costo-emissioni con intensità carbonica oraria $g_t$.
-5. Capacità minima ammissibile per bisezione: $k^* = 68$ kW.
+5. Capacità minima ammissibile per bisezione: $\tilde k = 68$ kW.

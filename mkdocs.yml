@@ -43,6 +43,15 @@ plugins:
         richiami.md: teoria-lp.md
         guida-gurobi.md: solver-lp.md
 
+extra:
+  alternate:
+    - name: Italiano
+      link: https://fabiofurini.github.io/laboratorio-ricerca-operativa/
+      lang: it
+    - name: English
+      link: https://fabiofurini.github.io/operations-research-lab/
+      lang: en
+
 extra_css:
   - stylesheets/extra.css
 

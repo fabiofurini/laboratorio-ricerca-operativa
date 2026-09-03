@@ -13,32 +13,73 @@ $\mu > \lambda$.
 
 ## Modello
 
-Coda **M/M/1** (arrivi di Poisson a tasso $\lambda$, servizio esponenziale, un
-servente): tempo medio nel sistema $w(\mu) = 1/(\mu - \lambda)$, clienti medi
-$l(\mu) = \lambda/(\mu - \lambda)$.
+Usiamo il modello di coda più semplice, la **M/M/1**: arrivi *markoviani* (processo
+di Poisson), tempi di servizio *markoviani* (esponenziali) e *un* servente. La novità
+è trattare la capacità $\mu$ come una variabile di ottimizzazione.
+
+**Dati (input del modello).**
+
+| Simbolo | Tipo | Significato |
+|---|---|---|
+| $\lambda$ | $\in \mathbb{Q}_{> 0}$ | tasso medio di arrivo dei clienti (richieste/ora) |
+| $c$ | $\in \mathbb{Q}_{> 0}$ | costo di un'unità di capacità (€ per unità di $\mu$ all'ora) |
+| $h$ | $\in \mathbb{Q}_{> 0}$ | valore di un'ora di permanenza di un cliente nel sistema (€) |
+
+**Variabile decisionale e grandezze derivate.** Introduciamo una variabile continua:
 
 $$
-\min_{\mu > \lambda}\; c\,\mu + h\,\frac{\lambda}{\mu - \lambda}
+\mu = \text{capacità del servizio (tasso di servizio, richieste/ora)},
+$$
+
+con il requisito di stabilità $\mu > \lambda$. Dalla teoria delle code M/M/1 derivano
+il tempo medio nel sistema $w(\mu) = 1/(\mu - \lambda)$ (in letteratura: $W$) e il
+numero medio di clienti nel sistema $l(\mu) = \lambda/(\mu - \lambda)$ (legge di
+Little; in letteratura: $L$).
+
+Usando questa variabile, il modello per il problema è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ c\,\mu + h\,\frac{\lambda}{\mu - \lambda} & & \\
+\text{soggetto a} \quad \mu &> \lambda. &
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e del vincolo:
+
+- la funzione obiettivo è la somma di due termini: il primo, $c\,\mu$, compra la
+  capacità; il secondo, $h \cdot l(\mu)$, monetizza il tempo complessivo che i
+  clienti passano nel sistema; è convessa su $(\lambda, +\infty)$;
+- il vincolo di **stabilità** definisce la variabile e garantisce che la coda non
+  diverga: con $\mu \le \lambda$ la fila cresce senza limite.
+
+Annullando la derivata dell'obiettivo si ottiene la soluzione in forma chiusa:
+
+$$
+C'(\mu) = c - \frac{h\,\lambda}{(\mu - \lambda)^2} = 0
 \qquad\Longrightarrow\qquad
-\mu^* = \lambda + \sqrt{h\lambda/c}
+\tilde\mu = \lambda + \sqrt{h\,\lambda/c}
 $$
 
-"Capacità = domanda + **cuscinetto**": il cuscinetto cresce con il valore del tempo
-dei clienti, decresce con il costo della capacità, e scala come $\sqrt\lambda$
-(economie di scala → pooling).
+"Capacità = domanda + **scorta di sicurezza**": il margine $\sqrt{h\lambda/c}$ cresce
+con il valore del tempo dei clienti, decresce con il costo della capacità, e scala
+come $\sqrt\lambda$ (economie di scala nel cuscinetto → pooling).
 
 !!! example "Esempio a mano"
-    $\lambda = 8$/h, $c = 2$, $h = 4$: $\mu^* = 8 + \sqrt{16} = 12$, $\rho = 67\%$,
-    $w = 15$ min, costo 32 €/h. "Tagliare gli sprechi" a $\mu = 9$ ($\rho = 89\%$)
-    costerebbe 50 €/h.
+    $\lambda = 8$/h, $c = 2$ €, $h = 4$ €/h: $\tilde\mu = 8 + \sqrt{4 \cdot 8/2} = 12$
+    clienti/ora, $\rho = 8/12 = 66{,}7\%$, $w = 1/(12 - 8) = 15$ min, costo
+    $2 \cdot 12 + 4 \cdot 8/4 = 32$ €/h. "Tagliare gli sprechi" a $\mu = 9$
+    ($\rho = 89\%$) costerebbe $18 + 32 = 50$ €/h: l'apparente spreco del 33% di
+    capacità inutilizzata è ciò che tiene corte le code.
 
 ## Caso di studio
 
 $\lambda = 42$ richieste/ora, $c = 3$ €, $h = 1{,}5$ €.
 
 ```text
-mu* = 46,583 (analitico = Gurobi, bilineare con NonConvex=2)   costo 153,50 €/h
-rho = 90,2%   w = 13,1 minuti
+Analitico : mu* = 42 + sqrt(1,5*42/3) = 46,583   costo 153,495 EUR/h
+Gurobi    : mu* = 46,582 (bilineare w(mu-lam) = 1, NonConvex=2: coincide)
+All'ottimo: rho = 90,2%   w = 13,1 minuti
 ```
 
 ![Costo convesso e muro dell'utilizzazione](img/cap11_costo_muro.png)
@@ -49,22 +90,33 @@ organizzativo.
 
 ## Il prezzo di una promessa di servizio
 
-Con la promessa $w \le w_{\max}$ serve $\mu \ge \lambda + 1/w_{\max}$:
+Se il marketing promette "tempo medio sotto $w_{\max}$", serve
+$\mu \ge \lambda + 1/w_{\max}$: il vincolo diventa attivo quando è più stringente
+dell'ottimo economico (13,1 minuti).
 
 ```text
-w_max = 12 min: costo 153,60 (quasi gratis)     w_max = 3 min: 189,15
-w_max =  6 min: costo 162,30                    w_max = 2 min: 218,10 (+42%)
+w_max = 12 min: mu = 47,00  costo 153,60   (quasi gratis)
+w_max =  9 min: mu = 48,67  costo 155,45
+w_max =  6 min: mu = 52,00  costo 162,30
+w_max =  4 min: mu = 57,00  costo 175,20
+w_max =  3 min: mu = 62,00  costo 189,15
+w_max =  2 min: mu = 72,00  costo 218,10   (+42% sul costo base)
 ```
 
 ![Costo della promessa](img/cap11_promessa.png)
 
-Quando il vincolo è attivo, $dC/dw_{\max} = -c/w_{\max}^2 + h\lambda$: a 6 minuti
-vale $-237$ €/h per ora di promessa — il numero da dare al marketing *prima* che
-firmi lo SLA.
+Il prezzo ombra del vincolo cresce in modo esplosivo: passare da 12 a 9 minuti costa
+1,85 €/h, da 3 a 2 minuti costa 28,95 €/h. Quando il vincolo è attivo,
+$\mu = \lambda + 1/w_{\max}$ e $C = c\lambda + c/w_{\max} + h\lambda\, w_{\max}$, da
+cui $dC/dw_{\max} = -c/w_{\max}^2 + h\lambda$ (con $w_{\max}$ in ore): a
+$w_{\max} = 6$ minuti vale $-300 + 63 = -237$ €/h per ora di promessa — il numero da
+dare al marketing *prima* che firmi lo SLA (*Service Level Agreement*).
 
-**Robustezza:** con $\lambda \in [36, 48]$ l'ottimo nominale ($\mu^* = 46{,}6 < 48$)
-**diverge** nel caso peggiore; il dimensionamento robusto ($\mu = 52{,}9$) costa
-+13% — un premio assicurativo contro il disastro.
+**Robustezza:** se $\lambda$ è incerto in $[36, 48]$, dimensionare sull'ottimo
+nominale $\tilde\mu = 46{,}58$ è **instabile**: con $\lambda = 48 > \tilde\mu$ la coda
+diverge (costo infinito). Minimizzare il costo del caso peggiore dà
+$\mu_{\text{rob}} = 52{,}90$ con costo worst-case 173,39 €/h: si paga un premio
+assicurativo di circa il 13% per essere protetti da un disastro.
 
 
 ## Codice
@@ -223,7 +275,7 @@ Lo script completo del capitolo — dati, modello, soluzione, sensitività e fig
 ## Esercizi
 
 1. Ricavare $dC/dw_{\max} = -c/w_{\max}^2 + h\lambda$ e verificarla a 4 e 9 minuti.
-2. Costo d'attesa quadratico $h/(\mu - \lambda)^2$: $\mu^* = \lambda + (2h/c)^{1/3}$.
+2. Costo d'attesa quadratico $h/(\mu - \lambda)^2$: $\tilde\mu = \lambda + (2h/c)^{1/3}$.
 3. Pooling: due code separate ($\lambda = 21$ ciascuna) vs una unica ($\lambda = 42$)
    a parità di capacità totale.
 4. Frontiera (costo, $w$): dove ogni minuto promesso in meno costa più di 10 €/h?

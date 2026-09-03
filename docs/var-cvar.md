@@ -19,8 +19,12 @@ $$
 \mathrm{CVaR}_\alpha(L) = \text{media della coda peggiore di massa } 1 - \alpha .
 $$
 
-Il CVaR è **convesso** e subadditivo (premia la diversificazione); il VaR in
-generale no, e non distingue code diverse con lo stesso quantile.
+| Proprietà | |
+|---|---|
+| Convessità | il CVaR è convesso nelle decisioni (se $L$ lo è); il VaR in generale no |
+| Subadditività | il CVaR premia la diversificazione; il VaR può violarla |
+| Coda | il VaR non distingue due code con lo stesso quantile ma gravità diversa |
+| Ottimizzazione | il CVaR ammette una formulazione LP a scenari; il VaR no |
 
 !!! example "Esempio a mano (6 scenari, α = 0,80)"
     Perdite equiprobabili $\{2, 4, 5, 7, 12, 20\}$: VaR $= 12$ (la cumulata tocca
@@ -30,55 +34,153 @@ generale no, e non distingue code diverse con lo stesso quantile.
 
 ## La formulazione lineare di Rockafellar–Uryasev
 
-Con scenari $s \in S$ di probabilità $\pi_s$ e perdita lineare
-$\ell_s(\boldsymbol x)$:
+**Dati (input del modello).** Il numero di scenari $k \in \mathbb{Z}_{\ge 1}$,
+indicizzati da $s \in \{1, 2, \dots, k\}$; per ogni scenario, la probabilità
+$\pi_s \in \mathbb{Q}_{\ge 0}$ (con $\sum_{s=1}^{k} \pi_s = 1$) e la perdita
+$\ell_s(\boldsymbol x)$, funzione lineare del vettore delle decisioni
+$\boldsymbol x$, vincolato in un poliedro $X$; il livello di confidenza
+$\alpha \in (0, 1)$.
+
+**Variabili decisionali.** Oltre alle decisioni $\boldsymbol x$, introduciamo una
+variabile libera e $k$ variabili non negative:
 
 $$
-\min_{\boldsymbol x,\, \eta,\, \boldsymbol\xi}\;
-\eta + \frac{1}{1 - \alpha} \sum_{s=1}^{k} \pi_s\, \xi_s
-\quad\text{soggetto a}\;\;\;
-\xi_s \ge \ell_s(\boldsymbol x) - \eta, \;\;\forall s \in \{1, 2, \dots,k\},
-\qquad \boldsymbol x \in X,\qquad \eta \text{ libera},\qquad \xi_s \ge 0
+\begin{cases}
+\eta = \text{soglia candidata di perdita (all'ottimo: un VaR)}\\[1ex]
+\xi_s = \text{eccesso di perdita oltre } \eta \text{ nello scenario } s
+\end{cases}
+\qquad \forall s \in \{1, 2, \dots, k\}.
 $$
 
-All'ottimo $\eta^*$ è un VaR e il valore obiettivo è il CVaR: **un solo LP, entrambe
-le misure**. Attenzione: $\eta$ è una variabile *libera*
-(`addVar(lb=-GRB.INFINITY)`).
+Usando queste variabili, il modello LP di Rockafellar–Uryasev è il seguente:
+
+$$
+\begin{aligned}
+\min ~~ \eta + \frac{1}{1-\alpha} \sum_{s=1}^{k} \pi_s\, \xi_s & & \\
+\text{soggetto a} \quad \xi_s &\ge \ell_s(\boldsymbol x) - \eta, & \forall s \in \{1, 2, \dots, k\}, \\
+\boldsymbol x &\in X, & \\
+\eta &\gtreqless 0, & \\
+\xi_s &\ge 0, & \forall s \in \{1, 2, \dots, k\}.
+\end{aligned}
+$$
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo lineare è la soglia $\eta$ più la media pesata degli eccessi
+  di coda, amplificata di $1/(1-\alpha)$; *all'ottimo $\tilde\eta$ è un VaR e il
+  valore obiettivo è il CVaR*: un solo LP fornisce entrambe le misure;
+- i vincoli lineari di **coda** definiscono gli eccessi: solo gli scenari con perdita
+  oltre la soglia contribuiscono ($k$ vincoli lineari);
+- il vincolo $\boldsymbol x \in X$ raccoglie i vincoli (poliedrali) del problema
+  decisionale sottostante;
+- i vincoli su $\eta$ e $\xi_s$ definiscono le variabili: $\eta$ è libera (il simbolo
+  $\gtreqless$, in Gurobi `addVar(lb=-GRB.INFINITY)`), le $\xi_s$ non negative.
+
+La variabile $\xi_s = (\ell_s - \eta)^+$ è l'eccesso di perdita oltre la soglia
+candidata $\eta$ (stesso trucco delle parti positive del Newsvendor). Minimizzare su
+$\eta$ bilancia due spinte: alzare $\eta$ riduce gli eccessi ma sposta in su la
+soglia; il punto di equilibrio è esattamente il quantile $\alpha$.
 
 ## Caso di studio 1: portafoglio mean-CVaR vs Markowitz
 
-220 scenari mensili con **code grasse** ($t$ di Student), rendimento richiesto 8%.
+Gli stessi otto titoli del capitolo su Markowitz, ma con $k = 220$ scenari mensili
+generati con **code grasse** (fattore di mercato $t$ di Student, 4 gradi di libertà).
+Perdita di scenario $\ell_s(\boldsymbol x) = -\sum_{i=1}^{n} r_{is}\, x_i$, dove
+$r_{is}$ è il rendimento del titolo $i$ nello scenario $s$; minimizziamo
+$\mathrm{CVaR}_{0,90}$ con rendimento atteso $\ge 8\%$ annuo.
 
 ```text
-            | perdita media | VaR90  | CVaR90
+            | perdita media | VaR90  | CVaR90   (perdite mensili)
   mean-CVaR |       -0,0067 | 0,0327 | 0,0489
-  Markowitz |       -0,0067 | 0,0329 | 0,0531   (-8% di coda per il mean-CVaR)
+  Markowitz |       -0,0067 | 0,0329 | 0,0531
+Composizioni: mean-CVaR: ENE 9,9 FIN 1,9 TEC 10,5 SAN 8,6 UTL 46,5 MAT 22,5
+              Markowitz: ENE 18,4 FIN 6,4 TEC 6,5 SAN 13,6 UTL 40,4 MAT 14,6
 ```
 
 ![Distribuzione delle perdite e frontiera](img/cap13_perdite_frontiera.png)
 
-A parità di rendimento e perdita media, il mean-CVaR taglia la coda: la varianza
-penalizza simmetricamente sopra e sotto la media, il CVaR guarda solo dove fa male.
+A parità di rendimento richiesto e di perdita media, il portafoglio mean-CVaR taglia
+la coda: CVaR₉₀ del 4,89% contro 5,31% di Markowitz (−8%). Lo fa riducendo i titoli
+ad alto beta (ENE dal 18% al 10%) a favore di UTL e di una quota di TEC che, pur
+mediocre in media, si muove in controtendenza negli scenari peggiori di questo
+campione. La varianza penalizza simmetricamente sopra e sotto la media; il CVaR
+guarda solo dove fa male.
 
 ## Caso di studio 2: supply chain a due stadi
 
-Capacità prenotata *prima* dello scenario (F1 economico ma fragile: nel 12% degli
-scenari crolla al 30%; F2 caro ma affidabile), flussi e shortage come ricorso.
+Prima di osservare lo scenario si *prenota* capacità dai fornitori; poi, visto lo
+scenario, si decide il ricorso. F1 è economico ma fragile (nel 12% degli scenari la
+sua disponibilità crolla al 30%); F2 è caro ma affidabile. Penalità di shortage
+40 €/unità; $k = 400$ scenari.
+
+**Dati.** Due fornitori indicizzati da $a \in \{1, 2\}$ con costi di prenotazione
+$c^{\mathrm{pre}}_a \in \mathbb{Q}_{>0}$ e di acquisto
+$c^{\mathrm{uso}}_a \in \mathbb{Q}_{>0}$; $k$ scenari $s \in \{1, 2, \dots, k\}$ con
+domanda $d_s \in \mathbb{Q}_{\ge 0}$ e disponibilità $\delta_{as} \in (0, 1]$ (il
+dato che modella il guasto); penalità di shortage $g \in \mathbb{Q}_{>0}$; peso del
+rischio $\lambda \in [0, 1]$ e livello $\alpha \in (0,1)$.
+
+**Variabili decisionali.** Le variabili non negative $x_a$ (capacità prenotata dal
+fornitore $a$, *di primo stadio*: uguale in tutti gli scenari), $f_{as}$ (acquisto
+dal fornitore $a$ nello scenario $s$) e $u_s$ (domanda non servita nello scenario
+$s$), queste ultime *di ricorso*.
+
+$$
+\begin{aligned}
+\min ~~ (1-\lambda) \Bigl[ \sum_{a=1}^{2} c^{\mathrm{pre}}_a x_a + \sum_{s=1}^{k} \pi_s\, \phi_s \Bigr] + \lambda\, \mathrm{CVaR}_\alpha & & \\
+\text{soggetto a} \quad f_{as} &\le \delta_{as}\, x_a, & \forall a \in \{1, 2\},~\forall s \in \{1, 2, \dots, k\}, \\
+f_{1s} + f_{2s} + u_s &\ge d_s, & \forall s \in \{1, 2, \dots, k\}, \\
+x_a,\ f_{as},\ u_s &\ge 0, & \forall a \in \{1, 2\},~\forall s \in \{1, 2, \dots, k\},
+\end{aligned}
+$$
+
+dove $\phi_s = \sum_{a=1}^{2} c^{\mathrm{uso}}_a f_{as} + g\, u_s$ è il costo di
+ricorso dello scenario $s$ e $\mathrm{CVaR}_\alpha$ è il CVaR del costo totale,
+linearizzato con le variabili $\eta$ e $\xi_s$ del modello di Rockafellar–Uryasev.
+
+Descrizione della funzione obiettivo e dei vincoli:
+
+- la funzione obiettivo combina, con peso $\lambda$, il costo medio (prenotazioni più
+  valore atteso di acquisti e penalità) e il CVaR del costo totale;
+- i vincoli lineari di **capacità** impongono che nello scenario $s$ si possa usare il
+  fornitore $a$ solo fino alla capacità prenotata $x_a$, ridotta dalla disponibilità
+  $\delta_{as}$ ($2\,k$ vincoli lineari);
+- i vincoli lineari di **domanda** impongono di coprire $d_s$ con i flussi o, in
+  mancanza, di conteggiarla come shortage $u_s$, che in obiettivo paga la penalità:
+  il modello non è mai inammissibile, "compra" l'inammissibilità al prezzo della
+  penalità ($k$ vincoli lineari);
+- i vincoli di non negatività su $x_a$, $f_{as}$ e $u_s$ definiscono le variabili del
+  modello.
 
 ```text
-lambda = 0,0: F1 161,5  F2 134,2 | medio 1.724  CVaR90 2.902 | servizio 98,7%
-lambda = 0,5: F1  92,7  F2 212,7 | medio 1.803  CVaR90 2.217 | servizio 99,9%
-lambda = 1,0: F1  68,5  F2 236,9 | medio 1.906  CVaR90 2.139
+lambda = 0,0: prenoto forn.1 161,5  forn.2 134,2
+              costo medio 1.724   CVaR90 2.902   servizio 98,7%
+lambda = 0,5: prenoto forn.1  92,7  forn.2 212,7
+              costo medio 1.803   CVaR90 2.217   servizio 99,9%
+lambda = 1,0: prenoto forn.1  68,5  forn.2 236,9
+              costo medio 1.906   CVaR90 2.139   servizio 99,0%
 ```
 
-Al crescere dell'avversione al rischio la capacità migra verso il fornitore
-affidabile: **+79 € di costo medio comprano −685 € di CVaR** — il costo della
-resilienza, quantificato.
+Il decisore neutrale compra dal fornitore economico e accetta che nel 12% degli
+scenari lo shortage faccia esplodere i costi (CVaR 2.902). Al crescere di $\lambda$
+la capacità migra verso il fornitore affidabile: **+79 € di costo medio comprano
+−685 € di CVaR** — il costo della resilienza, quantificato.
+
+## Analisi di sensitività
+
+| Parametro | Effetto atteso |
+|---|---|
+| $\alpha$ | più alto ⇒ coda più estrema stimata da meno scenari: servono più scenari per stime stabili |
+| $\lambda$ | controlla il compromesso prestazione media / protezione |
+| $\pi_s$ | scenari ripesati o stress test (aggiungere scenari estremi) |
+| $k$ | stabilità statistica: ripetere con campioni diversi, come nel Newsvendor |
 
 !!! warning "Limiti statistici"
-    Con $\alpha = 0{,}99$ e 220 scenari la coda contiene 2–3 scenari: il CVaR
-    stimato è quasi rumore. Servono decine di scenari *oltre* il quantile; il VaR
-    può non essere unico su distribuzioni discrete.
+    Con $\alpha = 0{,}99$ e $k = 220$ scenari la coda contiene solo 2–3 scenari: il
+    CVaR stimato è quasi rumore. Regola pratica: servono almeno qualche decina di
+    scenari *oltre* il quantile. Inoltre con distribuzioni discrete il VaR può non
+    essere unico ($\tilde\eta$ è *un* VaR): confrontare sempre $\tilde\eta$ con il
+    quantile empirico.
 
 
 ## Codice
