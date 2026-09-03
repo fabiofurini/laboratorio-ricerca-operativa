@@ -18,99 +18,58 @@ cambiano del 5%?
     ma *«quale decisione suggeriamo e quanto è robusta?»*. Tutti i modelli usano
     **solo variabili continue**: valgono dualità, prezzi ombra e condizioni KKT.
 
+## Le quattro parti del laboratorio
+
 <div class="grid cards" markdown>
 
--   :material-hammer-wrench: **Per iniziare**
+-   :material-hammer-wrench: **Strumenti**
 
     ---
 
     Come si costruisce un modello, come si fa girare, come si leggono soluzione,
-    prezzi ombra e costi ridotti.
+    prezzi ombra e costi ridotti: la teoria e il solver.
 
-    [:octicons-arrow-right-24: Teoria LP](teoria-lp.md) ·
-    [Teoria non lineare](teoria-non-lineare.md) ·
-    [Solver, modelli lineari](solver-lp.md) ·
-    [Solver, non lineari](solver-non-lineare.md)
+    [:octicons-arrow-right-24: I quattro capitoli](strumenti.md)
 
--   :material-factory: **Pianificare la produzione**
+-   :material-factory: **Modelli deterministici**
 
     ---
 
-    LP multiperiodale con scorte: il solver scopre il pre-build e i duali dicono
-    quanto vale un'ora di capacità.
+    Produzione, supply chain, portafoglio, prezzi, budget, localizzazione,
+    ricarica dei veicoli elettrici, code: tutti i dati sono noti.
 
-    [:octicons-arrow-right-24: Produzione e scorte](produzione.md)
+    [:octicons-arrow-right-24: Gli otto problemi](modelli-deterministici.md)
 
--   :material-truck-delivery: **Muovere i flussi**
-
-    ---
-
-    Flusso a costo minimo, congestione convessa e frontiera costo-emissioni con il
-    prezzo interno della CO₂.
-
-    [:octicons-arrow-right-24: Supply chain](supplychain.md)
-
--   :material-chart-line: **Investire**
+-   :material-dice-multiple: **Decisioni sotto incertezza**
 
     ---
 
-    Il QP più famoso della storia: frontiera efficiente, diversificazione e
-    fragilità delle stime.
+    Si decide prima di sapere: la regola del quantile, il rischio di coda e la
+    dualità che dà il prezzo agli strumenti finanziari.
 
-    [:octicons-arrow-right-24: Markowitz](markowitz.md)
+    [:octicons-arrow-right-24: I tre problemi](decisioni-incertezza.md)
 
--   :material-currency-eur: **Decidere i prezzi**
-
-    ---
-
-    Domanda endogena, obiettivo bilineare, ottimi di spigolo e il vero valore di un
-    posto in più.
-
-    [:octicons-arrow-right-24: Pricing](pricing.md) ·
-    [Budget pubblicitario](budget.md)
-
--   :material-map-marker: **Localizzare e dimensionare**
-
-    ---
-
-    Efficienza contro equità sulla mappa; il muro dell'utilizzazione nelle code;
-    la ricarica intelligente di una flotta.
-
-    [:octicons-arrow-right-24: Localizzazione](localizzazione.md) ·
-    [Code](code.md) · [Ricarica EV](ricarica-ev.md)
-
--   :material-dice-multiple: **Decidere prima di sapere**
-
-    ---
-
-    La regola del quantile, gli scenari, il valore della soluzione stocastica e il
-    rischio di coda ottimizzato con un LP.
-
-    [:octicons-arrow-right-24: Newsvendor](newsvendor.md) ·
-    [VaR e CVaR](var-cvar.md) ·
-    [Arbitraggio](arbitraggio.md)
-
--   :material-robot: **Dal solver al machine learning**
+-   :material-robot: **Ottimizzazione e machine learning**
 
     ---
 
     La SVM come QP convesso: margine, duale, support vector e kernel — senza
     librerie di ML.
 
-    [:octicons-arrow-right-24: Support Vector Machine](svm.md)
+    [:octicons-arrow-right-24: Il problema](ottimizzazione-ml.md)
 
 </div>
 
 ## Indice completo
 
-**Strumenti**
+**[Strumenti](strumenti.md)**
 
 1. [Teoria: programmazione lineare](teoria-lp.md) e [ottimizzazione non lineare](teoria-non-lineare.md) — dualità,
    prezzi ombra, KKT, protocollo di sensitività
 2. [Solver, modelli lineari](solver-lp.md) e [non lineari](solver-non-lineare.md) — costruire il modello, farlo
    girare, recuperare la soluzione, interpretare l'output
 
-**Modelli deterministici**
+**[Modelli deterministici](modelli-deterministici.md)**
 
 3. [Produzione e scorte multiperiodali](produzione.md) — LP/QP
 4. [Supply chain con congestione e CO₂](supplychain.md) — LP/NLP
@@ -121,13 +80,13 @@ cambiano del 5%?
 9. [Ricarica di veicoli elettrici](ricarica-ev.md) — LP/QP
 10. [Code e capacità di servizio](code.md) — NLP convesso
 
-**Decisioni sotto incertezza**
+**[Decisioni sotto incertezza](decisioni-incertezza.md)**
 
 11. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
 12. [VaR e CVaR](var-cvar.md) — LP a scenari
 13. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
 
-**Ottimizzazione e machine learning**
+**[Ottimizzazione e machine learning](ottimizzazione-ml.md)**
 
 14. [Support Vector Machine](svm.md) — QP
 
