@@ -4,26 +4,6 @@ Il primo sottocapitolo dei richiami: dualità, condizioni di ottimalità e anali
 di sensitività degli LP. L'estensione non lineare (convessità, QP, KKT) è nella
 [pagina gemella](teoria-non-lineare.md).
 
-## Le tre classi di modelli
-
-- **LP** (*Linear Programming*): obiettivo e vincoli lineari;
-- **QP** (*Quadratic Programming*): obiettivo quadratico, vincoli lineari;
-- **NLP** (*Nonlinear Programming*): obiettivo o vincoli non lineari generali.
-
-Un problema è **convesso** quando ogni minimo locale è anche globale: per gli LP è
-sempre vero; per QP e NLP dipende dalle funzioni.
-
-**Notazione.** Scalari e indici minuscoli ($x_{it}$, $\lambda$); gli oggetti dei
-modelli (prodotti, canali, titoli, scenari…) sono **numerati** e gli indici corrono
-su insiemi enumerati esplicitamente, $i \in \{1, 2, \dots, n\}$; i conteggi sono
-interi ($n \in \mathbb{Z}_{\ge 1}$) e i dati razionali ($\mathbb{Q}$); vettori
-minuscoli in grassetto ($\boldsymbol{x}$), matrici maiuscole in grassetto
-($\boldsymbol{Q}$); le variabili duali si chiamano $\pi_i$, i costi ridotti
-$\bar c_j$; la **barra** indica quantità valutate in una soluzione ammissibile, la
-**tilde** una soluzione ottima ($\tilde{\boldsymbol x}$, $\tilde z$). Nei modelli la
-dicitura è sempre «soggetto a», le variabili sono introdotte prima della
-formulazione e i vincoli che le definiscono chiudono il modello.
-
 ## Programmazione lineare e dualità
 
 I *dati* sono i costi $c_j$, i coefficienti $a_{ij}$ e i termini noti $b_i$, con
@@ -151,19 +131,17 @@ coincidono).
 
 ## Le condizioni di ottimalità dell'LP: gli scarti complementari
 
-Le variabili incognite si scrivono lisce; barra = valori di una soluzione
-ammissibile, tilde = valori di una soluzione ottima. A ogni vincolo associamo lo
-*scarto* $s_i$, a ogni variabile il *costo ridotto* $\bar c_j$ (la barra fa
-parte del nome, da tradizione), cioè lo scarto del vincolo *duale*:
+A ogni vincolo associamo il suo *scarto* $\bar s_i$, a ogni variabile il suo
+*costo ridotto* $\bar c_j$, cioè lo scarto del corrispondente vincolo *duale*:
 
 $$
-s_i = \sum_{j \in N} a_{ij} x_j - b_i, \quad \forall i \in M,
+\bar s_i = \sum_{j \in N} a_{ij} \bar x_j - b_i, \quad \forall i \in M,
 \qquad
-\bar c_j = c_j - \sum_{i \in M} a_{ij} \pi_i, \quad \forall j \in N.
+\bar c_j = c_j - \sum_{i \in M} a_{ij} \bar\pi_i, \quad \forall j \in N.
 $$
 
-Sono funzioni delle variabili; barra e tilde ne indicano la valutazione in una
-soluzione ($\bar s_i$, $\tilde s_i$, …).
+Lo scarto misura quanto il vincolo è lontano dall'essere attivo; il costo ridotto
+misura $c_j$ al netto del valore delle risorse consumate, ai prezzi ombra.
 
 Una coppia di soluzioni ammissibili è ottima per entrambi i problemi **se e solo
 se** valgono gli **scarti complementari**:

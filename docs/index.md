@@ -133,6 +133,27 @@ cambiano del 5%?
 14. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
     valutazione, errori da evitare
 
+## Notazione e classi di modelli
+
+- **LP** (*Linear Programming*): obiettivo e vincoli lineari;
+- **QP** (*Quadratic Programming*): obiettivo quadratico, vincoli lineari;
+- **NLP** (*Nonlinear Programming*): obiettivo o vincoli non lineari generali.
+
+Un problema è **convesso** quando ogni minimo locale è anche globale: per gli LP è
+sempre vero; per QP e NLP dipende dalle funzioni.
+
+**Notazione usata in tutto il corso.** Scalari e indici minuscoli ($x_{it}$,
+$\lambda$); gli oggetti dei modelli (prodotti, canali, titoli, scenari…) sono
+**numerati** e gli indici corrono su insiemi enumerati esplicitamente,
+$i \in \{1, 2, \dots, n\}$; conteggi interi ($n \in \mathbb{Z}_{\ge 1}$), dati
+razionali ($\mathbb{Q}$); vettori minuscoli in grassetto ($\boldsymbol{x}$),
+matrici maiuscole in grassetto ($\boldsymbol{Q}$). Variabili duali $\pi_i$, costi
+ridotti $\bar c_j$, scarti $\bar s_i$: la **barra** indica i valori di una
+soluzione ammissibile, la **tilde** quelli di una soluzione ottima
+($\tilde x_j$, $\tilde z$). Nei modelli la dicitura è sempre «soggetto a», le
+variabili sono introdotte prima della formulazione e i vincoli che le definiscono
+chiudono il modello.
+
 ## Avvio rapido
 
 ```bash
