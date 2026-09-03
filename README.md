@@ -24,8 +24,8 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Scarica in PDF
 
-- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (104 pagine)
-- [Slide del corso](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/slide-laboratorio-ricerca-operativa.pdf) (80 slide)
+- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (114 pagine)
+- [Slide del corso](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/slide-laboratorio-ricerca-operativa.pdf) (83 slide)
 
 ## Indice
 
@@ -56,6 +56,7 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 **Ottimizzazione e machine learning**
 
 - [Support Vector Machine](https://fabiofurini.github.io/laboratorio-ricerca-operativa/svm/) — QP
+- [Regressione robusta e quantile](https://fabiofurini.github.io/laboratorio-ricerca-operativa/regressione/) — LP, stimare i parametri
 
 **Il corso**
 
@@ -63,7 +64,7 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Eseguire i modelli
 
-Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab15`), con i dati
+Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab16`), con i dati
 in [`dati/`](dati/):
 
 ```bash

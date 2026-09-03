@@ -109,4 +109,5 @@ nav:
   - Ottimizzazione e machine learning:
       - ottimizzazione-ml.md
       - Support Vector Machine: svm.md
+      - Regressione robusta e quantile: regressione.md
   - Organizzazione del laboratorio: organizzazione.md

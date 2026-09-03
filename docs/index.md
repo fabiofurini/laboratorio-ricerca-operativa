@@ -53,10 +53,10 @@ cambiano del 5%?
 
     ---
 
-    La SVM come QP convesso: margine, duale, support vector e kernel — senza
-    librerie di ML.
+    La SVM come QP convesso e la regressione robusta come LP: margine, duale,
+    support vector e punti di appoggio — senza librerie di ML.
 
-    [:octicons-arrow-right-24: Il problema](ottimizzazione-ml.md)
+    [:octicons-arrow-right-24: I due problemi](ottimizzazione-ml.md)
 
 </div>
 
@@ -89,10 +89,11 @@ cambiano del 5%?
 **[Ottimizzazione e machine learning](ottimizzazione-ml.md)**
 
 14. [Support Vector Machine](svm.md) — QP
+15. [Regressione robusta e quantile](regressione.md) — LP
 
 **Il corso**
 
-15. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
+16. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
     valutazione, errori da evitare
 
 ## Notazione e classi di modelli
@@ -118,8 +119,8 @@ chiudono il modello.
 
 ## Scarica in PDF
 
-- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 104 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
-- 📊 **[Slide del corso](pdf/slide-laboratorio-ricerca-operativa.pdf)** — 80 slide, tutto il materiale della dispensa in forma sintetica
+- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 114 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
+- 📊 **[Slide del corso](pdf/slide-laboratorio-ricerca-operativa.pdf)** — 83 slide, tutto il materiale della dispensa in forma sintetica
 
 ## Installazione e licenza
 
