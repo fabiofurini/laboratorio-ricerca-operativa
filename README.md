@@ -65,5 +65,5 @@ The whole lab is also available in English:
 
 ---
 
-Materiale didattico di **Fabio Furini** (Sapienza Università di Roma).
+Materiale didattico di **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)** — [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
 Slide del corso e soluzioni degli esercizi vengono distribuite a lezione.

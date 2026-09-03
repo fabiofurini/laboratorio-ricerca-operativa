@@ -193,3 +193,8 @@ python3 python/esegui_tutti.py        # rigenera dati, risultati e figure
 
 Nel [repository](https://github.com/fabiofurini/laboratorio-ricerca-operativa)
 trovi tutti gli **script Python** e i **dati** in CSV dei casi di studio.
+
+---
+
+Materiale didattico di **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)** —
+[DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
