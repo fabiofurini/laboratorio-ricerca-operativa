@@ -31,6 +31,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
+    - navigation.indexes
     - navigation.top
     - navigation.footer
     - content.code.copy
@@ -85,11 +86,13 @@ extra_javascript:
 nav:
   - Home: index.md
   - Strumenti:
+      - strumenti.md
       - Teoria, programmazione lineare: teoria-lp.md
       - Teoria, ottimizzazione non lineare: teoria-non-lineare.md
       - Solver, modelli lineari: solver-lp.md
       - Solver, modelli non lineari: solver-non-lineare.md
   - Modelli deterministici:
+      - modelli-deterministici.md
       - Produzione e scorte: produzione.md
       - Supply chain e CO2: supplychain.md
       - Portafoglio di Markowitz: markowitz.md
@@ -99,9 +102,11 @@ nav:
       - Ricarica di veicoli elettrici: ricarica-ev.md
       - Code e capacità di servizio: code.md
   - Decisioni sotto incertezza:
+      - decisioni-incertezza.md
       - Il Newsvendor: newsvendor.md
       - VaR e CVaR: var-cvar.md
       - Arbitraggio e prezzatura: arbitraggio.md
   - Ottimizzazione e machine learning:
+      - ottimizzazione-ml.md
       - Support Vector Machine: svm.md
   - Organizzazione del laboratorio: organizzazione.md

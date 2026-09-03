@@ -105,10 +105,10 @@ cambiano del 5%?
 
 **Strumenti**
 
-1. [Solver, modelli lineari](solver-lp.md) e [non lineari](solver-non-lineare.md) — costruire il modello, farlo
+1. [Teoria: programmazione lineare](teoria-lp.md) e [ottimizzazione non lineare](teoria-non-lineare.md) — dualità,
+   prezzi ombra, KKT, protocollo di sensitività
+2. [Solver, modelli lineari](solver-lp.md) e [non lineari](solver-non-lineare.md) — costruire il modello, farlo
    girare, recuperare la soluzione, interpretare l'output
-2. [Teoria: programmazione lineare](teoria-lp.md) e [ottimizzazione non lineare](teoria-non-lineare.md) — dualità, prezzi ombra, KKT, protocollo
-   di sensitività
 
 **Modelli deterministici**
 
@@ -129,11 +129,11 @@ cambiano del 5%?
 
 **Ottimizzazione e machine learning**
 
-13. [Support Vector Machine](svm.md) — QP
+14. [Support Vector Machine](svm.md) — QP
 
 **Il corso**
 
-14. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
+15. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
     valutazione, errori da evitare
 
 ## Notazione e classi di modelli
