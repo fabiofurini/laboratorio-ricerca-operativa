@@ -110,8 +110,8 @@ della capacità attuale il problema diventa **inammissibile**.
 
 ![Effetto dello smoothing](img/cap04_smoothing.png)
 
-La variante QP aggiunge in obiettivo $\gamma \sum_{t=2}^{m} (X_t - X_{t-1})^2$ con
-$X_t = \sum_{i=1}^{n} x_{it}$: con $\gamma = 0{,}5$ il profilo produttivo diventa quasi
+La variante QP aggiunge in obiettivo $\gamma \sum_{t=2}^{m} (v_t - v_{t-1})^2$ con
+$v_t = \sum_{i=1}^{n} x_{it}$: con $\gamma = 0{,}5$ il profilo produttivo diventa quasi
 piatto (variazione mensile massima da 81 a 1 unità) al costo di appena
 $33.003 - 32.889 = 114$ € (+0,35%).
 
