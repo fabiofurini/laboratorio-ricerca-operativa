@@ -1,4 +1,21 @@
+<h3 align="center">Materiale didattico di
+<a href="https://sites.google.com/view/fabiofurini/home-page">Fabio Furini</a></h3>
+<p align="center">
+  Professore associato di Ricerca Operativa ·
+  <a href="https://www.diag.uniroma1.it/">DIAG</a>, Sapienza Università di Roma ·
+  <a href="https://sites.google.com/view/fabiofurini/home-page">sito personale</a>
+</p>
+
 # Laboratorio di Ricerca Operativa
+
+> **L'autore.** Fabio Furini è professore associato al DIAG della Sapienza dal
+> settembre 2021. Dottorato in Automatica e Ricerca Operativa all'Università di
+> Bologna (2011) e assegno di ricerca fino al 2012; postdoc all'Université
+> Paris-13 (2012–2013); dal 2013 al 2019 *Maître de Conférences* all'Université
+> Paris-Dauphine. *Habilitation à Diriger des Recherches* in Francia nel 2017 e
+> Abilitazione Scientifica Nazionale a professore ordinario in Ricerca Operativa
+> nel 2019. Nel 2020 ricercatore CNR presso l'IASI-CNR di Roma.
+> Sito personale: <https://sites.google.com/view/fabiofurini/home-page>
 
 Modelli continui di ottimizzazione per l'Ingegneria Gestionale — la dispensa del
 corso in versione online, con codice Python/Gurobi, dati e casi di studio.
