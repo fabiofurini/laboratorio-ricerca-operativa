@@ -8,6 +8,39 @@ formato dei modelli sono in `ESEMPI_FORMATO_MODELLI/` (EX_1 … EX_5).
 
 ---
 
+## 0. REGOLA ZERO: ogni modifica va propagata OVUNQUE
+
+Il materiale esiste in **cinque forme parallele**. Qualunque cosa si cambi — un
+numero, un modello, una notazione, una frase, una figura — va aggiornata in
+**tutte e cinque**, nella stessa sessione di lavoro:
+
+| # | Forma | Dove |
+|---|---|---|
+| 1 | Dispensa ITALIANA | `dispensa/` (LaTeX) |
+| 2 | Dispensa INGLESE | `../LABORATORIO_EN/dispensa/` (LaTeX) |
+| 3 | Slide (IT e EN) | `slides/it/`, `../LABORATORIO_EN/slides/en/` |
+| 4 | Sito (IT e EN) | `docs/`, `../LABORATORIO_EN/docs/` |
+| 5 | Soluzioni (IT e EN) | `soluzioni/`, `../LABORATORIO_EN/soluzioni/` |
+
+E, se il cambiamento tocca i numeri, anche:
+- gli **script Python** in `python/` e `../LABORATORIO_EN/python/` (i due devono
+  produrre gli STESSI numeri: si verifica confrontando i CSV di `dati/` e
+  `dati_en/`);
+- le **verifiche** `python/soluzioni_calcoli.py` e
+  `../LABORATORIO_EN/python/solutions_numbers.py` (gli assert devono passare);
+- la **guida al solver**: `GUIDA_GUROBI.md` e `GUROBI_GUIDE.md`.
+
+**Checklist di chiusura di ogni modifica** (nessuna eccezione):
+1. `cd dispensa && latexmk -pdf main.tex` → 0 Overfull, 0 undefined references;
+2. lo stesso per la dispensa inglese, per le slide IT/EN e per le soluzioni IT/EN;
+3. `python3 -m mkdocs build --strict` su entrambi i siti;
+4. rieseguire gli script se i numeri cambiano (`esegui_tutti.py` / `run_all.py`) e
+   ricontrollare che i valori citati nei testi coincidano;
+5. commit e push su ENTRAMBI i repository:
+   `laboratorio-ricerca-operativa` (IT) e `operations-research-lab` (EN).
+
+Una versione che resta indietro è un errore: gli studenti leggono l'una o l'altra.
+
 ## 1. Notazione matematica
 
 - **Scalari e indici**: minuscoli in corsivo ($x_{it}$, $b_t$, $\lambda$, $i$, $t$).
