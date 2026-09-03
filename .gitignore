@@ -11,7 +11,7 @@
 *.vrb
 dispensa/main.pdf
 soluzioni/soluzioni.pdf
-slides/it/slides_laboratorio.pdf
+slides/slides_laboratorio.pdf
 # Python
 __pycache__/
 *.pyc
@@ -40,3 +40,6 @@ GUROBI_GUIDE.md
 README_EN.md
 python_en/
 dati_en/
+
+# i PDF pubblicati sul sito vanno invece versionati
+!docs/pdf/*.pdf

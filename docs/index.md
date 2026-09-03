@@ -154,6 +154,36 @@ soluzione ammissibile, la **tilde** quelli di una soluzione ottima
 variabili sono introdotte prima della formulazione e i vincoli che le definiscono
 chiudono il modello.
 
+## Scarica in PDF
+
+- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 104 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
+- 📊 **[Slide del corso](pdf/slide-laboratorio-ricerca-operativa.pdf)** — 80 slide, tutto il materiale della dispensa in forma sintetica
+
+## Installazione e licenza
+
+```bash
+python3 -m pip install gurobipy
+```
+
+Il pacchetto pip include una **licenza dimostrativa** (fino a 2000 variabili e 2000 vincoli):
+sufficiente per tutti i modelli di questo laboratorio. All'avvio compare la riga
+`Restricted license - for non-production use only`: è normale.
+
+**Licenza accademica completa (gratuita):**
+1. registrarsi su <https://portal.gurobi.com> con l'email istituzionale (`@uniroma1.it`);
+2. richiedere una *Named-User Academic License*;
+3. eseguire il comando `grbgetkey XXXXXXXX-...` mostrato dal portale (serve la rete di ateneo o VPN);
+4. la licenza viene salvata in `~/gurobi.lic` e da quel momento non ci sono limiti di dimensione.
+
+Verifica rapida:
+
+```python
+import gurobipy as gp
+print(gp.gurobi.version())        # es. (13, 0, 3)
+```
+
+---
+
 ## Avvio rapido
 
 ```bash

@@ -5,6 +5,11 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 **📖 Dispensa online: [fabiofurini.github.io/laboratorio-ricerca-operativa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/)**
 
+## Scarica in PDF
+
+- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (104 pagine)
+- [Slide del corso](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/slide-laboratorio-ricerca-operativa.pdf) (80 slide)
+
 ## Indice
 
 **Strumenti**

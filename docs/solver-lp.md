@@ -7,32 +7,7 @@ copia-incollabili in un terminale Python. I modelli non lineari sono nella
 
 ---
 
-## 1. Installazione e licenza
-
-```bash
-python3 -m pip install gurobipy
-```
-
-Il pacchetto pip include una **licenza dimostrativa** (fino a 2000 variabili e 2000 vincoli):
-sufficiente per tutti i modelli di questo laboratorio. All'avvio compare la riga
-`Restricted license - for non-production use only`: è normale.
-
-**Licenza accademica completa (gratuita):**
-1. registrarsi su <https://portal.gurobi.com> con l'email istituzionale (`@uniroma1.it`);
-2. richiedere una *Named-User Academic License*;
-3. eseguire il comando `grbgetkey XXXXXXXX-...` mostrato dal portale (serve la rete di ateneo o VPN);
-4. la licenza viene salvata in `~/gurobi.lic` e da quel momento non ci sono limiti di dimensione.
-
-Verifica rapida:
-
-```python
-import gurobipy as gp
-print(gp.gurobi.version())        # es. (13, 0, 3)
-```
-
----
-
-## 2. Come si costruisce un modello
+## 1. Come si costruisce un modello
 
 Un modello di programmazione matematica in `gurobipy` si costruisce **sempre negli stessi
 cinque passi**. Usiamo come esempio un piccolo LP generico di massimo, con due
@@ -159,14 +134,14 @@ Valore ottimo: 1900.0
   vincolo2: Slack = 0.0   Pi = 8.0   SARHS = [30.0, 180.0]
 ```
 
-La sezione 5 spiega come leggere ciascuno di questi numeri; l'esempio «tutti i
-casi» (sezione 5.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`;
+La sezione 4 spiega come leggere ciascuno di questi numeri; l'esempio «tutti i
+casi» (sezione 4.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`;
 per i modelli non lineari c'è la [pagina gemella](solver-non-lineare.md).
 
 
 ---
 
-## 3. Come si fa girare
+## 2. Come si fa girare
 
 ```python
 m.optimize()
@@ -199,7 +174,7 @@ i *range* dei coefficienti (dati scalati bene?) e l'ultima riga (esito).
 
 ---
 
-## 4. Come si recupera la soluzione
+## 3. Come si recupera la soluzione
 
 **Prima di leggere qualunque valore, controllare sempre lo stato:**
 
@@ -243,9 +218,9 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in I for t in T],
 
 ---
 
-## 5. Come si interpreta l'output
+## 4. Come si interpreta l'output
 
-### 5.1 L'esito
+### 4.1 L'esito
 
 - **OPTIMAL** — soluzione ottima certificata. Nei modelli convessi di questo laboratorio
   l'ottimo è **globale**; anche in un QP dichiarato non convesso (`NonConvex=2`) e nei
@@ -257,7 +232,7 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in I for t in T],
 - **UNBOUNDED** — l'obiettivo può migliorare all'infinito: quasi sempre manca un vincolo o
   un bound (es. max profitto senza vincolo di capacità).
 
-### 5.2 Prezzi ombra (`Pi`) — "quanto vale un'unità in più di risorsa?"
+### 4.2 Prezzi ombra (`Pi`) — "quanto vale un'unità in più di risorsa?"
 
 Nell'LP 2×2: all'ottimo `x_1 = 30, x_2 = 20`, valore 1900, entrambi i vincoli
 attivi. I duali valgono:
@@ -274,7 +249,7 @@ la base cambia e il prezzo ombra non è più quello.
 Un vincolo **non attivo** (`Slack > 0`) ha sempre `Pi = 0`: la risorsa avanza, un'unità in
 più non vale nulla.
 
-### 5.3 Costi ridotti (`RC`) — "perché questa variabile è a zero?"
+### 4.3 Costi ridotti (`RC`) — "perché questa variabile è a zero?"
 
 Le variabili in base hanno `RC = 0` (attenzione: può esistere una variabile **in
 base a valore zero** — base *degenere* — quindi `RC = 0` da solo non dice che la
@@ -298,7 +273,7 @@ for v in m.getVars():
         print(v.VarName, v.RC)
 ```
 
-### 5.3 bis — Il caso generale: segni e lettura
+### 4.3 bis — Il caso generale: segni e lettura
 
 **Prezzi ombra** (`Pi`): sempre la "derivata dell'ottimo rispetto al termine noto",
 `Pi = ∂z*/∂b`. Il segno si deduce con due domande: *aumentare `b` allarga o
@@ -359,7 +334,7 @@ complementarietà); uguaglianza → duale libera, qui `+6`; `≤` in un minimo �
 perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzata a
 −1 → `623` (+3).
 
-### 5.4 Checklist di interpretazione (da usare in ogni esercitazione)
+### 4.4 Checklist di interpretazione (da usare in ogni esercitazione)
 
 1. Lo stato è `OPTIMAL`? Se no, fermarsi e diagnosticare.
 2. Il valore ottimo ha l'ordine di grandezza atteso?
@@ -372,7 +347,7 @@ perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzat
 
 ---
 
-## 6. Errori tipici e come riconoscerli
+## 5. Errori tipici e come riconoscerli
 
 | Sintomo | Causa probabile | Rimedio |
 |---|---|---|
@@ -382,11 +357,11 @@ perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzat
 | `UNBOUNDED` | manca un bound o un vincolo di capacità | scrivere il `.lp` e cercare la variabile libera |
 | valori attesi ma `Pi` non disponibile | il modello è QP/MIP, i duali LP non esistono | per QP usare `m.Params.QCPDual = 1` o verifica per perturbazione |
 | numeri "quasi zero" tipo `1e-13` | normale tolleranza numerica | filtrare con `> 1e-6` nelle stampe |
-| `Model too large for size-limited license` | superati i limiti della licenza pip | attivare la licenza accademica (sez. 1) |
+| `Model too large for size-limited license` | superati i limiti della licenza pip | attivare la licenza accademica (vedi la home) |
 
 ---
 
-## 7. Scheletro standard da riutilizzare
+## 6. Scheletro standard da riutilizzare
 
 Ogni script del laboratorio segue questo scheletro:
 
