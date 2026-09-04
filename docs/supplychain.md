@@ -2,6 +2,8 @@
 
 **Classe:** LP / NLP convesso · **Script:** `python/lab05_supplychain.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab05_supplychain.ipynb)
+
 I prodotti attraversano una rete di stabilimenti, hub e mercati. Ogni tratta ha
 costo, capacità e impronta di CO₂. Come instradare i flussi al minimo costo? Cosa
 cambia penalizzando la congestione? Quanto deve valere la CO₂ perché le rotte
@@ -131,6 +133,8 @@ strettamente convesso, si sposterebbe invece con continuità.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab05_supplychain.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab05_supplychain.py)
 (riproducibile con `python3 python/lab05_supplychain.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab05_supplychain.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab05_supplychain.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab05_supplychain.py`"
 

@@ -154,6 +154,9 @@ python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni
 python3 python/esegui_tutti.py        # rigenera dati, risultati e figure
 ```
 
+Oppure **senza installare niente**: ogni capitolo ha un
+[notebook che si apre in Colab](notebook.md) e gira nel browser.
+
 Nel [repository](https://github.com/fabiofurini/laboratorio-ricerca-operativa)
 trovi tutti gli **script Python** e i **dati** in CSV dei casi di studio.
 

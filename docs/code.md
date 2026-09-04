@@ -2,6 +2,8 @@
 
 **Classe:** NLP convesso (coda M/M/1) · **Script:** `python/lab11_code.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab11_code.ipynb)
+
 Quanta capacità assegnare a un call center, uno sportello, un servizio cloud? Più
 capacità costa; poca capacità fa esplodere le attese. Messaggio centrale,
 contro-intuitivo per chi ragiona "a efficienza": **l'utilizzazione ottima non è il
@@ -124,6 +126,8 @@ assicurativo di circa il 13% per essere protetti da un disastro.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab11_code.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab11_code.py)
 (riproducibile con `python3 python/lab11_code.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab11_code.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab11_code.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab11_code.py`"
 

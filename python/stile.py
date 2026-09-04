@@ -3,11 +3,27 @@
 Tutti gli script importano da qui: palette coerente con la dispensa,
 salvataggio figure in dispensa/figure/, salvataggio dati in dati/.
 """
+import sys
 from pathlib import Path
 
 import matplotlib
 
-matplotlib.use("Agg")
+
+def _dentro_notebook() -> bool:
+    """True in Jupyter/Colab: lì le figure si mostrano, non si salvano."""
+    if "google.colab" in sys.modules:
+        return True
+    try:
+        from IPython import get_ipython
+        return type(get_ipython()).__name__ == "ZMQInteractiveShell"
+    except Exception:
+        return False
+
+
+NOTEBOOK = _dentro_notebook()
+
+if not NOTEBOOK:
+    matplotlib.use("Agg")     # nei notebook resta il backend inline
 import matplotlib.pyplot as plt
 
 BASE = Path(__file__).resolve().parent.parent
@@ -43,7 +59,13 @@ plt.rcParams.update({
 
 
 def salva_figura(fig, nome: str) -> None:
-    """Salva la figura come PDF (anteprima) e come PNG per il sito (docs/img/)."""
+    """Salva la figura come PDF (anteprima) e come PNG per il sito (docs/img/).
+
+    Nel notebook non salva niente: mostra la figura sotto la cella.
+    """
+    if NOTEBOOK:
+        plt.show()
+        return
     DIR_FIGURE.mkdir(parents=True, exist_ok=True)
     percorso = DIR_FIGURE / f"{nome}.pdf"
     fig.savefig(percorso)
@@ -55,7 +77,10 @@ def salva_figura(fig, nome: str) -> None:
 
 
 def salva_dati(df, nome: str) -> None:
-    """Salva un DataFrame in dati/<nome>.csv."""
+    """Salva un DataFrame in dati/<nome>.csv (nel notebook stampa solo le dimensioni)."""
+    if NOTEBOOK:
+        print(f"  [dati]   {nome}: {len(df)} righe x {len(df.columns)} colonne")
+        return
     DIR_DATI.mkdir(parents=True, exist_ok=True)
     percorso = DIR_DATI / f"{nome}.csv"
     df.to_csv(percorso, index=False)
@@ -63,7 +88,12 @@ def salva_dati(df, nome: str) -> None:
 
 
 def salva_dat(df, nome: str) -> None:
-    """Salva un CSV pronto per pgfplots in dispensa/figure/dat/<nome>.csv."""
+    """Salva un CSV pronto per pgfplots in dispensa/figure/dat/<nome>.csv.
+
+    Serve solo alla dispensa stampata: nel notebook non fa niente.
+    """
+    if NOTEBOOK:
+        return
     d = DIR_FIGURE / "dat"
     d.mkdir(parents=True, exist_ok=True)
     percorso = d / f"{nome}.csv"
@@ -72,7 +102,12 @@ def salva_dat(df, nome: str) -> None:
 
 
 def salva_tikz(codice: str, nome: str) -> None:
-    """Salva codice TikZ generato in dispensa/figure/<nome>.tex."""
+    """Salva codice TikZ generato in dispensa/figure/<nome>.tex.
+
+    Serve solo alla dispensa stampata: nel notebook non fa niente.
+    """
+    if NOTEBOOK:
+        return
     DIR_FIGURE.mkdir(parents=True, exist_ok=True)
     percorso = DIR_FIGURE / f"{nome}.tex"
     percorso.write_text(codice)

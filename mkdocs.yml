@@ -4,6 +4,11 @@ site_description: >-
   dispensa, codice Python/Gurobi, dati e casi di studio.
 site_author: Fabio Furini
 repo_url: https://github.com/fabiofurini/laboratorio-ricerca-operativa
+copyright: >-
+  &copy; 2026 Fabio Furini — testi, figure e dati con licenza
+  <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>,
+  codice Python con licenza
+  <a href="https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/LICENSE-CODE">MIT</a>
 
 theme:
   name: material
@@ -91,6 +96,7 @@ nav:
       - Teoria, ottimizzazione non lineare: teoria-non-lineare.md
       - Solver, modelli lineari: solver-lp.md
       - Solver, modelli non lineari: solver-non-lineare.md
+      - Notebook in Colab: notebook.md
   - Modelli deterministici:
       - modelli-deterministici.md
       - Produzione e scorte: produzione.md

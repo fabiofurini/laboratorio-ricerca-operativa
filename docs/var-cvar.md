@@ -2,6 +2,8 @@
 
 **Classe:** LP a scenari · **Script:** `python/lab13_var_cvar.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab13_var_cvar.ipynb)
+
 Ottimizzare il valore medio può nascondere perdite rare e molto elevate. Il **VaR**
 (*Value-at-Risk*) risponde a "qual è una soglia di perdita elevata?"; il **CVaR**
 (*Conditional Value-at-Risk*) anche a "quanto perdiamo *in media* quando la soglia
@@ -188,6 +190,8 @@ la capacità migra verso il fornitore affidabile: **+79 € di costo medio compr
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab13_var_cvar.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab13_var_cvar.py)
 (riproducibile con `python3 python/lab13_var_cvar.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab13_var_cvar.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab13_var_cvar.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab13_var_cvar.py`"
 

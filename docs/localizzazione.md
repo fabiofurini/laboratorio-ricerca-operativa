@@ -2,6 +2,8 @@
 
 **Classe:** NLP convesso · **Script:** `python/lab09_localizzazione.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab09_localizzazione.ipynb)
+
 Dove collocare una stazione di ricarica, un micro-hub, un presidio sanitario per
 essere "vicini" alla domanda? Dipende da cosa significa vicini: distanza **media**
 (efficienza), **massima** (equità) o **quadratica** (baricentro). Tre obiettivi,
@@ -132,6 +134,8 @@ segnalerebbe un vero conflitto efficienza-equità.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab09_localizzazione.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab09_localizzazione.py)
 (riproducibile con `python3 python/lab09_localizzazione.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab09_localizzazione.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab09_localizzazione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab09_localizzazione.py`"
 

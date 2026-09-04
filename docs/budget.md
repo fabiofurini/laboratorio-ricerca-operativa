@@ -2,6 +2,8 @@
 
 **Classe:** NLP convesso · **Script:** `python/lab08_budget.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab08_budget.ipynb)
+
 Come ripartire una campagna da 100.000 € tra canali con rendimenti marginali
 decrescenti? La teoria dice qualcosa di forte e verificabile: **all'ottimo i
 rendimenti marginali si eguagliano** — ed è esattamente ciò che il solver
@@ -120,6 +122,8 @@ marketing finché $\lambda$ supera il rendimento di un euro investito altrove.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab08_budget.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab08_budget.py)
 (riproducibile con `python3 python/lab08_budget.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab08_budget.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab08_budget.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab08_budget.py`"
 

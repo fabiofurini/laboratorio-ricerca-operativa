@@ -2,6 +2,8 @@
 
 **Classe:** LP / QP convesso · **Script:** `python/lab10_ricarica_ev.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab10_ricarica_ev.ipynb)
+
 Una flotta deve arrivare carica al mattino sfruttando le ore economiche — ma se
 tutti caricano insieme, il picco di prelievo esplode. Un problema che *sembra*
 richiedere variabili di accensione/spegnimento e invece è un LP puro: la decisione
@@ -128,6 +130,8 @@ ottimizzare un solo obiettivo quando ce ne sono due.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab10_ricarica_ev.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab10_ricarica_ev.py)
 (riproducibile con `python3 python/lab10_ricarica_ev.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab10_ricarica_ev.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab10_ricarica_ev.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab10_ricarica_ev.py`"
 

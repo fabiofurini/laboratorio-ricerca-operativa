@@ -2,6 +2,8 @@
 
 **Classe:** QP convesso · **Script:** `python/lab15_svm.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab15_svm.ipynb)
+
 La SVM collega l'ottimizzazione convessa al machine learning: il classificatore si
 ottiene risolvendo un QP. Qui **niente librerie di ML**: ogni modello è un QP
 scritto e risolto con Gurobi, per capire *che cosa* ottimizza un classificatore.
@@ -215,6 +217,8 @@ Tubo eps = 8: 14 punti su 40 fuori dal tubo -> solo loro determinano la retta
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab15_svm.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab15_svm.py)
 (riproducibile con `python3 python/lab15_svm.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab15_svm.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab15_svm.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab14_svm.py`"
 

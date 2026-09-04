@@ -1,7 +1,8 @@
 """Esegue in sequenza tutti gli script del laboratorio.
 
 Rigenera: dati (dati/*.csv), dati per le figure pgfplots (dispensa/figure/dat/*.csv),
-diagrammi TikZ (dispensa/figure/*.tex) e anteprime matplotlib (dispensa/figure/*.pdf).
+diagrammi TikZ (dispensa/figure/*.tex), anteprime matplotlib (dispensa/figure/*.pdf)
+e i notebook dei capitoli (notebooks/*.ipynb).
 
 Uso:  python3 esegui_tutti.py
 """
@@ -34,4 +35,10 @@ for s in SCRIPT:
     if esito.returncode != 0:
         print(f"ERRORE in {s}: interrompo.")
         sys.exit(1)
+print(f"\n{'#' * 72}\n# genera_notebook.py\n{'#' * 72}")
+esito = subprocess.run([sys.executable, str(base / "genera_notebook.py")], cwd=base)
+if esito.returncode != 0:
+    print("ERRORE nella generazione dei notebook: interrompo.")
+    sys.exit(1)
+
 print(f"\nTutti gli script completati in {time.time() - inizio:.1f} s.")

@@ -2,6 +2,8 @@
 
 **Classe:** convesso 1D / LP stocastico a scenari · **Script:** `python/lab12_newsvendor.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab12_newsvendor.ipynb)
+
 Scegliere una quantità **prima** di osservare la domanda: moda e stagionali,
 freschi, farmaci, capacità alberghiera. È la porta d'ingresso dell'ottimizzazione
 stocastica, con un risultato netto: **la quantità ottima non è la domanda media**.
@@ -192,6 +194,8 @@ diversificazione: i tre prodotti falliscono insieme.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab12_newsvendor.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab12_newsvendor.py)
 (riproducibile con `python3 python/lab12_newsvendor.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab12_newsvendor.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab12_newsvendor.py`"
 

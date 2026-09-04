@@ -2,6 +2,8 @@
 
 **Classe:** NLP concavo / non convesso · **Script:** `python/lab07_pricing.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab07_pricing.ipynb)
+
 Quale prezzo massimizza il profitto quando la domanda diminuisce al crescere del
 prezzo? Qui il prezzo è una *variabile*: la domanda diventa endogena e il profitto
 $p \cdot q$ introduce un termine bilineare — il primo incontro con la non convessità.
@@ -127,6 +129,8 @@ decisi **congiuntamente**: ottimizzarli uno alla volta lascia soldi sul tavolo.
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab07_pricing.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab07_pricing.py)
 (riproducibile con `python3 python/lab07_pricing.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab07_pricing.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab07_pricing.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab07_pricing.py`"
 

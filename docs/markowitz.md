@@ -2,6 +2,8 @@
 
 **Classe:** QP convesso · **Script:** `python/lab06_markowitz.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab06_markowitz.ipynb)
+
 Quanto investire in ciascun titolo per bilanciare rendimento atteso e rischio? Il
 risultato non è un numero ma una **frontiera efficiente**: il menu completo dei
 compromessi tra cui il decisore sceglie.
@@ -129,6 +131,8 @@ $\bar r = 12\%$).
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
 è [`python/lab06_markowitz.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab06_markowitz.py)
 (riproducibile con `python3 python/lab06_markowitz.py` dalla cartella `python/`).
+
+Lo stesso codice è disponibile come notebook — [`notebooks/lab06_markowitz.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab06_markowitz.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
 ??? example "Mostra lo script completo — `lab06_markowitz.py`"
 

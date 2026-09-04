@@ -2,6 +2,8 @@
 
 **Classe: LP** · Script: `python/lab14_arbitraggio.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab14_arbitraggio.ipynb)
+
 Un **arbitraggio** è una strategia che crea denaro dal nulla: incassa oggi senza
 alcun rischio di perdita domani (tipo A), oppure non costa nulla oggi e può solo
 guadagnare (tipo B). Rilevarlo è un LP; la dualità — prezzi ombra, scarti

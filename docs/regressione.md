@@ -2,6 +2,8 @@
 
 **Classe: LP** (confronto con QP) · Script: `python/lab16_regressione.py`
 
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab16_regressione.ipynb)
+
 Tutti i modelli del laboratorio partono da parametri noti: la curva di domanda
 del [pricing](pricing.md), i costi della [produzione](produzione.md), gli scenari
 del [newsvendor](newsvendor.md). Quei numeri qualcuno li deve stimare, e la

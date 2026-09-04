@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "Se usi questo materiale, per favore citalo come segue."
+title: "Laboratorio di Ricerca Operativa: modelli continui di ottimizzazione per l'Ingegneria Gestionale"
+abstract: >-
+  Materiale didattico completo del Laboratorio di Ricerca Operativa: dispensa
+  online, codice Python/Gurobi, dati e casi di studio. Diciassette capitoli su
+  teoria della programmazione lineare e non lineare, uso del solver, otto
+  modelli deterministici, decisioni sotto incertezza, ottimizzazione e machine
+  learning. Tutti i modelli usano solo variabili continue e un solo solver.
+authors:
+  - family-names: Furini
+    given-names: Fabio
+    email: fabio.furini@uniroma1.it
+    affiliation: "DIAG, Sapienza Università di Roma"
+url: "https://fabiofurini.github.io/laboratorio-ricerca-operativa/"
+repository-code: "https://github.com/fabiofurini/laboratorio-ricerca-operativa"
+license:
+  - CC-BY-4.0
+  - MIT
+date-released: 2026-09-04
+keywords:
+  - ricerca operativa
+  - ottimizzazione
+  - programmazione lineare
+  - ottimizzazione non lineare
+  - Gurobi
+  - Python
+  - materiale didattico
