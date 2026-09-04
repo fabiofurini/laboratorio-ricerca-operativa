@@ -13,6 +13,9 @@ trasforma in un modello di ottimizzazione, lo risolve con Gurobi chiamato da Pyt
 *interroga*: quanto vale un'ora di capacità in più? La soluzione resiste se i dati
 cambiano del 5%?
 
+Tutti i modelli si possono eseguire **subito nel browser**: ogni capitolo ha il
+suo [notebook che si apre in Colab](notebook.md), senza installare niente.
+
 !!! tip "La domanda giusta"
     Alla fine di ogni esercitazione la domanda non è soltanto *«qual è l'ottimo?»*,
     ma *«quale decisione suggeriamo e quanto è robusta?»*. Tutti i modelli usano

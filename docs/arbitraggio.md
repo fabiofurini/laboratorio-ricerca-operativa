@@ -99,6 +99,8 @@ $(0, 3, 1)$:
   $[1{,}4615,\; 2{,}0308]$ — fuori da quell'intervallo chiunque costruirebbe un
   arbitraggio combinando call e titoli quotati.
 
+Lo stesso codice è disponibile come notebook — [`notebooks/lab14_arbitraggio.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab14_arbitraggio.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+
 ??? example "Mostra lo script completo — `lab14_arbitraggio.py`"
     ```python
     """Capitolo 14 — Arbitraggio e prezzatura senza arbitraggio (LP).

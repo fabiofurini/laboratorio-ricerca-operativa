@@ -22,6 +22,8 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 **📖 Dispensa online: [fabiofurini.github.io/laboratorio-ricerca-operativa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/)**
 
+**▶️ Notebook eseguibili in Colab: [l'elenco dei capitoli](https://fabiofurini.github.io/laboratorio-ricerca-operativa/notebook/)** — girano nel browser, senza installare niente.
+
 ## Scarica in PDF
 
 - [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (114 pagine)

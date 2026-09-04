@@ -200,6 +200,8 @@ pezzi per deviazione standard finché il budget non diventa palesemente
 eccessivo. Il budget da scegliere non è quello che minimizza l'errore storico,
 ma quello oltre il quale il prezzo ombra diventa trascurabile.
 
+Lo stesso codice è disponibile come notebook — [`notebooks/lab16_regressione.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab16_regressione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+
 ??? example "Mostra lo script completo — `lab16_regressione.py`"
     ```python
     """Capitolo 16 — Regressione robusta e quantile (LP).
