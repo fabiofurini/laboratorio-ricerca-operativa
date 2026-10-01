@@ -43,3 +43,41 @@ lanciare, dalla cartella `python/`:
 ```bash
 python3 lab06_markowitz.py
 ```
+
+## Installazione e licenza
+
+```bash
+python3 -m pip install gurobipy
+```
+
+Il pacchetto pip include una **licenza dimostrativa** (fino a 2000 variabili e 2000 vincoli):
+sufficiente per tutti i modelli di questo laboratorio. All'avvio compare la riga
+`Restricted license - for non-production use only`: è normale.
+
+**Licenza accademica completa (gratuita):**
+1. registrarsi su <https://portal.gurobi.com> con l'email istituzionale (`@uniroma1.it`);
+2. richiedere una *Named-User Academic License*;
+3. eseguire il comando `grbgetkey XXXXXXXX-...` mostrato dal portale (serve la rete di ateneo o VPN);
+4. la licenza viene salvata in `~/gurobi.lic` e da quel momento non ci sono limiti di dimensione.
+
+Verifica rapida:
+
+```python
+import gurobipy as gp
+print(gp.gurobi.version())        # es. (13, 0, 3)
+```
+
+---
+
+## Avvio rapido
+
+```bash
+python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni statistiche
+python3 python/esegui_tutti.py        # rigenera dati, risultati e figure
+```
+
+Oppure **senza installare niente**: ogni capitolo ha un
+[notebook che si apre in Colab](notebook.md) e gira nel browser.
+
+Nel [repository](https://github.com/fabiofurini/laboratorio-ricerca-operativa)
+trovi tutti gli **script Python** e i **dati** in CSV dei casi di studio.

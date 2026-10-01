@@ -4,6 +4,11 @@ Otto capitoli in cui tutti i dati sono noti: si decide con certezza, e il valore
 sta nell'interrogare la soluzione (quanto vale una risorsa in più? dove si rompe
 il piano?).
 
+Dentro ci sono LP, QP, NLP convessi e un NLP non convesso: **cambia il linguaggio
+del modello, non cambia il metodo di lavoro** --- si costruisce il modello, lo si
+risolve, si leggono i duali, si muovono i dati e si guarda che cosa resta in
+piedi.
+
 <div class="grid cards" markdown>
 
 -   :material-factory: **Produzione e scorte**
