@@ -1,4 +1,5 @@
 site_name: Laboratorio di Ricerca Operativa · Fabio Furini
+site_url: https://fabiofurini.github.io/laboratorio-ricerca-operativa/
 site_description: >-
   Modelli continui di ottimizzazione:
   dispensa, codice Python/Gurobi, dati e casi di studio.
