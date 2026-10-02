@@ -17,7 +17,7 @@
 > nel 2019. Nel 2020 ricercatore CNR presso l'IASI-CNR di Roma.
 > Sito personale: <https://sites.google.com/view/fabiofurini/home-page>
 
-Modelli continui di ottimizzazione per l'Ingegneria Gestionale — la dispensa del
+Modelli continui di ottimizzazione — la dispensa del
 corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 **📖 Dispensa online: [fabiofurini.github.io/laboratorio-ricerca-operativa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/)**

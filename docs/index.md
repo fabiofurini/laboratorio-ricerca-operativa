@@ -3,7 +3,7 @@
 Materiale didattico ideato e sviluppato da **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)**, professore
 associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
 
-**Modelli continui di ottimizzazione per l'Ingegneria Gestionale** — la dispensa
+**Modelli continui di ottimizzazione** — la dispensa
 del corso in versione online, con codice Python/Gurobi, dati e casi di studio
 riproducibili.
 
