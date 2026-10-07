@@ -61,6 +61,12 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/fabiofurini
       name: GitHub
+    - icon: material/vector-polygon
+      link: https://fabiofurini.github.io/modellazione-mip/
+      name: Modellazione MIP
+    - icon: material/math-integral
+      link: https://fabiofurini.github.io/analisi-matematica-1/
+      name: Analisi Matematica 1
   alternate:
     - name: Italiano
       link: https://fabiofurini.github.io/laboratorio-ricerca-operativa/

@@ -100,6 +100,11 @@ The whole lab is also available in English:
 **[fabiofurini.github.io/operations-research-lab](https://fabiofurini.github.io/operations-research-lab/)**
 ([repository](https://github.com/fabiofurini/operations-research-lab)).
 
+## Della stessa collana
+
+- [Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)
+- [Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)
+
 ---
 
 Materiale didattico di **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)** — [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.

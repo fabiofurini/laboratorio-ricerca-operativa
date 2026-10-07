@@ -85,7 +85,9 @@ pagina.
 ---
 
 Dello stesso autore: **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** —
-il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso stile.
+il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso
+stile — e **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — le dispense
+di analisi, con i grafici interattivi.
 
 Materiale didattico di **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)** —
 [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
