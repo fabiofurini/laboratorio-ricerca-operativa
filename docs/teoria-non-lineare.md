@@ -19,8 +19,8 @@ l'ottimalità si può *certificare*.
     $$
     \begin{array}{r r@{\;}c@{\;}r c r l}
     \min & x_1^2 & + & 2\,x_2^2 & & & \\
-    \text{soggetto a} & x_1 & + & x_2 & \ge & 6, & \\
-     & x_1, & & x_2 & \ge & 0. &
+    \text{soggetto a} & x_1 & + & x_2 & \ge & 6 & \\
+     & x_1, & & x_2 & \ge & 0 &
     \end{array}
     $$
 
