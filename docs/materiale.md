@@ -50,9 +50,11 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
 
     ---
 
+    - [Produzione e scorte multiperiodali](pdf/slide-04-produzione.pdf)
     - [Supply chain con congestione e sostenibilità](pdf/slide-05-supply-chain.pdf)
     - [Portafoglio di Markowitz](pdf/slide-06-markowitz.pdf)
     - [Pricing e revenue management](pdf/slide-07-pricing.pdf)
+    - [Allocazione del budget pubblicitario](pdf/slide-08-budget.pdf)
     - [Localizzazione continua di un servizio](pdf/slide-09-localizzazione.pdf)
     - [Ricarica intelligente di veicoli elettrici](pdf/slide-10-ricarica-ev.pdf)
     - [Capacità di servizio e tempi di attesa](pdf/slide-11-code.pdf)

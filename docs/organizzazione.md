@@ -9,32 +9,6 @@
 | **Lab 3** | Pricing *oppure* budget | modellare funzioni non lineari; studiare la concavità; verificare le KKT numericamente |
 | **Lab 4** | Progetto a scelta | supply chain, ricarica EV, localizzazione, code, Newsvendor, CVaR o SVM; presentazione manageriale |
 
-## Struttura della consegna (report, max 8 pagine)
-
-1. **Problema e ipotesi** — contesto e semplificazioni dichiarate;
-2. **Modello** — dati, variabili, vincoli e obiettivo, ciascuno spiegato;
-3. **Dati** — origine, unità di misura, generazione;
-4. **Risultati** — valore ottimo, decisioni, vincoli attivi;
-5. **Sensitività** — il protocollo completo in sei passi;
-6. **Raccomandazione manageriale** — massimo dieci righe, senza formule.
-
-## Criteri di valutazione
-
-| Dimensione | Peso |
-|---|---|
-| Correttezza della formulazione | 30% |
-| Implementazione e verifica numerica | 25% |
-| Analisi di sensitività | 25% |
-| Interpretazione e comunicazione | 20% |
-
-## Domande tipiche di discussione
-
-- Quale risorsa conviene aumentare per prima, e quanto si può pagare per essa?
-- Qual è il costo di una promessa di servizio più ambiziosa?
-- La soluzione resta credibile se i dati cambiano del 5%?
-- Quale punto della frontiera consigliereste a un decisore, e perché?
-- Che cosa NON dice il modello?
-
 ## Gli errori più comuni
 
 1. Leggere `.X` o `.Pi` senza controllare `m.Status`.

@@ -35,8 +35,8 @@ Ogni capitolo ha la sua pagina, il suo script Python e il suo
 
 **Il corso**
 
-16. [Organizzazione del laboratorio](organizzazione.md) — laboratori, consegne,
-    valutazione, errori da evitare
+16. [Organizzazione del laboratorio](organizzazione.md) — laboratori ed errori da
+    evitare
 
 ---
 
