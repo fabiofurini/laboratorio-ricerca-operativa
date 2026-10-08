@@ -84,10 +84,11 @@ pagina.
 
 ---
 
-Dello stesso autore: **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** —
-il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso
-stile — e **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — le dispense
-di analisi, con i grafici interattivi.
+Dello stesso autore:
+
+- **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** — il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso stile;
+- **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — le dispense di analisi, con i grafici interattivi;
+- **[Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)** — il corso propedeutico, con il laboratorio di calcolo passo per passo.
 
 Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** —
 [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
