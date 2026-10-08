@@ -1,6 +1,6 @@
 # Laboratorio di Ricerca Operativa
 
-Materiale didattico ideato e sviluppato da **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)**, professore
+Materiale didattico ideato e sviluppato da **[Fabio Furini](https://fabiofurini.github.io/)**, professore
 associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
 
 **Modelli continui di ottimizzazione** — la dispensa
@@ -73,7 +73,7 @@ capitolo per capitolo, sta nel [programma](programma.md).
 ## Scarica in PDF
 
 - 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 114 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
-- 📊 **[Slide del corso](pdf/slide-laboratorio-ricerca-operativa.pdf)** — 83 slide, tutto il materiale della dispensa in forma sintetica
+- 📊 **[Slide delle lezioni](materiale.md)** — una per capitolo della dispensa, nella pagina del [materiale](materiale.md)
 
 ## Per cominciare
 
@@ -89,5 +89,5 @@ il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso
 stile — e **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — le dispense
 di analisi, con i grafici interattivi.
 
-Materiale didattico di **[Fabio Furini](https://sites.google.com/view/fabiofurini/home-page)** —
+Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** —
 [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
