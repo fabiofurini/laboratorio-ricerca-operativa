@@ -1,5 +1,7 @@
 # Allocazione del budget pubblicitario
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-08-budget.pdf)
+
 **Classe:** NLP convesso · **Script:** `python/lab08_budget.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab08_budget.ipynb)

@@ -1,5 +1,7 @@
 # Teoria: programmazione lineare
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-02-richiami.pdf)
+
 Il primo sottocapitolo dei richiami: dualità, condizioni di ottimalità e analisi
 di sensitività degli LP. L'estensione non lineare (convessità, QP, KKT) è nella
 [pagina gemella](teoria-non-lineare.md).

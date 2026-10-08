@@ -1,5 +1,7 @@
 # Il Newsvendor e le sue varianti
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-12-newsvendor.pdf)
+
 **Classe:** convesso 1D / LP stocastico a scenari · **Script:** `python/lab12_newsvendor.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab12_newsvendor.ipynb)

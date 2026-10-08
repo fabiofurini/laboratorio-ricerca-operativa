@@ -1,5 +1,7 @@
 # Support Vector Machine: ottimizzazione per il machine learning
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-15-svm.pdf)
+
 **Classe:** QP convesso · **Script:** `python/lab15_svm.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab15_svm.ipynb)

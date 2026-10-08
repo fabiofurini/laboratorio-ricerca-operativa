@@ -1,5 +1,7 @@
 # Ricarica intelligente di veicoli elettrici
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-ricarica-ev.pdf)
+
 **Classe:** LP / QP convesso · **Script:** `python/lab10_ricarica_ev.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab10_ricarica_ev.ipynb)

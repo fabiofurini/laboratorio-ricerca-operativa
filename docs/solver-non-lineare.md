@@ -1,5 +1,7 @@
 # Implementazione: modelli non lineari
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-03-python-gurobi.pdf)
+
 **Un solver solo: anche gli NLP generali si risolvono con Gurobi** (dalla
 versione 12), con la stessa sintassi e la stessa checklist dei modelli lineari.
 Funzioni non lineari come vincoli funzionali su variabili ausiliarie — `addGenConstrLog`,

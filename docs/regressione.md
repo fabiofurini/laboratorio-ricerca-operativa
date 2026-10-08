@@ -1,5 +1,7 @@
 # Regressione robusta e quantile
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-16-regressione.pdf)
+
 **Classe: LP** (confronto con QP) · Script: `python/lab16_regressione.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab16_regressione.ipynb)

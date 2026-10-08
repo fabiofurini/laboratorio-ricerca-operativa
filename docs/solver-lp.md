@@ -1,5 +1,7 @@
 # Implementazione: modelli lineari
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-03-python-gurobi.pdf)
+
 Come si costruisce un modello lineare con `gurobipy`, come si fa girare, come si
 recupera la soluzione e come si interpreta l'output. Tutti gli esempi sono
 copia-incollabili in un terminale Python. I modelli non lineari sono nella

@@ -1,5 +1,7 @@
 # VaR e CVaR: misurare e ottimizzare il rischio
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-13-var-cvar.pdf)
+
 **Classe:** LP a scenari · **Script:** `python/lab13_var_cvar.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab13_var_cvar.ipynb)

@@ -1,5 +1,7 @@
 # Arbitraggio e prezzatura senza arbitraggio
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-14-arbitraggio.pdf)
+
 **Classe: LP** · Script: `python/lab14_arbitraggio.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab14_arbitraggio.ipynb)

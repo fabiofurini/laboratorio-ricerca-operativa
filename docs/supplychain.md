@@ -1,5 +1,7 @@
 # Supply chain con congestione e sostenibilità
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-supply-chain.pdf)
+
 **Classe:** LP / NLP convesso · **Script:** `python/lab05_supplychain.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab05_supplychain.ipynb)

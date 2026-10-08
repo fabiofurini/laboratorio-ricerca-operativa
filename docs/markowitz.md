@@ -1,5 +1,7 @@
 # Portafoglio di Markowitz
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-06-markowitz.pdf)
+
 **Classe:** QP convesso · **Script:** `python/lab06_markowitz.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab06_markowitz.ipynb)

@@ -1,5 +1,7 @@
 # Teoria: ottimizzazione non lineare
 
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-02-richiami.pdf)
+
 Il secondo sottocapitolo dei richiami: convessità, programmazione quadratica e
 condizioni KKT — l'estensione non lineare della [teoria degli LP](teoria-lp.md).
 Chiude il protocollo di sensitività usato in ogni laboratorio.

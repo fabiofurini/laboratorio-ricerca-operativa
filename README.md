@@ -26,8 +26,8 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Scarica in PDF
 
-- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (114 pagine)
-- [Slide del corso](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/slide-laboratorio-ricerca-operativa.pdf) (83 slide)
+- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (113 pagine)
+- [Slide delle lezioni](https://fabiofurini.github.io/laboratorio-ricerca-operativa/materiale/), una per capitolo, nella pagina del materiale
 
 ## Indice
 
@@ -91,7 +91,7 @@ la licenza accademica gratuita si attiva da [portal.gurobi.com](https://portal.g
   software, così il riuso degli script non ha ambiguità.
 
 Per citare il materiale c'è [`CITATION.cff`](CITATION.cff): GitHub ne ricava la
-voce *Cite this repository*. Slide e soluzioni degli esercizi non sono pubblicate:
+voce *Cite this repository*. Le soluzioni degli esercizi non sono pubblicate:
 vengono distribuite a lezione.
 
 ## English version
@@ -109,4 +109,4 @@ The whole lab is also available in English:
 ---
 
 Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** — [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
-Slide del corso e soluzioni degli esercizi vengono distribuite a lezione.
+Le soluzioni degli esercizi vengono distribuite a lezione.
