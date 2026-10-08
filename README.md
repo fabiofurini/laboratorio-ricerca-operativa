@@ -104,6 +104,7 @@ The whole lab is also available in English:
 
 - [Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)
 - [Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)
+- [Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)
 
 ---
 
