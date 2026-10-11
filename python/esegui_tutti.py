@@ -1,8 +1,8 @@
 """Esegue in sequenza tutti gli script del laboratorio.
 
-Rigenera: dati (dati/*.csv), dati per le figure pgfplots (dispensa/figure/dat/*.csv),
-diagrammi TikZ (dispensa/figure/*.tex), anteprime matplotlib (dispensa/figure/*.pdf)
-e i notebook dei capitoli (notebooks/*.ipynb).
+Rigenera: dati (dati/*.csv) e, in FIG = volumes/lecture_notes/dispensa_1_laboratorio/figure/,
+i dati per le figure pgfplots (FIG/dat/*.csv), i diagrammi TikZ (FIG/*.tex), le anteprime
+matplotlib (FIG/*.pdf); poi i notebook dei capitoli (notebooks/*.ipynb).
 
 Uso:  python3 esegui_tutti.py
 """

@@ -1,6 +1,6 @@
 """Calcoli di supporto per il fascicolo delle soluzioni degli esercizi.
 
-Ogni sezione ristampa i numeri citati in soluzioni/soluzioni.tex, così che ogni
+Ogni sezione ristampa i numeri citati in volumes/solutions/soluzioni_1_laboratorio/soluzioni.tex, così che ogni
 valore del fascicolo sia riproducibile con: python3 soluzioni_calcoli.py
 """
 import numpy as np

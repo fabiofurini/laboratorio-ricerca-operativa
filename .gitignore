@@ -9,9 +9,6 @@
 *.nav
 *.snm
 *.vrb
-dispensa/main.pdf
-soluzioni/soluzioni.pdf
-slides/slides_laboratorio.pdf
 # Python
 __pycache__/
 *.pyc
@@ -20,13 +17,16 @@ site/
 # varie
 .DS_Store
 
-# materiale interno, non pubblicato
+# materiale interno, non pubblicato (struttura comune dei moduli)
+note/
+volumes/
+slides/
+*.tex
+build/
+*conflicted copy*
 STILE_E_FORMATO.md
 pdf_originali/
 PIANO_DI_LAVORO.md
-soluzioni/
-slides/
-dispensa/
 ESEMPI_FORMATO_MODELLI/
 3_LINEAR_PROGRAMMING/
 30_OPTIMIZATION_IN_FINANCE/

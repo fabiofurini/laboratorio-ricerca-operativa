@@ -1,7 +1,7 @@
 """Stile grafico comune e utilità per gli script del laboratorio.
 
 Tutti gli script importano da qui: palette coerente con la dispensa,
-salvataggio figure in dispensa/figure/, salvataggio dati in dati/.
+salvataggio figure in volumes/lecture_notes/dispensa_1_laboratorio/figure/, salvataggio dati in dati/.
 """
 import sys
 from pathlib import Path
@@ -27,7 +27,7 @@ if not NOTEBOOK:
 import matplotlib.pyplot as plt
 
 BASE = Path(__file__).resolve().parent.parent
-DIR_FIGURE = BASE / "dispensa" / "figure"
+DIR_FIGURE = BASE / "volumes" / "lecture_notes" / "dispensa_1_laboratorio" / "figure"
 DIR_DATI = BASE / "dati"
 
 # Palette istituzionale della dispensa
@@ -88,7 +88,7 @@ def salva_dati(df, nome: str) -> None:
 
 
 def salva_dat(df, nome: str) -> None:
-    """Salva un CSV pronto per pgfplots in dispensa/figure/dat/<nome>.csv.
+    """Salva un CSV pronto per pgfplots in volumes/lecture_notes/dispensa_1_laboratorio/figure/dat/<nome>.csv.
 
     Serve solo alla dispensa stampata: nel notebook non fa niente.
     """
@@ -102,7 +102,7 @@ def salva_dat(df, nome: str) -> None:
 
 
 def salva_tikz(codice: str, nome: str) -> None:
-    """Salva codice TikZ generato in dispensa/figure/<nome>.tex.
+    """Salva codice TikZ generato in volumes/lecture_notes/dispensa_1_laboratorio/figure/<nome>.tex.
 
     Serve solo alla dispensa stampata: nel notebook non fa niente.
     """
