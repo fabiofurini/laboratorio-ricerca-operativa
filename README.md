@@ -107,6 +107,7 @@ The whole lab is also available in English:
 - [Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)
 - [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/)
 - [Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/)
+- [Algoritmi](https://fabiofurini.github.io/algoritmi/)
 
 ---
 
