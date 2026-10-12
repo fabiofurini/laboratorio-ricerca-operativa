@@ -86,12 +86,14 @@ pagina.
 
 Dello stesso autore:
 
-- **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** — il modulo sui modelli a variabili intere, con gli stessi strumenti e lo stesso stile;
-- **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — le dispense di analisi, con i grafici interattivi;
-- **[Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)** — il corso propedeutico, con il laboratorio di calcolo passo per passo;
-- **[Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/)** — problemi di programmazione lineare, simplesso, dualità e metodi avanzati, con il catalogo dei problemi;
-- **[Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/)** — insiemi e funzioni convesse, problemi di ottimizzazione, con grafici interattivi;
-- **[Algoritmi](https://fabiofurini.github.io/algoritmi/)** — rappresentazione dei numeri, pseudocodice, linguaggi C++, Python e Java, ordinamento e ricerca, notazione asintotica, analisi e algoritmi ricorsivi, con grafici interattivi.
+- **[Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/)** — poliedri, algoritmo del simplesso, dualità e simplesso duale, con il laboratorio interattivo
+- **[Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/)** — insiemi e funzioni convesse, problemi di ottimizzazione convessa, con grafici interattivi
+- **[Algoritmi](https://fabiofurini.github.io/algoritmi/)** — rappresentazione dei numeri, pseudocodice, ordinamento e ricerca, analisi e algoritmi ricorsivi
+- **[Programmazione lineare intera](https://fabiofurini.github.io/programmazione-lineare-intera/)** — rilassamento continuo, disuguaglianze valide, piani di taglio, branch-and-bound e branch-and-cut
+- **[Ottimizzazione combinatoria](https://fabiofurini.github.io/ottimizzazione-combinatoria/)** — zaino, bin packing, colorazione, TSP, scheduling e lot sizing, risolti in tutti i modi
+- **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** — modelli di programmazione lineare a variabili intere, dalla formulazione alla soluzione con i solver
+- **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — numeri reali, funzioni, limiti, derivate e serie, con i grafici interattivi
+- **[Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)** — vettori, matrici, determinanti, sistemi lineari e autovalori, con il laboratorio di calcolo
 
 Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** —
 [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
