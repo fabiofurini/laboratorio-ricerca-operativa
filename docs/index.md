@@ -91,6 +91,7 @@ Dello stesso autore:
 - **[Algoritmi](https://fabiofurini.github.io/algoritmi/)** — rappresentazione dei numeri, pseudocodice, ordinamento e ricerca, analisi e algoritmi ricorsivi;
 - **[Programmazione lineare intera](https://fabiofurini.github.io/programmazione-lineare-intera/)** — rilassamento continuo, disuguaglianze valide, piani di taglio, branch-and-bound e branch-and-cut;
 - **[Ottimizzazione combinatoria](https://fabiofurini.github.io/ottimizzazione-combinatoria/)** — zaino, bin packing, colorazione, TSP, scheduling e lot sizing, risolti in tutti i modi;
+- **[Ottimizzazione su reti](https://fabiofurini.github.io/ottimizzazione-su-reti/)** — grafi, alberi ricoprenti, cammini minimi, flussi su reti, simplesso su reti e gestione dei progetti;
 - **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)** — modelli di programmazione lineare a variabili intere, dalla formulazione alla soluzione con i solver;
 - **[Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)** — numeri reali, funzioni, limiti, derivate e serie, con i grafici interattivi;
 - **[Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)** — vettori, matrici, determinanti, sistemi lineari e autovalori, con il laboratorio di calcolo.
