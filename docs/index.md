@@ -16,6 +16,8 @@ cambiano del 5%?
 Tutti i modelli si possono eseguire **subito nel browser**: ogni capitolo ha il
 suo [notebook che si apre in Colab](notebook.md), senza installare niente.
 
+[:material-clipboard-check-outline: Mettiti alla prova](autovalutazione.md){ .md-button }
+
 !!! tip "La domanda giusta"
     Alla fine di ogni esercitazione la domanda non è soltanto *«qual è l'ottimo?»*,
     ma *«quale decisione suggeriamo e quanto è robusta?»*. Tutte le variabili di
@@ -70,6 +72,20 @@ suo [notebook che si apre in Colab](notebook.md), senza installare niente.
 **14 capitoli applicativi · 4 capitoli di strumenti · LP, QP e NLP · un notebook
 Colab per capitolo · codice Python/Gurobi riproducibile.** L'elenco completo,
 capitolo per capitolo, sta nel [programma](programma.md).
+
+<div class="grid cards" markdown>
+
+-   :material-clipboard-check-outline: **Autovalutazione**
+
+    ---
+
+    *Facsimile d'esame*
+
+    Un facsimile nuovo a ogni avvio: 13 domande, 33 punti, con la soluzione e il link alle dispense.
+
+    [:octicons-arrow-right-24: Mettiti alla prova](autovalutazione.md)
+
+</div>
 
 ## Scarica in PDF
 
