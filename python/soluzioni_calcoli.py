@@ -3,6 +3,8 @@
 Ogni sezione ristampa i numeri citati in volumes/solutions/soluzioni_1_laboratorio/soluzioni.tex, così che ogni
 valore del fascicolo sia riproducibile con: python3 soluzioni_calcoli.py
 """
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import gurobipy as gp
@@ -329,20 +331,129 @@ print(f"es. 11.2 — analitico mu* = lam + (2h/c)^(1/3) = {mu_q:.4f}; "
       f"(caso lineare: 90,2%)")
 
 # ======================================================================
-intestazione("Cap. 12 — varianti del newsvendor")
+intestazione("Cap. 12 — DEA: es. 12.1-12.5")
+d12 = pd.read_csv((Path(__file__).resolve().parent.parent / "dati") / "dea_filiali.csv")
+X12 = d12[["personale", "costi_operativi"]].to_numpy(float).T
+Y12 = d12[["prestiti", "depositi"]].to_numpy(float).T
+
+
+def dea12(X, Y, o, orient="input", vrs=False, escludi=False, peso_min=None):
+    """CCR/BCC in forma di inviluppo (input) o orientata all'output.
+
+    escludi=True toglie l'unità o dall'insieme di riferimento (super-efficienza);
+    peso_min=k impone u_2 >= k u_1 nella forma dei moltiplicatori (input)."""
+    m_, n_ = X.shape
+    p_ = Y.shape[0]
+    md = gp.Model(); md.Params.OutputFlag = 0
+    md.Params.FeasibilityTol = 1e-9; md.Params.OptimalityTol = 1e-9
+    if peso_min is not None:
+        u = md.addVars(p_); v = md.addVars(m_)
+        md.addConstr(gp.quicksum(v[i] * X[i, o] for i in range(m_)) == 1)
+        md.addConstrs(gp.quicksum(u[r] * Y[r, j] for r in range(p_))
+                      - gp.quicksum(v[i] * X[i, j] for i in range(m_)) <= 0 for j in range(n_))
+        md.addConstr(u[1] >= peso_min * u[0])
+        md.setObjective(gp.quicksum(u[r] * Y[r, o] for r in range(p_)), GRB.MAXIMIZE)
+        md.optimize()
+        return md.ObjVal, None, None, None
+    rif = [j for j in range(n_) if not (escludi and j == o)]
+    t = md.addVar(lb=-GRB.INFINITY)
+    lam = md.addVars(rif)
+    sm = md.addVars(m_); sp = md.addVars(p_)
+    if orient == "input":
+        md.addConstrs(gp.quicksum(lam[j] * X[i, j] for j in rif) + sm[i] == t * X[i, o]
+                      for i in range(m_))
+        md.addConstrs(gp.quicksum(lam[j] * Y[r, j] for j in rif) - sp[r] == Y[r, o]
+                      for r in range(p_))
+        senso = GRB.MINIMIZE
+    else:
+        md.addConstrs(gp.quicksum(lam[j] * X[i, j] for j in rif) + sm[i] == X[i, o]
+                      for i in range(m_))
+        md.addConstrs(gp.quicksum(lam[j] * Y[r, j] for j in rif) - sp[r] == t * Y[r, o]
+                      for r in range(p_))
+        senso = GRB.MAXIMIZE
+    if vrs:
+        md.addConstr(lam.sum() == 1)
+    md.setObjective(t, senso)
+    md.optimize()
+    tt = t.X
+    # seconda fase: massimi scarti a t fissato
+    t.LB = t.UB = tt
+    md.setObjective(sm.sum() + sp.sum(), GRB.MAXIMIZE)
+    md.optimize()
+    return tt, {j + 1: lam[j].X for j in rif if lam[j].X > 1e-6}, \
+        [sm[i].X for i in range(m_)], [sp[r].X for r in range(p_)]
+
+
+n12 = X12.shape[1]
+ccr12 = [dea12(X12, Y12, o)[0] for o in range(n12)]
+bcc12 = [dea12(X12, Y12, o, vrs=True)[0] for o in range(n12)]
+
+# es. 12.1: rapporto pesato della filiale 4 con i pesi del primale
+u4, v4 = np.array([0.0, 0.0]), np.array([0.0, 0.0])
+mm = gp.Model(); mm.Params.OutputFlag = 0
+mm.Params.FeasibilityTol = 1e-9; mm.Params.OptimalityTol = 1e-9
+uu = mm.addVars(2); vv = mm.addVars(2)
+mm.addConstr(vv[0] * X12[0, 3] + vv[1] * X12[1, 3] == 1)
+rr = mm.addConstrs(uu[0] * Y12[0, j] + uu[1] * Y12[1, j] - vv[0] * X12[0, j] - vv[1] * X12[1, j] <= 0
+                   for j in range(n12))
+mm.setObjective(uu[0] * Y12[0, 3] + uu[1] * Y12[1, 3], GRB.MAXIMIZE)
+mm.optimize()
+u4 = np.array([uu[0].X, uu[1].X]); v4 = np.array([vv[0].X, vv[1].X])
+rapp4 = [(u4 @ Y12[:, j]) / (v4 @ X12[:, j]) for j in range(n12)]
+print(f"es. 12.1 — filiale 4: u = ({u4[0]:.5f}, {u4[1]:.5f}), v = ({v4[0]:.5f}, {v4[1]:.6f}); "
+      f"output pesato {u4 @ Y12[:, 3]:.4f}, input pesato {v4 @ X12[:, 3]:.4f}")
+print("         rapporti con questi pesi: "
+      + ", ".join(f"{j + 1}: {rapp4[j]:.4f}" for j in range(n12)))
+print(f"         filiali con rapporto 1 (vincoli attivi): "
+      f"{[j + 1 for j in range(n12) if abs(rapp4[j] - 1) < 1e-6]}")
+
+# es. 12.2: orientamento all'output
+phi_c = [dea12(X12, Y12, o, orient="output")[0] for o in range(n12)]
+phi_b = [dea12(X12, Y12, o, orient="output", vrs=True)[0] for o in range(n12)]
+print("es. 12.2 — CCR output: phi e 1/theta: "
+      + ", ".join(f"{o + 1}: {phi_c[o]:.4f}/{1 / ccr12[o]:.4f}" for o in range(n12)))
+print(f"         max |phi - 1/theta| (CCR) = {max(abs(phi_c[o] - 1 / ccr12[o]) for o in range(n12)):.2e}")
+print("         BCC: 1/phi contro theta: "
+      + ", ".join(f"{o + 1}: {1 / phi_b[o]:.4f}/{bcc12[o]:.4f}" for o in range(n12)
+                  if abs(1 / phi_b[o] - bcc12[o]) > 1e-6))
+
+# es. 12.3: una filiale 13 uguale alla 7 ma con costi operativi 700 k€
+X13 = np.hstack([X12, [[X12[0, 6]], [700.0]]])
+Y13 = np.hstack([Y12, Y12[:, [6]]])
+t13, l13, sm13, sp13 = dea12(X13, Y13, 12)
+print(f"es. 12.3 — filiale 13 ({X12[0, 6]:.0f} FTE, 700 k€, {Y12[0, 6]}, {Y12[1, 6]}): theta = {t13:.4f}, "
+      f"lambda = " + ", ".join(f"{k}: {v:.3f}" for k, v in l13.items())
+      + f"; scarti input = ({sm13[0]:.2f}, {sm13[1]:.2f}), output = ({sp13[0]:.2f}, {sp13[1]:.2f})")
+print(f"         theta = 1 con scarto positivo: debolmente efficiente; "
+      f"la filiale 7 resta efficiente: theta = {dea12(X13, Y13, 6)[0]:.4f}")
+
+# es. 12.4: restrizione sui pesi u_2 >= u_1 (un M€ di depositi vale almeno quanto un M€ di prestiti)
+ar = [dea12(X12, Y12, o, peso_min=1.0)[0] for o in range(n12)]
+print("es. 12.4 — con u2 >= u1: "
+      + ", ".join(f"{o + 1}: {ccr12[o]:.4f} -> {ar[o]:.4f}" for o in range(n12)))
+print(f"         efficienti con la restrizione: {[o + 1 for o in range(n12) if abs(ar[o] - 1) < 1e-6]}")
+
+# es. 12.5: super-efficienza delle filiali efficienti
+eff12 = [o for o in range(n12) if abs(ccr12[o] - 1) < 1e-6]
+sup = {o + 1: dea12(X12, Y12, o, escludi=True)[0] for o in eff12}
+print("es. 12.5 — super-efficienza: " + ", ".join(f"{k}: {v:.4f}" for k, v in sup.items()))
+print(f"         classifica: {sorted(sup, key=sup.get, reverse=True)}")
+
+# ======================================================================
+intestazione("Cap. 13 — varianti del newsvendor")
 mu_d, s_d = 100., 20.
 for nome, Cu, Co in [("base", 9., 4.), ("penalita' b=3", 12., 4.),
                      ("smaltimento v=-1", 9., 7.)]:
     al = Cu / (Cu + Co)
-    print(f"es. 12.1/12.3 — {nome}: alpha* = {al:.4f}, "
+    print(f"es. 13.1/13.3 — {nome}: alpha* = {al:.4f}, "
           f"q* = {stats.norm.ppf(al, mu_d, s_d):.2f}")
 rng12 = np.random.default_rng(42)
 dom12 = np.maximum(rng12.normal(mu_d, s_d, 600), 0)
 q_st = np.quantile(dom12, 9 / 13)
 costi = 4 * np.maximum(q_st - dom12, 0) + 9 * np.maximum(dom12 - q_st, 0)
-print(f"es. 12.4 — EVPI: wait-and-see costa 0, here-and-now {costi.mean():.2f} "
+print(f"es. 13.4 — EVPI: wait-and-see costa 0, here-and-now {costi.mean():.2f} "
       f"-> una previsione perfetta vale fino a {costi.mean():.2f} EUR/ciclo")
-# es 12.6: multiprodotto rho=0 vs 0.7
+# es 13.6: multiprodotto rho=0 vs 0.7
 def multi12(rho):
     r = np.random.default_rng(7)
     mu_m = np.array([100., 80., 60.]); sig = np.array([20., 25., 15.])
@@ -360,11 +471,11 @@ def multi12(rho):
     return m.ObjVal
 
 
-print(f"es. 12.6 — costo atteso: rho=0,7 -> {multi12(0.7):.2f}; "
+print(f"es. 13.6 — costo atteso: rho=0,7 -> {multi12(0.7):.2f}; "
       f"rho=0 -> {multi12(0.0):.2f} (stessi margini, stesso budget, stesso seed)")
 
 # ======================================================================
-intestazione("Cap. 13 — es. 13.1: sei scenari con alpha = 0,90")
+intestazione("Cap. 14 — es. 14.1: sei scenari con alpha = 0,90")
 perd = np.array([2., 4., 5., 7., 12., 20.])
 m13 = gp.Model(); m13.Params.OutputFlag = 0
 eta = m13.addVar(lb=-GRB.INFINITY); xi = m13.addVars(6)
@@ -430,7 +541,7 @@ print(f"es. 3.4 — max 5 log(1+x) - x: x* = {xl.X:.4f}, f* = {ml.ObjVal:.4f} "
 assert abs(xl.X - 4) < 1e-4
 
 # ======================================================================
-intestazione("Cap. 14 — arbitraggio: es. 14.1-14.3")
+intestazione("Cap. 15 — arbitraggio: es. 15.1-15.3")
 Rarb = 1.04
 s1a = np.array([[Rarb, Rarb, Rarb], [10., 15., 13.], [30., 15., 25.]])
 
@@ -446,14 +557,14 @@ def lp_arb(s0, k=1.0):
 
 
 m14, _ = lp_arb([1, 6, 20], k=5)
-print(f"es. 14.1 — normalizzazione a 5: ottimo {m14.ObjVal:.1f}; "
+print(f"es. 15.1 — normalizzazione a 5: ottimo {m14.ObjVal:.1f}; "
       f"strategia (-135, 5, 5): costo {-135 + 30 + 100}")
 assert m14.ObjVal == -5.0
 
 m14b, cc = lp_arb([1, 13, 21.538462])
 q14 = [round(Rarb*cc[j].Pi, 2) for j in range(3)]
 m14c, _ = lp_arb([1, 13, 21.60])
-print(f"es. 14.2 — a 21.5385: ottimo {m14b.ObjVal:.4f}, q = {q14}; "
+print(f"es. 15.2 — a 21.5385: ottimo {m14b.ObjVal:.4f}, q = {q14}; "
       f"a 21.60: ottimo {m14c.ObjVal:.1f}")
 assert abs(m14b.ObjVal) < 1e-6 and m14c.ObjVal == -1.0 and q14 == [0.0, 0.26, 0.74]
 
@@ -465,15 +576,15 @@ d14.addConstr(gp.quicksum(s1a[2, j]*pp[j] for j in range(3)) == 18.692308)
 h14 = np.maximum(s1a[2] - 20, 0)
 d14.setObjective(gp.quicksum(h14[j]*pp[j] for j in range(3)), GRB.MINIMIZE)
 d14.optimize()
-print(f"es. 14.3 — call su titolo 2, strike 20: prezzo {d14.ObjVal:.4f} "
+print(f"es. 15.3 — call su titolo 2, strike 20: prezzo {d14.ObjVal:.4f} "
       f"(= 10 q1 / R = {10*0.296/1.04:.4f})")
 assert abs(d14.ObjVal - 2.846154) < 1e-4
 
-intestazione("Cap. 16 — regressione: es. 16.1-16.5")
+intestazione("Cap. 17 — regressione: es. 17.1-17.5")
 
 
 def qr16(X, y, tau=0.5, budget=None):
-    """Regressione quantile come LP (la stessa del capitolo 16)."""
+    """Regressione quantile come LP (la stessa del capitolo 17)."""
     nn, pp = X.shape
     m = gp.Model(); m.Params.OutputFlag = 0
     w = m.addVars(pp, lb=-GRB.INFINITY); b = m.addVar(lb=-GRB.INFINITY)
@@ -493,7 +604,7 @@ def qr16(X, y, tau=0.5, budget=None):
 
 y16 = np.array([88., 96., 104., 112., 120., 132., 148.])
 m16, _, b16, pi16, _ = qr16(np.zeros((7, 0)), y16, 0.5)
-print(f"es. 16.1 — mediana {b16:.0f}, valore {m16.ObjVal:.0f}, "
+print(f"es. 17.1 — mediana {b16:.0f}, valore {m16.ObjVal:.0f}, "
       f"somma dei duali {pi16.sum():.6f}")
 assert b16 == 112.0 and m16.ObjVal == 56.0 and abs(pi16.sum()) < 1e-9
 
@@ -516,7 +627,7 @@ d_su = dom16.copy(); d_su[sopra16[0]] += 30
 _, wA16, bA16, _, _ = qr16(Xt16, d_su, 0.5)
 d_ap = dom16.copy(); d_ap[app16[0]] -= 30
 _, wB16, bB16, _, _ = qr16(Xt16, d_ap, 0.5)
-print(f"es. 16.2 — retta {bb16:.2f} {w16[0]:+.2f}t; +30 su un punto sopra: "
+print(f"es. 17.2 — retta {bb16:.2f} {w16[0]:+.2f}t; +30 su un punto sopra: "
       f"{bA16:.2f} {wA16[0]:+.2f}t (invariata); -30 su un appoggio: "
       f"{bB16:.2f} {wB16[0]:+.2f}t")
 assert len(app16) == 2 and abs(bA16 - bb16) < 1e-6 and abs(bB16 - 211.84) < 0.01
@@ -529,7 +640,7 @@ prev16 = {}
 for co, tau in ((4, 9/13), (2, 9/11)):
     _, wq, bq, _, _ = qr16(X3_16[puliti16], dom16[puliti16], tau)
     prev16[co] = float(tipo16 @ wq + bq)
-print(f"es. 16.3 — co=4 (alpha*=9/13): {prev16[4]:.1f} pezzi; "
+print(f"es. 17.3 — co=4 (alpha*=9/13): {prev16[4]:.1f} pezzi; "
       f"co=2 (alpha*=9/11): {prev16[2]:.1f} pezzi (+{prev16[2]-prev16[4]:.1f})")
 assert abs(prev16[4] - 132.1) < 0.1 and abs(prev16[2] - 139.6) < 0.1
 
@@ -548,7 +659,7 @@ vals16 = np.array(vals16); ombre16 = np.array(ombre16)
 convessa = all(vals16[i+1] - 2*vals16[i] + vals16[i-1] > -1e-6
                for i in range(1, len(vals16)-1))
 rotture = sum(1 for i in range(1, 61) if abs(ombre16[i] - ombre16[i-1]) > 1e-6)
-print(f"es. 16.4 — valore da {vals16[0]:.1f} a {vals16[-1]:.1f}, convesso: "
+print(f"es. 17.4 — valore da {vals16[0]:.1f} a {vals16[-1]:.1f}, convesso: "
       f"{convessa}, {rotture} cambi di prezzo ombra")
 assert convessa and np.all(np.diff(vals16) <= 1e-6) and rotture == 35
 
@@ -561,7 +672,7 @@ for t in range(5, 60, 5):
     err16[t] = (float(np.abs(y3_16[stima16] - (Xs16[stima16] @ wt + bt)).mean()),
                 float(np.abs(y3_16[verif16] - (Xs16[verif16] @ wt + bt)).mean()))
 mono = all(err16[t][0] >= err16[t+5][0] - 1e-9 for t in range(5, 55, 5))
-print(f"es. 16.5 — stima monotona: {mono}; verifica 45: {err16[45][1]:.2f}, "
+print(f"es. 17.5 — stima monotona: {mono}; verifica 45: {err16[45][1]:.2f}, "
       f"50: {err16[50][1]:.2f}, 55: {err16[55][1]:.2f} (non monotona)")
 assert mono and err16[50][1] > err16[45][1]
 

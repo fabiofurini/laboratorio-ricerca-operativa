@@ -1,4 +1,4 @@
-"""Capitolo 12 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
+"""Capitolo 13 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
 
 Caso di studio: panetteria che decide quanti panettoni artigianali produrre.
 Prezzo p = 15 €, costo c = 6 €, recupero v = 2 € → Cu = 9, Co = 4.
@@ -50,7 +50,7 @@ print(f"Costo atteso in q*: {costo_atteso(q_star):.2f} €  |  in q = media: "
       f"{costo_atteso(mu_d):.2f} €")
 
 qq = np.linspace(50, 160, 400)
-salva_dat(pd.DataFrame({"q": qq, "costo": [costo_atteso(q) for q in qq]}), "cap12_costo")
+salva_dat(pd.DataFrame({"q": qq, "costo": [costo_atteso(q) for q in qq]}), "cap13_costo")
 
 # ----------------------------------------------------------------------
 # 2. LP A SCENARI
@@ -112,7 +112,7 @@ for Sn in [10, 30, 100, 300, 1000, 3000]:
     righe.append((Sn, np.mean(stime), np.std(stime)))
     print(f"  S = {Sn:5d}: q media {np.mean(stime):7.2f}, dev. std tra repliche {np.std(stime):5.2f}")
 stab = pd.DataFrame(righe, columns=["S", "q_media", "q_std"])
-salva_dat(stab, "cap12_stabilita")
+salva_dat(stab, "cap13_stabilita")
 
 # ----------------------------------------------------------------------
 # 4. VINCOLI DI SERVIZIO
@@ -145,7 +145,7 @@ for lam in [0, 0.25, 0.5, 0.75, 1.0]:
     print(f"  lambda = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
           f"CVaR90 = {cvar_l:6.2f}")
 front = pd.DataFrame(front, columns=["lam", "q", "costo_medio", "cvar"])
-salva_dat(front, "cap12_frontiera_cvar")
+salva_dat(front, "cap13_frontiera_cvar")
 print("Aumentando lambda si ordina di più: costa in media, protegge dagli scenari peggiori.")
 
 # ----------------------------------------------------------------------
@@ -201,7 +201,7 @@ ax2.set_xscale("log")
 ax2.set_xlabel("numero di scenari S"); ax2.set_ylabel("q ottima")
 ax2.set_title("Stabilità della soluzione a scenari")
 ax2.legend(fontsize=8)
-salva_figura(fig, "cap12_quantile_stabilita")
+salva_figura(fig, "cap13_quantile_stabilita")
 
 fig, ax = plt.subplots()
 ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
@@ -210,6 +210,6 @@ for _, r in front.iterrows():
                 fontsize=8)
 ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
 ax.set_title("Frontiera costo medio - rischio di coda")
-salva_figura(fig, "cap12_frontiera")
+salva_figura(fig, "cap13_frontiera")
 
-print("\nFatto: capitolo 12.")
+print("\nFatto: capitolo 13.")

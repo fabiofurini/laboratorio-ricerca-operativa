@@ -1,6 +1,6 @@
-"""Capitolo 16 — Regressione robusta e quantile (LP).
+"""Capitolo 17 — Regressione robusta e quantile (LP).
 
-Caso di studio: la panetteria del capitolo 12. Sessanta giorni di storico
+Caso di studio: la panetteria del capitolo 13. Sessanta giorni di storico
 (domanda, temperatura, prezzo, weekend) piu' tre giorni di sciopero dei
 trasporti che fanno crollare la domanda.
 
@@ -19,7 +19,7 @@ from gurobipy import GRB
 from stile import (ARANCIO, BLU, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt,
                    salva_dat, salva_dati, salva_figura)
 
-TAU_NV = 9 / 13                                # frattile critico del capitolo 12
+TAU_NV = 9 / 13                                # frattile critico del capitolo 13
 
 
 # ----------------------------------------------------------------------
@@ -84,7 +84,7 @@ y7 = np.array([88.0, 96.0, 104.0, 112.0, 120.0, 132.0, 148.0])
 X0 = np.zeros((len(y7), 0))
 m0, _, b0, pi0, _ = regressione_quantile(X0, y7, tau=TAU_NV)
 print(f"Sette giorni: {y7.astype(int)}")
-print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 12: cu=9, co=4)")
+print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 13: cu=9, co=4)")
 print(f"Intercetta ottima b = {b0:.4f}  -> e' il 5o valore ordinato, il quantile 69,23%")
 print(f"Valore ottimo = {m0.ObjVal:.4f} = 680/13")
 print(f"Duali pi = {np.round(pi0, 4)}  (limiti: -(1-tau) = {-(1 - TAU_NV):.4f}, "
@@ -220,7 +220,7 @@ print(f"  domanda mediana prevista        {prev_med:6.1f} pezzi")
 print(f"  quantile {TAU_NV:.4f} previsto        {prev_nv:6.1f} pezzi  <- quantita' da produrre")
 print(f"  scorta di sicurezza             {prev_nv - prev_med:6.1f} pezzi")
 print(f"  quantile {TAU_NV:.4f} senza attributi {q_incond:6.1f} pezzi  "
-      f"(capitolo 12: stessa regola, nessun attributo)")
+      f"(capitolo 13: stessa regola, nessun attributo)")
 
 # ----------------------------------------------------------------------
 # 6. SELEZIONE DELLE CARATTERISTICHE CON UN BUDGET SUI COEFFICIENTI
@@ -252,7 +252,7 @@ for t in griglia_t:
             entrate[nome] = t
 curva = pd.DataFrame(curva)
 salva_dati(curva, "regressione_budget")
-salva_dat(curva[["budget", "scarto_medio", "prezzo_ombra"]], "cap16_budget")
+salva_dat(curva[["budget", "scarto_medio", "prezzo_ombra"]], "cap17_budget")
 
 print(f"\nOrdine di ingresso (coefficiente oltre {SOGLIA:.0f} pezzi per "
       f"deviazione standard):")
@@ -278,7 +278,7 @@ for t in (5.0, 10.0, 20.0, 30.0, 45.0):
 punti = pd.DataFrame({"temperatura": temperatura, "domanda": domanda,
                       "sciopero": anomalo.astype(int),
                       "appoggio": appoggio.astype(int)})
-salva_dat(punti, "cap16_panetteria")
+salva_dat(punti, "cap17_panetteria")
 
 fig, ax = plt.subplots()
 ax.scatter(temperatura[buoni], domanda[buoni], s=18, color=TEAL,
@@ -295,14 +295,14 @@ ax.set_xlabel("temperatura massima (gradi)")
 ax.set_ylabel("domanda (pezzi)")
 ax.set_title("Cinque giorni di sciopero spostano i minimi quadrati, non l'LP")
 ax.legend(loc="upper right", fontsize=8)
-salva_figura(fig, "cap16_regressione_robusta")
+salva_figura(fig, "cap17_regressione_robusta")
 
 rette = []
 for tau in (0.10, 0.50, TAU_NV):
     _, w_t, b_t, _, _ = regressione_quantile(Xt[puliti], domanda[puliti], tau=tau)
     rette.append({"tau": tau, "intercetta": b_t, "pendenza": w_t[0]})
 rette = pd.DataFrame(rette)
-salva_dat(rette, "cap16_rette_quantili")
+salva_dat(rette, "cap17_rette_quantili")
 
 fig, ax = plt.subplots()
 ax.scatter(temperatura[puliti], domanda[puliti], s=16, color=GRIGIO, alpha=0.7,
@@ -317,7 +317,7 @@ ax.set_xlabel("temperatura massima (gradi)")
 ax.set_ylabel("domanda (pezzi)")
 ax.set_title("Una retta per ogni quantile: il ventaglio della domanda")
 ax.legend(loc="upper right", fontsize=8)
-salva_figura(fig, "cap16_quantili")
+salva_figura(fig, "cap17_quantili")
 
 fig, ax = plt.subplots()
 ax.plot(curva["budget"], curva["scarto_medio"], color=TEAL, lw=2)
@@ -329,6 +329,6 @@ for nome, t in sorted(entrate.items(), key=lambda kv: kv[1]):
 ax.set_xlabel("budget sui coefficienti")
 ax.set_ylabel("scarto assoluto medio (pezzi)")
 ax.set_title("Il prezzo della complessità: errore contro budget")
-salva_figura(fig, "cap16_budget")
+salva_figura(fig, "cap17_budget")
 
-print("\nFatto: capitolo 16 (regressione robusta e quantile).")
+print("\nFatto: capitolo 17 (regressione robusta e quantile).")

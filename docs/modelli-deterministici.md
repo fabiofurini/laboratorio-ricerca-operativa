@@ -1,6 +1,6 @@
 # Modelli deterministici
 
-Otto capitoli in cui tutti i dati sono noti: si decide con certezza, e il valore
+Nove capitoli in cui tutti i dati sono noti: si decide con certezza, e il valore
 sta nell'interrogare la soluzione (quanto vale una risorsa in più? dove si rompe
 il piano?).
 
@@ -82,5 +82,14 @@ piedi.
     servizio, robustezza alla domanda incerta.
 
     [:octicons-arrow-right-24: NLP convesso](code.md)
+
+-   :material-bank: **Data Envelopment Analysis**
+
+    ---
+
+    L'efficienza relativa di dodici filiali con un LP per filiale: il duale
+    dà peer e target, il confronto CCR/BCC l'inefficienza di scala.
+
+    [:octicons-arrow-right-24: LP](dea.md)
 
 </div>

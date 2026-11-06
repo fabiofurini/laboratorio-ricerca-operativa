@@ -58,21 +58,22 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
     - [Localizzazione continua di un servizio](pdf/slide-09-localizzazione.pdf)
     - [Ricarica intelligente di veicoli elettrici](pdf/slide-10-ricarica-ev.pdf)
     - [Capacità di servizio e tempi di attesa](pdf/slide-11-code.pdf)
+    - [Data Envelopment Analysis](pdf/slide-12-dea.pdf)
 
 -   :material-presentation: **Decisioni sotto incertezza**
 
     ---
 
-    - [Il Newsvendor e le sue varianti](pdf/slide-12-newsvendor.pdf)
-    - [VaR e CVaR](pdf/slide-13-var-cvar.pdf)
-    - [Arbitraggio e prezzatura](pdf/slide-14-arbitraggio.pdf)
+    - [Il Newsvendor e le sue varianti](pdf/slide-13-newsvendor.pdf)
+    - [VaR e CVaR](pdf/slide-14-var-cvar.pdf)
+    - [Arbitraggio e prezzatura](pdf/slide-15-arbitraggio.pdf)
 
 -   :material-presentation: **Ottimizzazione e machine learning**
 
     ---
 
-    - [Support Vector Machine](pdf/slide-15-svm.pdf)
-    - [Regressione robusta e quantile](pdf/slide-16-regressione.pdf)
+    - [Support Vector Machine](pdf/slide-16-svm.pdf)
+    - [Regressione robusta e quantile](pdf/slide-17-regressione.pdf)
 
 </div>
 

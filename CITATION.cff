@@ -3,8 +3,8 @@ message: "Se usi questo materiale, per favore citalo come segue."
 title: "Laboratorio di Ricerca Operativa: modelli continui di ottimizzazione per l'Ingegneria Gestionale"
 abstract: >-
   Materiale didattico completo del Laboratorio di Ricerca Operativa: dispensa
-  online, codice Python/Gurobi, dati e casi di studio. Diciassette capitoli su
-  teoria della programmazione lineare e non lineare, uso del solver, otto
+  online, codice Python/Gurobi, dati e casi di studio. Diciotto capitoli su
+  teoria della programmazione lineare e non lineare, uso del solver, nove
   modelli deterministici, decisioni sotto incertezza, ottimizzazione e machine
   learning. Tutti i modelli usano solo variabili continue e un solo solver.
 authors:

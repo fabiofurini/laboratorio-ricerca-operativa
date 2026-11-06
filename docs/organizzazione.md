@@ -7,7 +7,7 @@
 | **Lab 1** | Produzione e scorte | formulare un LP multiperiodale; leggere duali, slack e range; verificare un prezzo ombra per perturbazione |
 | **Lab 2** | Markowitz | costruire un QP convesso; tracciare una frontiera; discutere la fragilità delle stime |
 | **Lab 3** | Pricing *oppure* budget | modellare funzioni non lineari; studiare la concavità; verificare le KKT numericamente |
-| **Lab 4** | Progetto a scelta | supply chain, ricarica EV, localizzazione, code, Newsvendor, CVaR o SVM; presentazione manageriale |
+| **Lab 4** | Progetto a scelta | supply chain, ricarica EV, localizzazione, code, DEA, Newsvendor, CVaR o SVM; presentazione manageriale |
 
 ## Gli errori più comuni
 

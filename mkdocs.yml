@@ -129,6 +129,7 @@ nav:
       - Localizzazione continua: localizzazione.md
       - Ricarica di veicoli elettrici: ricarica-ev.md
       - Code e capacità di servizio: code.md
+      - Data Envelopment Analysis: dea.md
   - Decisioni sotto incertezza:
       - decisioni-incertezza.md
       - Il Newsvendor: newsvendor.md

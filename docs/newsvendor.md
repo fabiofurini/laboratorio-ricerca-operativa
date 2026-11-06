@@ -1,10 +1,10 @@
 # Il Newsvendor e le sue varianti
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-12-newsvendor.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-13-newsvendor.pdf)
 
-**Classe:** convesso 1D / LP stocastico a scenari · **Script:** `python/lab12_newsvendor.py`
+**Classe:** convesso 1D / LP stocastico a scenari · **Script:** `python/lab13_newsvendor.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab12_newsvendor.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab13_newsvendor.ipynb)
 
 Scegliere una quantità **prima** di osservare la domanda: moda e stagionali,
 freschi, farmaci, capacità alberghiera. È la porta d'ingresso dell'ottimizzazione
@@ -80,7 +80,7 @@ q* = F^-1(0,6923) = 110,05 unita'   (media = 100)
 costo atteso in q*: 91,43 EUR    in q = media: 103,72 EUR
 ```
 
-![Costo atteso e stabilità](img/cap12_quantile_stabilita.png)
+![Costo atteso e stabilità](img/cap13_quantile_stabilita.png)
 
 ## La formulazione lineare a scenari
 
@@ -163,7 +163,7 @@ lambda = 0,50: q = 114,48  costo medio 92,52  CVaR90 225,49
 lambda = 1,00: q = 116,17  costo medio 94,87  CVaR90 224,56
 ```
 
-![Frontiera costo-CVaR](img/cap12_frontiera.png)
+![Frontiera costo-CVaR](img/cap13_frontiera.png)
 
 Il decisore avverso al rischio ordina di più (da 108,6 a 116,2 unità): paga 6,5 € in
 più in media per tagliare di 21,4 € il costo medio dei peggiori 10% degli scenari. La
@@ -194,15 +194,15 @@ diversificazione: i tre prodotti falliscono insieme.
 ## Codice
 
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
-è [`python/lab12_newsvendor.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab12_newsvendor.py)
-(riproducibile con `python3 python/lab12_newsvendor.py` dalla cartella `python/`).
+è [`python/lab13_newsvendor.py`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/python/lab13_newsvendor.py)
+(riproducibile con `python3 python/lab13_newsvendor.py` dalla cartella `python/`).
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab12_newsvendor.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab13_newsvendor.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab13_newsvendor.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab12_newsvendor.py`"
+??? example "Mostra lo script completo — `lab13_newsvendor.py`"
 
     ```python
-    """Capitolo 12 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
+    """Capitolo 13 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
 
     Caso di studio: panetteria che decide quanti panettoni artigianali produrre.
     Prezzo p = 15 €, costo c = 6 €, recupero v = 2 € → Cu = 9, Co = 4.
@@ -254,7 +254,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.i
           f"{costo_atteso(mu_d):.2f} €")
 
     qq = np.linspace(50, 160, 400)
-    salva_dat(pd.DataFrame({"q": qq, "costo": [costo_atteso(q) for q in qq]}), "cap12_costo")
+    salva_dat(pd.DataFrame({"q": qq, "costo": [costo_atteso(q) for q in qq]}), "cap13_costo")
 
     # ----------------------------------------------------------------------
     # 2. LP A SCENARI
@@ -316,7 +316,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.i
         righe.append((Sn, np.mean(stime), np.std(stime)))
         print(f"  S = {Sn:5d}: q media {np.mean(stime):7.2f}, dev. std tra repliche {np.std(stime):5.2f}")
     stab = pd.DataFrame(righe, columns=["S", "q_media", "q_std"])
-    salva_dat(stab, "cap12_stabilita")
+    salva_dat(stab, "cap13_stabilita")
 
     # ----------------------------------------------------------------------
     # 4. VINCOLI DI SERVIZIO
@@ -349,7 +349,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.i
         print(f"  lambda = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
               f"CVaR90 = {cvar_l:6.2f}")
     front = pd.DataFrame(front, columns=["lam", "q", "costo_medio", "cvar"])
-    salva_dat(front, "cap12_frontiera_cvar")
+    salva_dat(front, "cap13_frontiera_cvar")
     print("Aumentando lambda si ordina di più: costa in media, protegge dagli scenari peggiori.")
 
     # ----------------------------------------------------------------------
@@ -405,7 +405,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.i
     ax2.set_xlabel("numero di scenari S"); ax2.set_ylabel("q ottima")
     ax2.set_title("Stabilità della soluzione a scenari")
     ax2.legend(fontsize=8)
-    salva_figura(fig, "cap12_quantile_stabilita")
+    salva_figura(fig, "cap13_quantile_stabilita")
 
     fig, ax = plt.subplots()
     ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
@@ -414,9 +414,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab12_newsvendor.i
                     fontsize=8)
     ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
     ax.set_title("Frontiera costo medio - rischio di coda")
-    salva_figura(fig, "cap12_frontiera")
+    salva_figura(fig, "cap13_frontiera")
 
-    print("\nFatto: capitolo 12.")
+    print("\nFatto: capitolo 13.")
     ```
 
 ## Esercizi

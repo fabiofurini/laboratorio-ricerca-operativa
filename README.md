@@ -26,7 +26,7 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Scarica in PDF
 
-- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (113 pagine)
+- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (126 pagine)
 - [Slide delle lezioni](https://fabiofurini.github.io/laboratorio-ricerca-operativa/materiale/), una per capitolo, nella pagina del materiale
 
 ## Indice
@@ -48,6 +48,7 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 - [Localizzazione continua](https://fabiofurini.github.io/laboratorio-ricerca-operativa/localizzazione/) — NLP convesso
 - [Ricarica di veicoli elettrici](https://fabiofurini.github.io/laboratorio-ricerca-operativa/ricarica-ev/) — LP/QP
 - [Code e capacità di servizio](https://fabiofurini.github.io/laboratorio-ricerca-operativa/code/) — NLP convesso
+- [Data Envelopment Analysis](https://fabiofurini.github.io/laboratorio-ricerca-operativa/dea/) — LP, l'efficienza relativa e il duale
 
 **Decisioni sotto incertezza**
 
@@ -66,7 +67,7 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Eseguire i modelli
 
-Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab16`), con i dati
+Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab17`), con i dati
 in [`dati/`](dati/):
 
 ```bash

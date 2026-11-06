@@ -29,15 +29,16 @@ GRUPPI = [
         ("slide-09-localizzazione", "slides-09-location", "Localizzazione continua di un servizio", "Continuous location of a service"),
         ("slide-10-ricarica-ev", "slides-10-ev-charging", "Ricarica intelligente di veicoli elettrici", "Smart charging of electric vehicles"),
         ("slide-11-code", "slides-11-queues", "Capacità di servizio e tempi di attesa", "Service capacity and waiting times"),
+        ("slide-12-dea", "slides-12-dea", "Data Envelopment Analysis", "Data Envelopment Analysis"),
     ]),
     (("Decisioni sotto incertezza", "Decisions under uncertainty"), [
-        ("slide-12-newsvendor", "slides-12-newsvendor", "Il Newsvendor e le sue varianti", "The Newsvendor and its variants"),
-        ("slide-13-var-cvar", "slides-13-var-cvar", "VaR e CVaR", "VaR and CVaR"),
-        ("slide-14-arbitraggio", "slides-14-arbitrage", "Arbitraggio e prezzatura", "Arbitrage and pricing"),
+        ("slide-13-newsvendor", "slides-13-newsvendor", "Il Newsvendor e le sue varianti", "The Newsvendor and its variants"),
+        ("slide-14-var-cvar", "slides-14-var-cvar", "VaR e CVaR", "VaR and CVaR"),
+        ("slide-15-arbitraggio", "slides-15-arbitrage", "Arbitraggio e prezzatura", "Arbitrage and pricing"),
     ]),
     (("Ottimizzazione e machine learning", "Optimization and machine learning"), [
-        ("slide-15-svm", "slides-15-svm", "Support Vector Machine", "Support Vector Machine"),
-        ("slide-16-regressione", "slides-16-regression", "Regressione robusta e quantile", "Robust and quantile regression"),
+        ("slide-16-svm", "slides-16-svm", "Support Vector Machine", "Support Vector Machine"),
+        ("slide-17-regressione", "slides-17-regression", "Regressione robusta e quantile", "Robust and quantile regression"),
     ]),
 ]
 PAGINA = {"it": "materiale.md", "en": "downloads.md"}

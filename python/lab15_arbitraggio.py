@@ -1,4 +1,4 @@
-"""Capitolo 14 — Arbitraggio e prezzatura senza arbitraggio (LP).
+"""Capitolo 15 — Arbitraggio e prezzatura senza arbitraggio (LP).
 
 Caso di studio: un mercato a uno stadio con 3 stati del mondo, un titolo privo
 di rischio (rendimento lordo R = 1,04) e 2 titoli rischiosi.
@@ -118,7 +118,7 @@ for prezzo2 in griglia:
     valori.append(mg.ObjVal)
 curva = pd.DataFrame({"prezzo_titolo2": griglia, "valore_lp": valori})
 salva_dati(curva, "arbitraggio_curva_prezzo")
-salva_dat(curva, "cap14_arbitraggio_curva")
+salva_dat(curva, "cap15_arbitraggio_curva")
 print(f"Griglia {griglia[0]:.0f}..{griglia[-1]:.0f}: valore LP = 0 solo dentro "
       f"l'intervallo, negativo fuori (arbitraggio)")
 
@@ -153,6 +153,6 @@ ax.plot([6], [0], alpha=0)  # noop
 ax.set_xlabel("prezzo del titolo 2")
 ax.set_ylabel("valore ottimo dell'LP normalizzato")
 ax.set_title("Fuori dall'intervallo di prezzo coerente compare l'arbitraggio")
-salva_figura(fig, "cap14_arbitraggio_curva")
+salva_figura(fig, "cap15_arbitraggio_curva")
 
-print("\nFatto: capitolo 14 (arbitraggio).")
+print("\nFatto: capitolo 15 (arbitraggio).")

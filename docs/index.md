@@ -40,9 +40,10 @@ suo [notebook che si apre in Colab](notebook.md), senza installare niente.
     ---
 
     Produzione, supply chain, portafoglio, prezzi, budget, localizzazione,
-    ricarica dei veicoli elettrici, code: tutti i dati sono noti.
+    ricarica dei veicoli elettrici, code, efficienza delle filiali: tutti i dati
+    sono noti.
 
-    [:octicons-arrow-right-24: Gli otto problemi](modelli-deterministici.md)
+    [:octicons-arrow-right-24: I nove problemi](modelli-deterministici.md)
 
 -   :material-dice-multiple: **Decisioni sotto incertezza**
 
@@ -66,13 +67,13 @@ suo [notebook che si apre in Colab](notebook.md), senza installare niente.
 
 ## Il laboratorio in breve
 
-**13 capitoli applicativi · 4 capitoli di strumenti · LP, QP e NLP · un notebook
+**14 capitoli applicativi · 4 capitoli di strumenti · LP, QP e NLP · un notebook
 Colab per capitolo · codice Python/Gurobi riproducibile.** L'elenco completo,
 capitolo per capitolo, sta nel [programma](programma.md).
 
 ## Scarica in PDF
 
-- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 114 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
+- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 126 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
 - 📊 **[Slide delle lezioni](materiale.md)** — una per capitolo della dispensa, nella pagina del [materiale](materiale.md)
 
 ## Per cominciare

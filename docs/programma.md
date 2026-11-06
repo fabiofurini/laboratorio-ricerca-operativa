@@ -21,21 +21,22 @@ Ogni capitolo ha la sua pagina, il suo script Python e il suo
 8. [Localizzazione continua](localizzazione.md) — NLP convesso
 9. [Ricarica di veicoli elettrici](ricarica-ev.md) — LP/QP
 10. [Code e capacità di servizio](code.md) — NLP convesso
+11. [Data Envelopment Analysis](dea.md) — LP e dualità
 
 **[Decisioni sotto incertezza](decisioni-incertezza.md)**
 
-11. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
-12. [VaR e CVaR](var-cvar.md) — LP a scenari
-13. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
+12. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
+13. [VaR e CVaR](var-cvar.md) — LP a scenari
+14. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
 
 **[Ottimizzazione e machine learning](ottimizzazione-ml.md)**
 
-14. [Support Vector Machine](svm.md) — QP
-15. [Regressione robusta e quantile](regressione.md) — LP
+15. [Support Vector Machine](svm.md) — QP
+16. [Regressione robusta e quantile](regressione.md) — LP
 
 **Il corso**
 
-16. [Organizzazione del laboratorio](organizzazione.md) — laboratori ed errori da
+17. [Organizzazione del laboratorio](organizzazione.md) — laboratori ed errori da
     evitare
 
 ---

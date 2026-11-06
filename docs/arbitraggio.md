@@ -1,10 +1,10 @@
 # Arbitraggio e prezzatura senza arbitraggio
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-14-arbitraggio.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-laboratorio-ricerca-operativa.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-15-arbitraggio.pdf)
 
-**Classe: LP** · Script: `python/lab14_arbitraggio.py`
+**Classe: LP** · Script: `python/lab15_arbitraggio.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab14_arbitraggio.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab15_arbitraggio.ipynb)
 
 Un **arbitraggio** è una strategia che crea denaro dal nulla: incassa oggi senza
 alcun rischio di perdita domani (tipo A), oppure non costa nulla oggi e può solo
@@ -87,7 +87,7 @@ $$
 s^0_2 \in [18{,}69,\; 21{,}54] .
 $$
 
-![Guadagno da arbitraggio al variare del prezzo del titolo 2](img/cap14_arbitraggio_curva.png)
+![Guadagno da arbitraggio al variare del prezzo del titolo 2](img/cap15_arbitraggio_curva.png)
 
 Dentro l'intervallo il valore dell'LP normalizzato è 0 (prezzi coerenti); fuori
 scende a −1: esiste un arbitraggio, in una direzione o nell'altra.
@@ -101,11 +101,11 @@ $(0, 3, 1)$:
   $[1{,}4615,\; 2{,}0308]$ — fuori da quell'intervallo chiunque costruirebbe un
   arbitraggio combinando call e titoli quotati.
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab14_arbitraggio.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab14_arbitraggio.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab15_arbitraggio.ipynb`](https://github.com/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab15_arbitraggio.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab14_arbitraggio.py`"
+??? example "Mostra lo script completo — `lab15_arbitraggio.py`"
     ```python
-    """Capitolo 14 — Arbitraggio e prezzatura senza arbitraggio (LP).
+    """Capitolo 15 — Arbitraggio e prezzatura senza arbitraggio (LP).
 
     Caso di studio: un mercato a uno stadio con 3 stati del mondo, un titolo privo
     di rischio (rendimento lordo R = 1,04) e 2 titoli rischiosi.
@@ -225,7 +225,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab14_arbitraggio.
         valori.append(mg.ObjVal)
     curva = pd.DataFrame({"prezzo_titolo2": griglia, "valore_lp": valori})
     salva_dati(curva, "arbitraggio_curva_prezzo")
-    salva_dat(curva, "cap14_arbitraggio_curva")
+    salva_dat(curva, "cap15_arbitraggio_curva")
     print(f"Griglia {griglia[0]:.0f}..{griglia[-1]:.0f}: valore LP = 0 solo dentro "
           f"l'intervallo, negativo fuori (arbitraggio)")
 
@@ -260,9 +260,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab14_arbitraggio.
     ax.set_xlabel("prezzo del titolo 2")
     ax.set_ylabel("valore ottimo dell'LP normalizzato")
     ax.set_title("Fuori dall'intervallo di prezzo coerente compare l'arbitraggio")
-    salva_figura(fig, "cap14_arbitraggio_curva")
+    salva_figura(fig, "cap15_arbitraggio_curva")
 
-    print("\nFatto: capitolo 14 (arbitraggio).")
+    print("\nFatto: capitolo 15 (arbitraggio).")
     ```
 
 ## Esercizi
