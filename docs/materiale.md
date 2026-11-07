@@ -78,3 +78,10 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
 </div>
 
 <!-- slide:fine -->
+
+<!-- banca-domande -->
+## Banca delle domande del quiz
+
+Tutte le domande dell'autovalutazione, divise per parte e capitolo, con la risposta corretta e la spiegazione; per le domande generate, che cambiano i numeri a ogni avvio, alcuni esempi.
+
+[:material-format-list-checks: Banca delle domande](quiz/elenco_domande.html){ .md-button }
