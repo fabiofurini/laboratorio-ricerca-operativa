@@ -142,5 +142,6 @@ nav:
       - Regressione robusta e quantile: regressione.md
   - Quiz: autovalutazione.md
   - Materiale: materiale.md
-  - Organizzazione del laboratorio: organizzazione.md
-  - Programma: programma.md
+  - Indice:
+      - Programma: programma.md
+      - Come si lavora con il corso: organizzazione.md

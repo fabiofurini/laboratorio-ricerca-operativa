@@ -19,21 +19,6 @@ associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma
 del corso in versione online, con codice Python/Gurobi, dati e casi di studio
 riproducibili.
 
-Ogni capitolo parte da un problema gestionale concreto — quanto produrre, dove
-localizzare un servizio, quale prezzo fissare, quanto rischio accettare — lo
-trasforma in un modello di ottimizzazione, lo risolve con Gurobi chiamato da Python e, soprattutto, lo
-*interroga*: quanto vale un'ora di capacità in più? La soluzione resiste se i dati
-cambiano del 5%?
-
-Tutti i modelli si possono eseguire **subito nel browser**: ogni capitolo ha il
-suo [notebook che si apre in Colab](notebook.md), senza installare niente.
-
-!!! tip "La domanda giusta"
-    Alla fine di ogni esercitazione la domanda non è soltanto *«qual è l'ottimo?»*,
-    ma *«quale decisione suggeriamo e quanto è robusta?»*. Tutte le variabili di
-    decisione sono **continue**; a seconda della classe del modello la soluzione
-    si legge con la dualità LP/QP, con i prezzi ombra o con le condizioni KKT.
-
 [Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
 [:material-download: Materiale](materiale.md){ .md-button }
@@ -123,6 +108,14 @@ La frontiera efficiente di Markowitz: ogni punto è un portafoglio ottimo per un
     Il codice del corso che gira nel browser, senza installare niente.
 
     [:octicons-arrow-right-24: I notebook](notebook.md)
+
+-   :material-format-list-numbered: **Indice completo**
+
+    ---
+
+    Tutti i capitoli con le loro sezioni in una pagina, e come è fatto ogni capitolo.
+
+    [:octicons-arrow-right-24: L'indice](programma.md)
 
 </div>
 <!-- /collana-da-non-perdere -->

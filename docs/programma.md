@@ -1,5 +1,22 @@
 # Programma
 
+<!-- collana-dalla-fascia -->
+Ogni capitolo parte da un problema gestionale concreto — quanto produrre, dove
+localizzare un servizio, quale prezzo fissare, quanto rischio accettare — lo
+trasforma in un modello di ottimizzazione, lo risolve con Gurobi chiamato da Python e, soprattutto, lo
+*interroga*: quanto vale un'ora di capacità in più? La soluzione resiste se i dati
+cambiano del 5%?
+
+Tutti i modelli si possono eseguire **subito nel browser**: ogni capitolo ha il
+suo [notebook che si apre in Colab](notebook.md), senza installare niente.
+
+!!! tip "La domanda giusta"
+    Alla fine di ogni esercitazione la domanda non è soltanto *«qual è l'ottimo?»*,
+    ma *«quale decisione suggeriamo e quanto è robusta?»*. Tutte le variabili di
+    decisione sono **continue**; a seconda della classe del modello la soluzione
+    si legge con la dualità LP/QP, con i prezzi ombra o con le condizioni KKT.
+<!-- /collana-dalla-fascia -->
+
 L'elenco completo dei capitoli del laboratorio, nell'ordine in cui si affrontano.
 Ogni capitolo ha la sua pagina, il suo script Python e il suo
 [notebook che si apre in Colab](notebook.md).
