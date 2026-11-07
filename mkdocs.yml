@@ -88,6 +88,7 @@ extra:
       lang: en
 
 extra_css:
+  - stylesheets/collana.css
   - stylesheets/extra.css
   - stylesheets/quiz.css?v=9e3792b41c
 
@@ -112,8 +113,6 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Programma: programma.md
-  - Materiale: materiale.md
   - Strumenti:
       - strumenti.md
       - Teoria, programmazione lineare: teoria-lp.md
@@ -141,5 +140,7 @@ nav:
       - ottimizzazione-ml.md
       - Support Vector Machine: svm.md
       - Regressione robusta e quantile: regressione.md
-  - Organizzazione del laboratorio: organizzazione.md
   - Quiz: autovalutazione.md
+  - Materiale: materiale.md
+  - Organizzazione del laboratorio: organizzazione.md
+  - Programma: programma.md
