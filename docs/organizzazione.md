@@ -1,5 +1,39 @@
 # Organizzazione del laboratorio
 
+<!-- collana-dalla-home -->
+## Il laboratorio in breve
+
+**14 capitoli applicativi · 4 capitoli di strumenti · LP, QP e NLP · un notebook
+Colab per capitolo · codice Python/Gurobi riproducibile.** L'elenco completo,
+capitolo per capitolo, sta nel [programma](programma.md).
+
+<div class="grid cards" markdown>
+
+-   :material-clipboard-check-outline: **Autovalutazione**
+
+    ---
+
+    *Facsimile d'esame*
+
+    Un facsimile nuovo a ogni avvio: 13 domande, 33 punti, con la soluzione e il link alle dispense.
+
+    [:octicons-arrow-right-24: Mettiti alla prova](autovalutazione.md)
+
+</div>
+
+## Scarica in PDF
+
+- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 126 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
+- 📊 **[Slide delle lezioni](materiale.md)** — una per capitolo della dispensa, nella pagina del [materiale](materiale.md)
+
+## Per cominciare
+
+Non serve installare niente: ogni capitolo ha il suo
+[notebook che si apre in Colab](notebook.md) e gira nel browser. Chi preferisce
+lavorare in locale trova i comandi e le note sulla licenza Gurobi nella stessa
+pagina.
+<!-- /collana-dalla-home -->
+
 ## Percorso essenziale in quattro laboratori
 
 | | Contenuto | Obiettivi di apprendimento |

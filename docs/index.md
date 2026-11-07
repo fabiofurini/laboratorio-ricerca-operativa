@@ -40,7 +40,19 @@ suo [notebook che si apre in Colab](notebook.md), senza installare niente.
 
 </div>
 
-## Le quattro parti del laboratorio
+<!-- collana-app -->
+## Provalo subito
+
+La frontiera efficiente di Markowitz: ogni punto è un portafoglio ottimo per un livello di rischio. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
+
+[![](img/cap06_frontiera.png)](markowitz.md)
+
+[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/laboratorio-ricerca-operativa/blob/main/notebooks/lab06_markowitz.ipynb){ .md-button .md-button--primary }
+[:material-book-open-variant: Il capitolo](markowitz.md){ .md-button }
+[:material-language-python: Tutti i notebook](notebook.md){ .md-button }
+<!-- /collana-app -->
+
+## Le parti del corso
 
 <div class="grid cards" markdown>
 
@@ -83,37 +95,37 @@ suo [notebook che si apre in Colab](notebook.md), senza installare niente.
 
 </div>
 
-## Il laboratorio in breve
-
-**14 capitoli applicativi · 4 capitoli di strumenti · LP, QP e NLP · un notebook
-Colab per capitolo · codice Python/Gurobi riproducibile.** L'elenco completo,
-capitolo per capitolo, sta nel [programma](programma.md).
+<!-- collana-da-non-perdere -->
+## Da non perdere
 
 <div class="grid cards" markdown>
 
--   :material-clipboard-check-outline: **Autovalutazione**
+-   :material-clipboard-check-outline: **Quiz di autovalutazione**
 
     ---
 
-    *Facsimile d'esame*
-
-    Un facsimile nuovo a ogni avvio: 13 domande, 33 punti, con la soluzione e il link alle dispense.
+    Un facsimile d'esame nuovo a ogni avvio: 13 domande, 33 punti, con la soluzione e il link alle dispense. In Materiale c'è anche la banca completa delle domande.
 
     [:octicons-arrow-right-24: Mettiti alla prova](autovalutazione.md)
 
+-   :material-download: **Dispense in PDF**
+
+    ---
+
+    Dispense, eserciziari e slide in PDF, con la stessa numerazione del sito.
+
+    [:octicons-arrow-right-24: Il materiale](materiale.md)
+
+-   :material-language-python: **Notebook in Colab**
+
+    ---
+
+    Il codice del corso che gira nel browser, senza installare niente.
+
+    [:octicons-arrow-right-24: I notebook](notebook.md)
+
 </div>
-
-## Scarica in PDF
-
-- 📘 **[Dispensa completa](pdf/dispensa-laboratorio-ricerca-operativa.pdf)** — 126 pagine: modelli, esempi svolti, casi di studio, analisi di sensitività
-- 📊 **[Slide delle lezioni](materiale.md)** — una per capitolo della dispensa, nella pagina del [materiale](materiale.md)
-
-## Per cominciare
-
-Non serve installare niente: ogni capitolo ha il suo
-[notebook che si apre in Colab](notebook.md) e gira nel browser. Chi preferisce
-lavorare in locale trova i comandi e le note sulla licenza Gurobi nella stessa
-pagina.
+<!-- /collana-da-non-perdere -->
 
 ---
 
@@ -166,6 +178,8 @@ Dieci corsi con la stessa impostazione: dispense online e in PDF, esercizi con l
 
 </div>
 <!-- /collana -->
+
+---
 
 Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** —
 [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
