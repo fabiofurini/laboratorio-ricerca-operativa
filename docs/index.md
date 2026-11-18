@@ -19,6 +19,8 @@ associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma
 del corso in versione online, con codice Python/Gurobi, dati e casi di studio
 riproducibili.
 
+Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) e [Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/).
+
 [Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
 [:material-download: Materiale](materiale.md){ .md-button }
