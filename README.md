@@ -1,116 +1,26 @@
 <h3 align="center">Materiale didattico di
 <a href="https://fabiofurini.github.io/">Fabio Furini</a></h3>
-<p align="center">
-  Professore associato di Ricerca Operativa ·
-  <a href="https://www.diag.uniroma1.it/">DIAG</a>, Sapienza Università di Roma ·
-  <a href="https://fabiofurini.github.io/">sito personale</a>
-</p>
 
 # Laboratorio di Ricerca Operativa
 
-> **L'autore.** Fabio Furini è professore associato al DIAG della Sapienza dal
-> settembre 2021. Dottorato in Automatica e Ricerca Operativa all'Università di
-> Bologna (2011) e assegno di ricerca fino al 2012; postdoc all'Université
-> Paris-13 (2012–2013); dal 2013 al 2019 *Maître de Conférences* all'Université
-> Paris-Dauphine. *Habilitation à Diriger des Recherches* in Francia nel 2017 e
-> Abilitazione Scientifica Nazionale a professore ordinario in Ricerca Operativa
-> nel 2019. Nel 2020 ricercatore CNR presso l'IASI-CNR di Roma.
-> Sito personale: <https://fabiofurini.github.io/>
+**Il corso è stato diviso** in due moduli, Modellazione PL e Modellazione PNL, che ne contengono ora dispensa, slide,
+notebook, dati e quiz. Con Modellazione MIP formano i tre moduli di modellazione:
 
-Modelli continui di ottimizzazione — la dispensa del
-corso in versione online, con codice Python/Gurobi, dati e casi di studio.
+- **[Modellazione PL](https://fabiofurini.github.io/modellazione-pl/)**
+  ([repository](https://github.com/fabiofurini/modellazione-pl)): modelli di programmazione lineare per problemi
+  gestionali, risolti con Python e Gurobi.
+- **[Modellazione PNL](https://fabiofurini.github.io/modellazione-pnl/)**
+  ([repository](https://github.com/fabiofurini/modellazione-pnl)): modelli di programmazione non lineare, dal
+  portafoglio al machine learning, con Python e Gurobi.
+- **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)**
+  ([repository](https://github.com/fabiofurini/modellazione-mip)): modelli di programmazione lineare a variabili
+  intere, dalla formulazione alla soluzione con i solver.
 
-**📖 Dispensa online: [fabiofurini.github.io/laboratorio-ricerca-operativa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/)**
+Questo repository pubblica solo una pagina che rimanda ai tre moduli; ogni vecchio indirizzo del sito porta a quella
+pagina. La versione precedente del materiale resta nella storia di git.
 
-**▶️ Notebook eseguibili in Colab: [l'elenco dei capitoli](https://fabiofurini.github.io/laboratorio-ricerca-operativa/notebook/)** — girano nel browser, senza installare niente.
-
-## Scarica in PDF
-
-- [Dispensa completa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pdf/dispensa-laboratorio-ricerca-operativa.pdf) (126 pagine)
-- [Slide delle lezioni](https://fabiofurini.github.io/laboratorio-ricerca-operativa/materiale/), una per capitolo, nella pagina del materiale
-
-## Indice
-
-**Strumenti**
-
-- [Teoria: programmazione lineare](https://fabiofurini.github.io/laboratorio-ricerca-operativa/teoria-lp/) — dualità, scarti complementari, prezzi ombra e sensitività
-- [Teoria: ottimizzazione non lineare](https://fabiofurini.github.io/laboratorio-ricerca-operativa/teoria-non-lineare/) — convessità, QP, condizioni KKT
-- [Solver: modelli lineari](https://fabiofurini.github.io/laboratorio-ricerca-operativa/solver-lp/) — costruire il modello, farlo girare, leggere e interpretare la soluzione
-- [Solver: modelli non lineari](https://fabiofurini.github.io/laboratorio-ricerca-operativa/solver-non-lineare/) — vincoli funzionali, bilineari, tolleranze
-
-**Modelli deterministici**
-
-- [Produzione e scorte multiperiodali](https://fabiofurini.github.io/laboratorio-ricerca-operativa/produzione/) — LP/QP
-- [Supply chain con congestione e CO₂](https://fabiofurini.github.io/laboratorio-ricerca-operativa/supplychain/) — LP/NLP
-- [Portafoglio di Markowitz](https://fabiofurini.github.io/laboratorio-ricerca-operativa/markowitz/) — QP
-- [Pricing e revenue management](https://fabiofurini.github.io/laboratorio-ricerca-operativa/pricing/) — NLP
-- [Budget pubblicitario](https://fabiofurini.github.io/laboratorio-ricerca-operativa/budget/) — NLP convesso
-- [Localizzazione continua](https://fabiofurini.github.io/laboratorio-ricerca-operativa/localizzazione/) — NLP convesso
-- [Ricarica di veicoli elettrici](https://fabiofurini.github.io/laboratorio-ricerca-operativa/ricarica-ev/) — LP/QP
-- [Code e capacità di servizio](https://fabiofurini.github.io/laboratorio-ricerca-operativa/code/) — NLP convesso
-- [Data Envelopment Analysis](https://fabiofurini.github.io/laboratorio-ricerca-operativa/dea/) — LP, l'efficienza relativa e il duale
-
-**Decisioni sotto incertezza**
-
-- [Il Newsvendor e le sue varianti](https://fabiofurini.github.io/laboratorio-ricerca-operativa/newsvendor/) — LP stocastico
-- [VaR e CVaR](https://fabiofurini.github.io/laboratorio-ricerca-operativa/var-cvar/) — LP a scenari
-- [Arbitraggio e prezzatura](https://fabiofurini.github.io/laboratorio-ricerca-operativa/arbitraggio/) — LP, la dualità che prezza
-
-**Ottimizzazione e machine learning**
-
-- [Support Vector Machine](https://fabiofurini.github.io/laboratorio-ricerca-operativa/svm/) — QP
-- [Regressione robusta e quantile](https://fabiofurini.github.io/laboratorio-ricerca-operativa/regressione/) — LP, stimare i parametri
-
-**Il corso**
-
-- [Organizzazione del laboratorio](https://fabiofurini.github.io/laboratorio-ricerca-operativa/organizzazione/) — laboratori, consegne, valutazione
-
-## Eseguire i modelli
-
-Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab17`), con i dati
-in [`dati/`](dati/):
-
-```bash
-python3 -m pip install gurobipy matplotlib pandas scipy
-python3 python/esegui_tutti.py     # tutti i modelli: dati, risultati e figure
-```
-
-Senza installare niente, ogni capitolo ha il suo notebook in
-[`notebooks/`](notebooks/): si apre in Colab dal badge in cima alla pagina del
-capitolo (l'elenco completo è [sul sito](https://fabiofurini.github.io/laboratorio-ricerca-operativa/notebook/))
-e gira nel browser. I notebook si generano dagli script — `python3 python/genera_notebook.py` —
-quindi il codice del corso resta uno solo.
-
-La licenza `gurobipy` inclusa nel pacchetto pip basta per tutti i modelli del corso;
-la licenza accademica gratuita si attiva da [portal.gurobi.com](https://portal.gurobi.com).
+English version: [operations-research-lab](https://github.com/fabiofurini/operations-research-lab).
 
 ## Licenza
 
-- **Testi, figure e dati** (`docs/`, `dati/`): [CC BY 4.0](LICENSE) — chiunque può
-  riusarli, adattarli e ridistribuirli, anche in altri corsi, citando l'autore.
-- **Codice Python** (`python/`): [MIT](LICENSE-CODE), la licenza usuale per il
-  software, così il riuso degli script non ha ambiguità.
-
-Per citare il materiale c'è [`CITATION.cff`](CITATION.cff): GitHub ne ricava la
-voce *Cite this repository*. Le soluzioni degli esercizi non sono pubblicate:
-vengono distribuite a lezione.
-
-## English version
-
-The whole lab is also available in English:
-**[fabiofurini.github.io/operations-research-lab](https://fabiofurini.github.io/operations-research-lab/)**
-([repository](https://github.com/fabiofurini/operations-research-lab)).
-
-## Della stessa collana
-
-- [Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)
-- [Analisi Matematica 1](https://fabiofurini.github.io/analisi-matematica-1/)
-- [Algebra lineare](https://fabiofurini.github.io/algebra-lineare/)
-- [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/)
-- [Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/)
-- [Algoritmi](https://fabiofurini.github.io/algoritmi/)
-
----
-
-Materiale didattico di **[Fabio Furini](https://fabiofurini.github.io/)** — [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
-Le soluzioni degli esercizi vengono distribuite a lezione.
+Testi: [CC BY 4.0](LICENSE). Codice: [MIT](LICENSE-CODE).

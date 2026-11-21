@@ -1,48 +1,6 @@
-# LaTeX
-*.aux
-*.log
-*.out
-*.toc
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-*.nav
-*.snm
-*.vrb
-# Python
-__pycache__/
-*.pyc
-# MkDocs
-site/
-# varie
-.DS_Store
-
-# materiale interno, non pubblicato (struttura comune dei moduli)
-note/
+# materiale interno, non pubblicato (resta solo in locale come archivio)
 volumes/
 slides/
-*.tex
-build/
+_site/
+.DS_Store
 *conflicted copy*
-STILE_E_FORMATO.md
-pdf_originali/
-PIANO_DI_LAVORO.md
-ESEMPI_FORMATO_MODELLI/
-3_LINEAR_PROGRAMMING/
-30_OPTIMIZATION_IN_FINANCE/
-pdf_originali/
-# materiale interno EN (i sorgenti restano locali come per l'italiano)
-dispensa_en/
-soluzioni_en/
-docs_en/
-site_en/
-mkdocs_en.yml
-GUROBI_GUIDE.md
-README_EN.md
-python_en/
-dati_en/
-
-# i PDF pubblicati sul sito vanno invece versionati
-!docs/pdf/*.pdf
-# ricalcola le soluzioni riservate ai docenti: privato
-python/soluzioni_calcoli.py
