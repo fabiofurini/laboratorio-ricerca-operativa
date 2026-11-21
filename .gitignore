@@ -44,3 +44,5 @@ dati_en/
 
 # i PDF pubblicati sul sito vanno invece versionati
 !docs/pdf/*.pdf
+# ricalcola le soluzioni riservate ai docenti: privato
+python/soluzioni_calcoli.py
